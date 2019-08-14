@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'ch.jokel.beehive'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'io.helidon.webserver', name: 'helidon-webserver', version: '1.2.0'
+    compile group: 'io.helidon.media.jsonb', name: 'helidon-media-jsonb-server', version: '1.2.0'
+
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+}

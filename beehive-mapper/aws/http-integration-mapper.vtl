@@ -1,0 +1,16 @@
+##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
+{
+    "api_key": "<api-key>",
+    "created_at": $input.json('$.metadata.time'),
+    "field1": $input.json('$.payload_fields.temperature.unten'),
+    "field2": $input.json('$.payload_fields.temperature.mitte'),
+    "field3": $input.json('$.payload_fields.temperature.oben'),
+    "field4": $input.json('$.payload_fields.temperature.dach'),
+    "field5": $input.json('$.payload_fields.temperature.aussen'),
+    "field6": $input.json('$.payload_fields.humidity.dach'),
+    "field7": $input.json('$.payload_fields.humidity.aussen'),
+    "field8": $input.json('$.payload_fields.weight'),
+    "latitude": $input.json('$.metadata.latitude'),
+    "longitude": $input.json('$.metadata.longitude'),
+    "status": "Testdata"
+}

@@ -1,0 +1,42 @@
+openapi: "3.0.1"
+info:
+  title: "beehive-mapper-api"
+  version: "2019-08-20T22:22:38Z"
+servers:
+- url: "https://rt9jhy41md.execute-api.us-west-2.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "/test"
+paths:
+  /beesensor:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TTNHTTPIntegrationUplinkModel"
+        required: true
+      responses:
+        200:
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+components:
+  schemas:
+    Empty:
+      title: "Empty Schema"
+      type: "object"
+    TTNHTTPIntegrationUplinkModel:
+      title: "TTN-HTTPIntegration-Uplink-Model"
+      type: "object"
+      properties:
+        payload_fields:
+          type: "object"
+          properties: {}
+        metadata:
+          type: "object"
+          properties:
+            time:
+              type: "string"

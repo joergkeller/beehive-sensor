@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "TTN-HTTPIntegration-UplinkModel",
+  "type": "object",
+  "properties": {
+    "payload_fields": {
+      "type": "object",
+      "properties": {}
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "time": { "type": "string"},
+        "latitude": { "type": "number"},
+        "longitude": { "type": "number"}
+      }
+    }
+  }
+}

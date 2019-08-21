@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "4a53f2f9-2884-4651-ad42-f4437b018604",
+		"name": "Beehive Sensor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ThingSpeak",
+			"item": [
+				{
+					"name": "POST ThingSpeak JSON Data",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n    \"api_key\": \"VQ77OGI164EXBJ6W\", \r\n    \"created_at\": \"2019-08-20 07:33:00 +0100\", \r\n    \"field1\": 21.1,\r\n    \"field2\": 22.2,\r\n    \"field3\": 23.3, \r\n    \"field4\": 25.8, \r\n    \"field5\": 18.0,\r\n    \"field6\": 98.9,\r\n    \"field7\": 83.3,\r\n    \"field8\": 23.6,\r\n    \"latitude\": \"\", \r\n    \"longitude\": \"\", \r\n    \"status\": \"Testdata\"    \r\n}"
+						},
+						"url": {
+							"raw": "https://api.thingspeak.com/update.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"thingspeak",
+								"com"
+							],
+							"path": [
+								"update.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -11,12 +11,12 @@ Weight, temperature and humidity measurement in a beehive using Arduino and LoRa
 - TTN-Gateway/Network/Application
     - Authorization and encoding (OTAA possible)
     - HTTP Integration plugin
-    - see [TTN application](file:./docs/ttn-application.md)
+    - see [TTN application](./docs/ttn-application.md)
     
 - Mapping and routing sensor data eg. AWS Api Gateway
     - Limited to 1:1 mapping TTN vs. ThingSpeak channel (?)
     - Simple extension eg. AWS Lambda (data store, device specific routing, custom app)
-    - see [AWS serverless](file:./docs/aws-serverless.md)
+    - see [AWS serverless](./docs/aws-serverless.md)
     
 - Dashboard and visualization eg. ThingSpeak channel
     - Simple to setup and share

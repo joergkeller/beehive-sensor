@@ -1,6 +1,6 @@
 ##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
 {
-    "api_key": "<api-key>",
+    "api_key": "$stageVariables['thingspeak_api_key']",
     "created_at": $input.json('$.metadata.time'),
     "field1": $input.json('$.payload_fields.temperature.unten'),
     "field2": $input.json('$.payload_fields.temperature.mitte'),
@@ -12,5 +12,5 @@
     "field8": $input.json('$.payload_fields.weight'),
     "latitude": $input.json('$.metadata.latitude'),
     "longitude": $input.json('$.metadata.longitude'),
-    "status": "Testdata"
+    "status": "Battery $input.json('$.payload_fields.battery') volt"
 }

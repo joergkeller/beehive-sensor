@@ -25,4 +25,4 @@ See https://thethingsnetwork.org/docs/applications/http/
 ## Testing the setup
  TTN > Application > xxx > Devices > Simulate Uplink
  
- Example message: ```2A 12 FD 00 00 00 00 00 00 C5 0D 00 00 E8 03```
+ Example message: ```00 2A 12 FD 12 07 80 07 ED 07 DD 09 8F 19 4E 25 0E 06 4B 01```

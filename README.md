@@ -26,6 +26,30 @@ Weight, temperature and humidity measurement in a beehive using Arduino and LoRa
     - No (?) linking of multiple channels (beehives)
     - Limited user interaction (drilldown)
    
+## Transmitted LoRa message (binary encoded)
+- Fixed size and order of measured values
+- Values are transmitted as short integer values with 2 digits (-327.67 .. 327.67)
+- Reserved value to represent null (-327.68) 
+~~~
+   {
+     "version": 0,      // command id or version
+     "hiveId": 42,      // when multiple hives per device
+     "temperature": {
+       "aussen": -7.5,  // °C
+       "dach": 25.25,
+       "mitte": 19.2,
+       "oben": 20.29,
+       "unten": 18.1
+     },
+     "humidity": {
+       "aussen": 65.43, // % rel
+       "dach": 95.5
+     },
+     "weight": 15.5,    // kilogram
+     "battery": 3.31    // volts
+   }
+~~~   
+   
 ## Checkout this project
 Local installation of 'git' assumed.
 ~~~

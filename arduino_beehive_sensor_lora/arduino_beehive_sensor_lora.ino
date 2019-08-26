@@ -4,12 +4,16 @@
  * ---
  * After setup, the sensors are read in intervals and the 
  * sensor data message is sent using LoRa (simulated).
+ * ---
+ * message version (aka command):
+ *  0: sensor data v0
  **********************************************************/
 
 #include "DraginoLoRa.h"
 //#include <Adafruit_SleepyDog.h>
 
 typedef struct beesensor_t {
+  byte version;
   byte hiveId;
   struct { 
     short aussen;
@@ -22,11 +26,13 @@ typedef struct beesensor_t {
     short aussen;
     short dach;
   } humidity;
+  short weight;
+  short battery;
 };
 
 union {
   beesensor_t sensor;
-  byte bytes[1+10+4];
+  byte bytes[1+1+10+4+2+2];
 } message;
 
 DraginoLoRa radio = DraginoLoRa();
@@ -42,6 +48,9 @@ unsigned long nextTransmissionMs = 0L;
 void setup() {
   Serial.begin(9600);
   Serial.println("Start LoRa test script");
+
+  // initialize sensor message
+  message.sensor.version = 0;
 
   // setup sensor library
   radio.begin();
@@ -77,8 +86,14 @@ void readSensors() {
   // read real sensors instead of dummy data below
   message.sensor.hiveId = 42;
   message.sensor.temperature.aussen = asShort(-7.5);
-  message.sensor.temperature.dach = asShort(35.25);
-  message.sensor.humidity.dach = asShort(10);
+  message.sensor.temperature.dach = asShort(25.25);
+  message.sensor.temperature.oben = asShort(20.3);
+  message.sensor.temperature.mitte = asShort(19.2);
+  message.sensor.temperature.unten = asShort(18.1);
+  message.sensor.humidity.aussen = asShort(65.43);
+  message.sensor.humidity.dach = asShort(95.5);
+  message.sensor.weight = asShort(15.5);
+  message.sensor.battery = asShort(3.31);
 }
 
 void sendLoRaMessage() {

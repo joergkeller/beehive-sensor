@@ -30,7 +30,18 @@ class DraginoLoRa {
   
       // Set static session parameters.
       LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
-  
+
+      // Set up the channels used by the things network
+      LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(1, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7B),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(2, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(3, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(4, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(5, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(6, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(7, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(8, 868100000, DR_RANGE_MAP(DR_FSK, DR_FSK),  BAND_MILLI);      // g2-
+
       // Disable link check validation
       LMIC_setLinkCheckMode(0);
   
@@ -43,14 +54,18 @@ class DraginoLoRa {
 
     void send(uint8_t *message, uint8_t len) {
         // Check if there is not a current TX/RX job running
-        if (LMIC.opmode & OP_TXRXPEND) {
+        if (isTransmitting()) {
             Serial.println(F("OP_TXRXPEND, not sending"));
         } else {
             // Prepare upstream data transmission at the next possible time.
             LMIC_setTxData2(1, message, len, 0);
-            Serial.println(F("Sending uplink packet..."));
+            Serial.println(F("Sending uplink packet"));
         }
         // Next TX is scheduled after TX_COMPLETE event.
+    }
+
+    bool isTransmitting() {
+      return LMIC.opmode & OP_TXRXPEND;
     }
 
     void printlnMessage(uint8_t *message, uint8_t len) {
@@ -78,26 +93,46 @@ const lmic_pinmap lmic_pins = {
     .dio = {2, 6, 7},
 };
 
-void do_send(osjob_t* j){
-    // Payload to send (uplink)
-    static uint8_t message[] = "hi";
-
-    // Check if there is not a current TX/RX job running
-    if (LMIC.opmode & OP_TXRXPEND) {
-        Serial.println(F("OP_TXRXPEND, not sending"));
-    } else {
-        // Prepare upstream data transmission at the next possible time.
-        LMIC_setTxData2(1, message, sizeof(message)-1, 0);
-        Serial.println(F("Sending uplink packet..."));
-    }
-    // Next TX is scheduled after TX_COMPLETE event.
-}
-
 void onEvent(ev_t ev) {
     if (ev == EV_TXCOMPLETE) {
-        Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
-        // Schedule next transmission
-        os_setTimedCallback(&sendjob, os_getTime()+sec2osticks(TX_INTERVAL_SEC), do_send);
+        Serial.println(F("EV_TXCOMPLETE"));
+        // includes waiting for RX windows
+        if (LMIC.txrxFlags & TXRX_ACK) {
+          Serial.println(F("Received ack"));
+        }
+        if (LMIC.dataLen) {
+          Serial.println(F("Received "));
+          Serial.println(LMIC.dataLen);
+          Serial.println(F(" bytes of payload"));
+        }
+    } else if (ev == EV_SCAN_TIMEOUT) {
+        Serial.println(F("EV_SCAN_TIMEOUT"));
+    } else if (ev == EV_BEACON_FOUND) {
+        Serial.println(F("EV_BEACON_FOUND"));
+    } else if (ev == EV_BEACON_MISSED) {
+        Serial.println(F("EV_BEACON_MISSED"));
+    } else if (ev == EV_BEACON_TRACKED) {
+        Serial.println(F("EV_BEACON_TRACKED"));
+    } else if (ev == EV_JOINING) {
+        Serial.println(F("EV_JOINING"));
+    } else if (ev == EV_JOINED) {
+        Serial.println(F("EV_JOINED"));
+    } else if (ev == EV_RFU1) {
+        Serial.println(F("EV_RFU1"));
+    } else if (ev == EV_JOIN_FAILED) {
+        Serial.println(F("EV_JOIN_FAILED"));
+    } else if (ev == EV_REJOIN_FAILED) {
+        Serial.println(F("EV_REJOIN_FAILED"));
+    } else if (ev == EV_LOST_TSYNC) {
+        Serial.println(F("EV_LOST_TSYNC"));
+    } else if (ev == EV_RESET) {
+        Serial.println(F("EV_RESET"));
+    } else if (ev == EV_RXCOMPLETE) {
+        Serial.println(F("EV_RXCOMPLETE"));
+    } else if (ev == EV_LINK_DEAD) {
+        Serial.println(F("EV_LINK_DEAD"));
+    } else if (ev == EV_LINK_ALIVE) {
+        Serial.println(F("EV_LINK_ALIVE"));
     }
 }
 

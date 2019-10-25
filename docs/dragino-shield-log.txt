@@ -1,0 +1,609 @@
+25.10.2019, ca. 00:20
+Start LoRa test script with dummy message
+
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+...........................................................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+......................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+......................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+......................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+......................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+.....................................
+-7.50 C outside
+65.43 % rel
+0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
+Sending uplink packet
+EV_TXCOMPLETE
+..........

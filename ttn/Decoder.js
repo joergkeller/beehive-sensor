@@ -2,23 +2,20 @@ function Decoder(bytes, port) {
   // Decode an uplink message from a buffer
   // (array) of bytes to an object of fields.
 
-  // Payload: 00 2A 12 FD 12 07 80 07 ED 07 DD 09 8F 19 4E 25 0E 06 4B 01 (20 bytes)
+  // Payload: 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01 (15 bytes)
   // {
-  //   "version": 0,
-  //   "hiveId": 42,
   //   "battery": 3.31,
-  //   "humidity": {
-  //     "aussen": 65.43,
-  //     "dach": 95.5
-  //   },
+  //     "humidity": {
+  //   "outer": 65.43
+  // },
   //   "temperature": {
-  //     "aussen": -7.5,
-  //     "dach": 25.25,
-  //     "mitte": 19.2,
-  //     "oben": 20.29,
-  //     "unten": 18.1
-  //   },
-  //   "weight": 15.5
+  //   "lower": 18.1,
+  //       "middle": 19.2,
+  //       "outer": -7.5,
+  //       "upper": 20.29
+  // },
+  //   "version": 42,
+  //     "weight": 15.5
   // }
 
   function asShort(index) {
@@ -35,19 +32,16 @@ function Decoder(bytes, port) {
   
   return {
     version: bytes[0],
-    hiveId: bytes[1],
     temperature: {
-      aussen: asFloat(2),
-      unten:  asFloat(4),
-      mitte:  asFloat(6),
-      oben:   asFloat(8),
-      dach:   asFloat(10)
+      outer: asFloat(1),
+      lower:  asFloat(3),
+      middle:  asFloat(5),
+      upper:   asFloat(7)
     },
     humidity: {
-      aussen: asFloat(12),
-      dach:   asFloat(14)
+      outer: asFloat(9)
     },
-    weight: asFloat(16),
-    battery: asFloat(18)
+    weight: asFloat(11),
+    battery: asFloat(13)
   };
 }

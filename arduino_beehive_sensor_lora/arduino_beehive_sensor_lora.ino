@@ -14,17 +14,14 @@
 
 typedef struct beesensor_t {
   byte version;
-  byte hiveId;
   struct { 
-    short aussen;
-    short unten;
-    short mitte;
-    short oben;
-    short dach;
+    short outer;
+    short lower;
+    short middle;
+    short upper;
   } temperature; 
   struct {
-    short aussen;
-    short dach;
+    short outer;
   } humidity;
   short weight;
   short battery;
@@ -32,7 +29,7 @@ typedef struct beesensor_t {
 
 union {
   beesensor_t sensor;
-  byte bytes[1+1+10+4+2+2];
+  byte bytes[1+8+2+2+2];
 } message;
 
 DraginoLoRa radio = DraginoLoRa();
@@ -40,17 +37,19 @@ DraginoLoRa radio = DraginoLoRa();
 #define MS 1L
 #define SEC (1000*MS)
 #define MIN (60*SEC)
-#define INTERVAL (1*MIN)
-unsigned long nextTransmissionMs = 0L;
+
+#define INTERVAL          (5*MIN)
+#define TRANSMISSION_WAIT (30*SEC)
+unsigned long lastTransmissionMs = 0L;
 
 /* Setup ******************************************/
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Start LoRa test script");
+  Serial.begin(115200);
+  Serial.println("Start LoRa test script with dummy message");
 
   // initialize sensor message
-  message.sensor.version = 0;
+  message.sensor.version = 42;
 
   // setup sensor library
   radio.begin();
@@ -59,21 +58,18 @@ void setup() {
 /* Loop ******************************************/
 
 void loop() {
-  if (millis() >= nextTransmissionMs) {
-    nextTransmissionMs += INTERVAL;
+  if (lastTransmissionMs == 0L || millis() >= lastTransmissionMs + INTERVAL) {
+    lastTransmissionMs += INTERVAL;
     // After each interval: measure and transmit
     readSensors();
     sendLoRaMessage();
+  } else if (radio.isTransmitting() && millis() < lastTransmissionMs + TRANSMISSION_WAIT) {
+    // Wait for transmission complete
+  } else {
+    sleep();
   }
-  
-  delay(8000); 
-  // for lower power consumption use deep sleep mode 
-  // (as long a possible, will be approx. 8 sec).
-  //Watchdog.sleep();  
-  //#ifdef USBCON
-  //  USBDevice.attach();
-  //#endif
-  Serial.print('.');
+
+  os_runloop_once();
 }
 
 /* Helper methods ******************************************/
@@ -84,28 +80,43 @@ short asShort(float value) {
 
 void readSensors() {
   // read real sensors instead of dummy data below
-  message.sensor.hiveId = 42;
-  message.sensor.temperature.aussen = asShort(-7.5);
-  message.sensor.temperature.dach = asShort(25.25);
-  message.sensor.temperature.oben = asShort(20.3);
-  message.sensor.temperature.mitte = asShort(19.2);
-  message.sensor.temperature.unten = asShort(18.1);
-  message.sensor.humidity.aussen = asShort(65.43);
-  message.sensor.humidity.dach = asShort(95.5);
+  message.sensor.temperature.outer = asShort(-7.5);
+  message.sensor.temperature.upper = asShort(20.3);
+  message.sensor.temperature.middle = asShort(19.2);
+  message.sensor.temperature.lower = asShort(18.1);
+  message.sensor.humidity.outer = asShort(65.43);
   message.sensor.weight = asShort(15.5);
   message.sensor.battery = asShort(3.31);
 }
 
 void sendLoRaMessage() {
   Serial.println();
-  Serial.print(message.sensor.temperature.aussen / 100.0);
-  Serial.println(" C aussen");
-  Serial.print(message.sensor.temperature.dach / 100.0);
-  Serial.println(" C dach");
-  Serial.print(message.sensor.humidity.dach / 100.0);
+  Serial.print(message.sensor.temperature.outer / 100.0);
+  Serial.println(" C outside");
+  Serial.print(message.sensor.humidity.outer / 100.0);
   Serial.println(" % rel");
   
   // send message.bytes using the LoRa transmitter
   radio.printlnMessage(message.bytes, sizeof(message));
   radio.send(message.bytes, sizeof(message));
+}
+
+void sleep() {
+  // shut down
+  Serial.flush();
+  #ifdef USBCON
+    USBDevice.detach();
+  #endif
+
+  // for lower power consumption use deep sleep mode 
+  // (as long a possible, will be approx. 8 sec).
+  delay(8000); 
+  //Watchdog.sleep();  
+
+  // wake up
+  #ifdef USBCON
+    USBDevice.init();
+    USBDevice.attach();
+  #endif
+  Serial.print('.');
 }

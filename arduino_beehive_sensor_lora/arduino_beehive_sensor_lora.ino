@@ -5,7 +5,7 @@
  * After setup, the sensors are read in intervals and the 
  * sensor data message is sent using LoRa.
  * - DS18B20 temperature sensors (multiple) are read from pin D3
- * - DHT22 sensor is simulated
+ * - DHT22 temperature/humidity sensor is read from pin D4
  * - Weight sensor is simulated
  * - Battery measurement is simulated
  * ---
@@ -13,6 +13,7 @@
  *  0: sensor data v0
  **********************************************************/
 
+#include "DHT.h"
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include "DraginoLoRa.h"
@@ -33,13 +34,15 @@ typedef struct beesensor_t {
   short battery;
 };
 
-#define ONE_WIRE_BUS 3
+#define DHT_PIN 4
+#define ONEWIRE_PIN 3
 #define TEMPERATURE_PRECISION 10
 
 #define MS 1L
 #define SEC (1000*MS)
 #define MIN (60*SEC)
 
+#define MESSAGE_VERSION 0
 #define INTERVAL          (5*MIN)
 #define TRANSMISSION_WAIT (30*SEC)
 
@@ -51,10 +54,12 @@ union {
 unsigned long lastTransmissionMs = 0L;
 
 DeviceAddress lowerThermometer =  { 0x28, 0xC2, 0xE1, 0x78, 0x0A, 0x00, 0x00, 0x26 };
-DeviceAddress middleThermometer = { 0x28, 0x3F, 0x1C, 0x31, 0x2, 0x0, 0x0, 0x2 };
-DeviceAddress upperThermometer =  { 0x28, 0x3F, 0x1C, 0x31, 0x2, 0x0, 0x0, 0x2 };
+DeviceAddress middleThermometer = { 0x28, 0x3F, 0x1C, 0x31, 0x02, 0x00, 0x00, 0x02 };
+DeviceAddress upperThermometer =  { 0x28, 0x3F, 0x1C, 0x31, 0x02, 0x00, 0x00, 0x02 };
 
-OneWire oneWire(ONE_WIRE_BUS);
+DHT dht(DHT_PIN, DHT22);
+
+OneWire oneWire(ONEWIRE_PIN);
 DallasTemperature sensors(&oneWire);
 
 DraginoLoRa radio = DraginoLoRa();
@@ -64,13 +69,15 @@ DraginoLoRa radio = DraginoLoRa();
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Start LoRa test script with dummy message");
+  Serial.print("Start LoRa test script with sensor message v");
+  Serial.println(MESSAGE_VERSION);
 
   // initialize sensor message
-  message.sensor.version = 42;
+  message.sensor.version = MESSAGE_VERSION;
 
-  radio.begin();
+  dht.begin();
   sensors.begin();
+  radio.begin();
 
   listSensors();
 }
@@ -95,6 +102,7 @@ void loop() {
 /* Helper methods ******************************************/
 
 short asShort(float value) {
+  if (isnan(value) || value == -127.0) return WINT_MIN;
   return value * 100;
 }
 
@@ -102,33 +110,37 @@ void readSensors() {
   sensors.requestTemperatures();
 
   // read real sensors instead of dummy data below
-  message.sensor.temperature.outer = asShort(-7.5);
+  message.sensor.temperature.outer = asShort(dht.readTemperature());
   message.sensor.temperature.upper = asShort(sensors.getTempC(upperThermometer));
   message.sensor.temperature.middle = asShort(sensors.getTempC(middleThermometer));
   message.sensor.temperature.lower = asShort(sensors.getTempC(lowerThermometer));
-  message.sensor.humidity.outer = asShort(65.43);
-  message.sensor.weight = asShort(15.5);
-  message.sensor.battery = asShort(3.31);
+  message.sensor.humidity.outer = asShort(dht.readHumidity());
+  message.sensor.weight = asShort(NAN);
+  message.sensor.battery = asShort(NAN);
 }
 
 void sendLoRaMessage() {
   Serial.println();
-  if (message.sensor.temperature.lower > -12700) {
+  if (message.sensor.temperature.lower > WINT_MIN) {
     Serial.print(message.sensor.temperature.lower / 100.0);
     Serial.println(" C lower level");
   }
-  if (message.sensor.temperature.middle > -12700) {
+  if (message.sensor.temperature.middle > WINT_MIN) {
     Serial.print(message.sensor.temperature.middle / 100.0);
     Serial.println(" C middle level");
   }
-  if (message.sensor.temperature.upper > -12700) {
+  if (message.sensor.temperature.upper > WINT_MIN) {
     Serial.print(message.sensor.temperature.upper / 100.0);
     Serial.println(" C upper level");
   }
-  Serial.print(message.sensor.temperature.outer / 100.0);
-  Serial.println(" C outside");
-  Serial.print(message.sensor.humidity.outer / 100.0);
-  Serial.println(" % rel");
+  if (message.sensor.temperature.outer > WINT_MIN) {
+    Serial.print(message.sensor.temperature.outer / 100.0);
+    Serial.println(" C outside");
+  }
+  if (message.sensor.humidity.outer > WINT_MIN) {
+    Serial.print(message.sensor.humidity.outer / 100.0);
+    Serial.println(" % rel");
+  }
   
   // send message.bytes using the LoRa transmitter
   Serial.print("Message: ");

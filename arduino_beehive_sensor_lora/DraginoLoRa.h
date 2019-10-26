@@ -68,15 +68,6 @@ class DraginoLoRa {
       return LMIC.opmode & OP_TXRXPEND;
     }
 
-    void printlnMessage(uint8_t *message, uint8_t len) {
-      Serial.print("0x ");
-      for (int i = 0; i < len; i++) {
-        if (message[i] < 16) Serial.print('0');
-        Serial.print(message[i], HEX);
-        Serial.print(' ');
-      }
-      Serial.println();
-    }
 };
 
 static osjob_t sendjob;

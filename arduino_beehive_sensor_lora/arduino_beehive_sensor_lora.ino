@@ -4,10 +4,10 @@
  * ---
  * After setup, the sensors are read in intervals and the 
  * sensor data message is sent using LoRa.
+ * - USB voltage measurement
  * - DS18B20 temperature sensors (multiple) are read from pin D3
  * - DHT22 temperature/humidity sensor is read from pin D4
  * - Weight sensor is simulated
- * - Battery measurement is simulated
  * ---
  * message version (aka command):
  *  0: sensor data v0
@@ -53,6 +53,7 @@ union {
 
 unsigned long lastTransmissionMs = 0L;
 
+// set unique DS18B20 addresses of used sensors
 DeviceAddress lowerThermometer =  { 0x28, 0xC2, 0xE1, 0x78, 0x0A, 0x00, 0x00, 0x26 };
 DeviceAddress middleThermometer = { 0x28, 0x3F, 0x1C, 0x31, 0x02, 0x00, 0x00, 0x02 };
 DeviceAddress upperThermometer =  { 0x28, 0x3F, 0x1C, 0x31, 0x02, 0x00, 0x00, 0x02 };
@@ -107,16 +108,18 @@ short asShort(float value) {
 }
 
 void readSensors() {
+  // DS18B20 temperature sensors on one-wire bus
   sensors.requestTemperatures();
-
-  // read real sensors instead of dummy data below
-  message.sensor.temperature.outer = asShort(dht.readTemperature());
   message.sensor.temperature.upper = asShort(sensors.getTempC(upperThermometer));
   message.sensor.temperature.middle = asShort(sensors.getTempC(middleThermometer));
   message.sensor.temperature.lower = asShort(sensors.getTempC(lowerThermometer));
+
+  // DHTxx sensor
+  message.sensor.temperature.outer = asShort(dht.readTemperature());
   message.sensor.humidity.outer = asShort(dht.readHumidity());
+  
   message.sensor.weight = asShort(NAN);
-  message.sensor.battery = asShort(NAN);
+  message.sensor.battery = asShort(readVcc() / 1023.0);
 }
 
 void sendLoRaMessage() {
@@ -191,6 +194,19 @@ void printBufferAsString(byte* buffer, int length) {
   Serial.println("\"");
 }
 
+// see https://forum.arduino.cc/index.php?topic=120693.msg908179#msg908179
+long readVcc() {
+  long result;
+  // Read 1.1V reference against AVcc
+  ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+  delay(2); // Wait for Vref to settle
+  ADCSRA |= _BV(ADSC); // Convert
+  while (bit_is_set(ADCSRA,ADSC));
+  result = ADCL;
+  result |= ADCH<<8;
+  result = 1126400L / result; // Back-calculate AVcc in mV
+  return result;
+}
 
 void sleep() {
   // shut down

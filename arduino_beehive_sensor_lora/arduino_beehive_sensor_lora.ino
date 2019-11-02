@@ -7,7 +7,7 @@
  * - USB voltage measurement
  * - DS18B20 temperature sensors (multiple) are read from pin D3
  * - DHT22 temperature/humidity sensor is read from pin D4
- * - Weight sensor is simulated
+ * - Weight measured with load cell and HX711 ADC from pins A0/A1
  * ---
  * message version (aka command):
  *  0: sensor data v0
@@ -16,6 +16,7 @@
 #include "DHT.h"
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include "HX711.h"
 #include "DraginoLoRa.h"
 //#include <Adafruit_SleepyDog.h>
 
@@ -35,8 +36,14 @@ typedef struct beesensor_t {
 };
 
 #define DHT_PIN 4
+
 #define ONEWIRE_PIN 3
 #define TEMPERATURE_PRECISION 10
+
+#define LOADCELL_DOUT_PIN  A0
+#define LOADCELL_SCK_PIN  A1
+#define LOADCELL_OFFSET -43496
+#define LOADCELL_DIVIDER 25365
 
 #define MS 1L
 #define SEC (1000*MS)
@@ -63,6 +70,8 @@ DHT dht(DHT_PIN, DHT22);
 OneWire oneWire(ONEWIRE_PIN);
 DallasTemperature sensors(&oneWire);
 
+HX711 scale;
+
 DraginoLoRa radio = DraginoLoRa();
   
 
@@ -79,6 +88,11 @@ void setup() {
   dht.begin();
   sensors.begin();
   radio.begin();
+  scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+  Serial.print(F("Initial raw weight read: "));
+  Serial.println(scale.read_average(100));
+  scale.set_scale(LOADCELL_DIVIDER);
+  scale.set_offset(LOADCELL_OFFSET);
 
   listSensors();
 }
@@ -117,13 +131,20 @@ void readSensors() {
   // DHTxx sensor
   message.sensor.temperature.outer = asShort(dht.readTemperature());
   message.sensor.humidity.outer = asShort(dht.readHumidity());
-  
-  message.sensor.weight = asShort(NAN);
+
+  // HX711 with load cell
+  message.sensor.weight = asShort(scale.get_units(10));
+
+  // voltage
   message.sensor.battery = asShort(readVcc() / 1023.0);
 }
 
 void sendLoRaMessage() {
   Serial.println();
+  if (message.sensor.weight > WINT_MIN) {
+    Serial.print(message.sensor.weight / 100.0);
+    Serial.println(" kg");
+  }
   if (message.sensor.temperature.lower > WINT_MIN) {
     Serial.print(message.sensor.temperature.lower / 100.0);
     Serial.println(" C lower level");

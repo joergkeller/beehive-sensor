@@ -44,6 +44,8 @@ typedef struct beesensor_t {
 #define LOADCELL_SCK_PIN  A1
 #define LOADCELL_OFFSET -43496
 #define LOADCELL_DIVIDER 25365
+#define SETUP_SAMPLING 100
+#define OPERATIONAL_SAMPLING 10
 
 #define MS 1L
 #define SEC (1000*MS)
@@ -52,6 +54,7 @@ typedef struct beesensor_t {
 #define MESSAGE_VERSION 0
 #define INTERVAL          (5*MIN)
 #define TRANSMISSION_WAIT (30*SEC)
+#define SETUP_DURATION    (2*MIN)
 
 union {
   beesensor_t sensor;
@@ -89,8 +92,6 @@ void setup() {
   sensors.begin();
   radio.begin();
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
-  Serial.print(F("Initial raw weight read: "));
-  Serial.println(scale.read_average(100));
   scale.set_scale(LOADCELL_DIVIDER);
   scale.set_offset(LOADCELL_OFFSET);
 
@@ -100,11 +101,16 @@ void setup() {
 /* Loop ******************************************/
 
 void loop() {
-  if (lastTransmissionMs == 0L || millis() >= lastTransmissionMs + INTERVAL) {
-    lastTransmissionMs += INTERVAL;
-    // After each interval: measure and transmit
+  if (millis() < SETUP_DURATION) {
     readSensors();
-    sendLoRaMessage();
+    printSensorData(true);
+  } else if (lastTransmissionMs == 0L || millis() >= lastTransmissionMs + INTERVAL) {
+    lastTransmissionMs += INTERVAL;
+    readSensors();
+    printSensorData(false);
+    Serial.print("Message: ");
+    printBufferAsString(message.bytes, sizeof(message)); 
+    radio.send(message.bytes, sizeof(message));
   } else if (radio.isTransmitting() && millis() < lastTransmissionMs + TRANSMISSION_WAIT) {
     // Wait for transmission complete
   } else {
@@ -122,6 +128,9 @@ short asShort(float value) {
 }
 
 void readSensors() {
+  // power up
+  scale.power_up();
+  
   // DS18B20 temperature sensors on one-wire bus
   sensors.requestTemperatures();
   message.sensor.temperature.upper = asShort(sensors.getTempC(upperThermometer));
@@ -133,14 +142,20 @@ void readSensors() {
   message.sensor.humidity.outer = asShort(dht.readHumidity());
 
   // HX711 with load cell
-  message.sensor.weight = asShort(scale.get_units(10));
+  message.sensor.weight = asShort(scale.get_units(OPERATIONAL_SAMPLING));
 
   // voltage
   message.sensor.battery = asShort(readVcc() / 1023.0);
 }
 
-void sendLoRaMessage() {
+void printSensorData(bool rawWeightReading) {
   Serial.println();
+  if (rawWeightReading) {
+    Serial.println("Setup mode");
+    Serial.println("----------");
+    Serial.print("Raw weight read: ");
+    Serial.println(scale.read_average(SETUP_SAMPLING));
+  }
   if (message.sensor.weight > WINT_MIN) {
     Serial.print(message.sensor.weight / 100.0);
     Serial.println(" kg");
@@ -165,11 +180,10 @@ void sendLoRaMessage() {
     Serial.print(message.sensor.humidity.outer / 100.0);
     Serial.println(" % rel");
   }
-  
-  // send message.bytes using the LoRa transmitter
-  Serial.print("Message: ");
-  printBufferAsString(message.bytes, sizeof(message)); 
-  radio.send(message.bytes, sizeof(message));
+  if (message.sensor.battery > WINT_MIN) {
+    Serial.print(message.sensor.battery / 100.0);
+    Serial.println(" Vcc");
+  }
 }
 
 void listSensors() {
@@ -231,6 +245,7 @@ long readVcc() {
 
 void sleep() {
   // shut down
+  scale.power_down();
   Serial.flush();
   #ifdef USBCON
     USBDevice.detach();

@@ -58,7 +58,7 @@ class DraginoLoRa {
             Serial.println(F("OP_TXRXPEND, not sending"));
         } else {
             // Prepare upstream data transmission at the next possible time.
-            LMIC_setTxData2(1, message, len, 0);
+            LMIC_setTxData2(1, message, len, 1);
             Serial.println(F("Sending uplink packet"));
         }
         // Next TX is scheduled after TX_COMPLETE event.

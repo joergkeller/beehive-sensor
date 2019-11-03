@@ -89,8 +89,8 @@ class SensorReader {
     // HX711 with load cell
     float getWeight() { return scale.get_units(OPERATIONAL_SAMPLING); }
 
-    // voltage
-    float getVoltage() { return readVcc() / 1023.0; }
+    // battery voltage
+    float getVoltage() { return readVcc() / 1000.0; }
 
   private:
     const DHT dht = DHT(DHT_PIN, DHT22);

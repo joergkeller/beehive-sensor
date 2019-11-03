@@ -13,9 +13,9 @@
  *  0: sensor data v0
  **********************************************************/
 
+//#include <LowPower.h>
 #include "SensorReader.h"
 #include "DraginoLoRa.h"
-//#include <Adafruit_SleepyDog.h>
 
 typedef struct beesensor_t {
   byte version;
@@ -62,6 +62,8 @@ void setup() {
   // initialize sensor message
   message.sensor.version = MESSAGE_VERSION;
 
+  os_init();
+  
   sensor.begin();
   radio.begin();
 
@@ -81,8 +83,6 @@ void loop() {
     Serial.println();
     readSensors();
     printSensorData();
-    Serial.print("Message: ");
-    printBufferAsString(message.bytes, sizeof(message)); 
     radio.send(message.bytes, sizeof(message));
   } else if (radio.isTransmitting() && millis() < lastTransmissionMs + TRANSMISSION_WAIT) {
     // Wait for transmission complete
@@ -146,15 +146,6 @@ void printSensorData() {
   }
 }
 
-void printBufferAsString(byte* buffer, int length) {
-  Serial.print("\"");
-  for (uint8_t i = 0; i < length; i++) {
-    if (buffer[i] < 16) Serial.print("0");
-    Serial.print(buffer[i], HEX);
-  }
-  Serial.println("\"");
-}
-
 void sleep() {
   // shut down
   sensor.powerDown();
@@ -165,8 +156,8 @@ void sleep() {
 
   // for lower power consumption use deep sleep mode 
   // (as long a possible, will be approx. 8 sec).
-  delay(8000); 
-  //Watchdog.sleep();  
+  delay(8000);
+  //LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
 
   // wake up
   #ifdef USBCON

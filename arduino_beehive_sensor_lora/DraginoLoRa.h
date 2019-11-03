@@ -5,26 +5,25 @@
  * Initialization and sending moved to a class, other code
  * seems to be obsolete (testing required).
  **********************************************************/
-#ifndef DRAGINOLORA
-#define DRAGINOLORA
+#ifndef __DRAGINOLORA_H__
+#define __DRAGINOLORA_H__
 
 #include <lmic.h>
 #include <hal/hal.h>
 #include "credentials.h"
 
-// These callbacks are only used in over-the-air activation, so they are
-// left empty here (we cannot leave them out completely unless
-// DISABLE_JOIN is set in config.h, otherwise the linker will complain).
-void os_getArtEui (u1_t* buf) { }
-void os_getDevEui (u1_t* buf) { }
-void os_getDevKey (u1_t* buf) { }
+// Pin mapping Dragino Shield
+const lmic_pinmap lmic_pins = {
+    .nss = 10,
+    .rxtx = LMIC_UNUSED_PIN,
+    .rst = 9,
+    .dio = {2, 6, 7},
+};
 
 class DraginoLoRa {
   public:
 
     void begin() {
-      os_init();
-  
       // Reset the MAC state. Session and pending data transfers will be discarded.
       LMIC_reset();
   
@@ -33,14 +32,14 @@ class DraginoLoRa {
 
       // Set up the channels used by the things network
       LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(1, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7B),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(1, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7B), BAND_CENTI);      // g-band
       LMIC_setupChannel(2, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
       LMIC_setupChannel(3, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
       LMIC_setupChannel(4, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
       LMIC_setupChannel(5, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
       LMIC_setupChannel(6, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
       LMIC_setupChannel(7, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(8, 868100000, DR_RANGE_MAP(DR_FSK, DR_FSK),  BAND_MILLI);      // g2-
+      LMIC_setupChannel(8, 868100000, DR_RANGE_MAP(DR_FSK, DR_FSK),   BAND_MILLI);      // g2-band
 
       // Disable link check validation
       LMIC_setLinkCheckMode(0);
@@ -49,7 +48,7 @@ class DraginoLoRa {
       LMIC.dn2Dr = DR_SF9;
   
       // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
-      LMIC_setDrTxpow(DR_SF12,14);
+      LMIC_setDrTxpow(DR_SF12, 14);
     }
 
     void send(uint8_t *message, uint8_t len) {
@@ -58,6 +57,8 @@ class DraginoLoRa {
             Serial.println(F("OP_TXRXPEND, not sending"));
         } else {
             // Prepare upstream data transmission at the next possible time.
+            Serial.print("Message: ");
+            printBufferAsString(message, len); 
             LMIC_setTxData2(1, message, len, 1);
             Serial.println(F("Sending uplink packet"));
         }
@@ -68,20 +69,16 @@ class DraginoLoRa {
       return LMIC.opmode & OP_TXRXPEND;
     }
 
-};
+  private:
+    void printBufferAsString(byte* buffer, int length) {
+      Serial.print("\"");
+      for (uint8_t i = 0; i < length; i++) {
+        if (buffer[i] < 16) Serial.print("0");
+        Serial.print(buffer[i], HEX);
+      }
+      Serial.println("\"");
+    }
 
-static osjob_t sendjob;
-
-// Schedule TX every this many seconds (might become longer due to duty
-// cycle limitations).
-const unsigned TX_INTERVAL_SEC = 20;
-    
-// Pin mapping Dragino Shield
-const lmic_pinmap lmic_pins = {
-    .nss = 10,
-    .rxtx = LMIC_UNUSED_PIN,
-    .rst = 9,
-    .dio = {2, 6, 7},
 };
 
 void onEvent(ev_t ev) {
@@ -126,5 +123,12 @@ void onEvent(ev_t ev) {
         Serial.println(F("EV_LINK_ALIVE"));
     }
 }
+
+// These callbacks are only used in over-the-air activation, so they are
+// left empty here (we cannot leave them out completely unless
+// DISABLE_JOIN is set in config.h, otherwise the linker will complain).
+void os_getArtEui (u1_t* buf) { }
+void os_getDevEui (u1_t* buf) { }
+void os_getDevKey (u1_t* buf) { }
 
 #endif

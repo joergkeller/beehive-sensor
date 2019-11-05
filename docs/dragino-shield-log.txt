@@ -1,609 +1,847 @@
-25.10.2019, ca. 00:20
-Start LoRa test script with dummy message
-
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-...........................................................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-......................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-......................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-......................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-......................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-.....................................
--7.50 C outside
-65.43 % rel
-0x 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01
-Sending uplink packet
-EV_TXCOMPLETE
-..........
+01:03:46.430 -> Start LoRa test script with sensor message v1
+01:03:46.879 -> Found 1 temperature sensor
+01:03:46.879 -> Parasite power is: OFF
+01:03:46.879 -> Device Address 0: { 0x28, 0xC2, 0xE1, 0x78, 0x0A, 0x00, 0x00, 0x26 }
+01:03:46.879 -> 
+01:03:46.879 -> Enter setup state
+01:03:56.339 -> Raw weight read: 77902
+01:03:57.410 -> 4.55 kg
+01:03:57.410 -> 22.00 C lower level
+01:03:57.410 -> 21.90 C outside
+01:03:57.410 -> 67.40 % rel
+01:03:57.410 -> 4.87 Vcc
+01:03:57.410 -> 
+01:03:57.410 -> Enter measure state
+01:03:58.446 -> 4.50 kg
+01:03:58.446 -> 22.00 C lower level
+01:03:58.446 -> 21.90 C outside
+01:03:58.446 -> 67.40 % rel
+01:03:58.446 -> 4.87 Vcc
+01:03:58.446 -> Message: "018E08980800800080541AC201E701"
+01:03:58.446 -> Sending uplink packet
+01:03:58.446 -> Enter transmitting state
+01:04:57.396 -> Enter sleep state
+01:05:05.392 -> ..............................
+01:08:57.406 -> Enter measure state
+01:08:58.685 -> 4.82 kg
+01:08:58.685 -> 22.00 C lower level
+01:08:58.685 -> 21.90 C outside
+01:08:58.685 -> 67.30 % rel
+01:08:58.685 -> 4.89 Vcc
+01:08:58.685 -> Message: "018E089808008000804A1AE201E901"
+01:08:58.685 -> Sending uplink packet
+01:08:58.685 -> Enter transmitting state
+01:09:57.411 -> Enter sleep state
+01:10:05.389 -> ..............................
+01:13:57.383 -> Enter measure state
+01:13:58.655 -> 4.80 kg
+01:13:58.655 -> 22.00 C lower level
+01:13:58.655 -> 22.20 C outside
+01:13:58.690 -> 65.90 % rel
+01:13:58.690 -> 4.89 Vcc
+01:13:58.690 -> Message: "01AC08980800800080BE19E001E901"
+01:13:58.690 -> Sending uplink packet
+01:13:58.690 -> Enter transmitting state
+01:14:57.410 -> Enter sleep state
+01:15:05.380 -> ..............................
+01:18:57.387 -> Enter measure state
+01:18:58.667 -> 4.80 kg
+01:18:58.667 -> 22.00 C lower level
+01:18:58.667 -> 22.00 C outside
+01:18:58.667 -> 66.20 % rel
+01:18:58.667 -> 4.89 Vcc
+01:18:58.667 -> Message: "019808980800800080DC19E001E901"
+01:18:58.667 -> Sending uplink packet
+01:18:58.667 -> Enter transmitting state
+01:19:57.411 -> Enter sleep state
+01:20:05.403 -> ..............................
+01:23:57.406 -> Enter measure state
+01:23:58.684 -> 4.81 kg
+01:23:58.684 -> 22.00 C lower level
+01:23:58.684 -> 22.00 C outside
+01:23:58.684 -> 66.30 % rel
+01:23:58.684 -> 4.89 Vcc
+01:23:58.684 -> Message: "019808980800800080E619E101E901"
+01:23:58.684 -> Sending uplink packet
+01:23:58.684 -> Enter transmitting state
+01:24:57.389 -> Enter sleep state
+01:25:05.397 -> ..............................
+01:28:57.394 -> Enter measure state
+01:28:58.669 -> 4.82 kg
+01:28:58.669 -> 22.00 C lower level
+01:28:58.669 -> 22.10 C outside
+01:28:58.669 -> 65.80 % rel
+01:28:58.669 -> 4.89 Vcc
+01:28:58.669 -> Message: "01A208980800800080B419E201E901"
+01:28:58.669 -> Sending uplink packet
+01:28:58.669 -> Enter transmitting state
+01:29:57.382 -> Enter sleep state
+01:30:05.402 -> ..............................
+01:33:57.373 -> Enter measure state
+01:33:58.649 -> 4.83 kg
+01:33:58.649 -> 22.00 C lower level
+01:33:58.649 -> 22.20 C outside
+01:33:58.684 -> 65.40 % rel
+01:33:58.684 -> 4.89 Vcc
+01:33:58.684 -> Message: "01AC089808008000808C19E301E901"
+01:33:58.684 -> Sending uplink packet
+01:33:58.684 -> Enter transmitting state
+01:34:57.373 -> Enter sleep state
+01:35:05.373 -> ..............................
+01:38:57.381 -> Enter measure state
+01:38:58.660 -> 4.84 kg
+01:38:58.660 -> 22.00 C lower level
+01:38:58.660 -> 22.30 C outside
+01:38:58.660 -> 64.80 % rel
+01:38:58.660 -> 4.89 Vcc
+01:38:58.660 -> Message: "01B6089808008000805019E401E901"
+01:38:58.660 -> Sending uplink packet
+01:38:58.660 -> Enter transmitting state
+01:39:57.402 -> Enter sleep state
+01:40:05.374 -> ..............................
+01:43:57.378 -> Enter measure state
+01:43:58.659 -> 4.86 kg
+01:43:58.659 -> 22.00 C lower level
+01:43:58.659 -> 22.40 C outside
+01:43:58.659 -> 64.50 % rel
+01:43:58.659 -> 4.89 Vcc
+01:43:58.659 -> Message: "01C0089808008000803219E601E901"
+01:43:58.659 -> Sending uplink packet
+01:43:58.659 -> Enter transmitting state
+01:44:57.371 -> Enter sleep state
+01:45:05.382 -> ..............................
+01:48:57.372 -> Enter measure state
+01:48:58.649 -> 4.86 kg
+01:48:58.649 -> 22.00 C lower level
+01:48:58.649 -> 22.40 C outside
+01:48:58.649 -> 64.10 % rel
+01:48:58.649 -> 4.89 Vcc
+01:48:58.684 -> Message: "01C0089808008000800A19E601E901"
+01:48:58.684 -> Sending uplink packet
+01:48:58.684 -> Enter transmitting state
+01:49:57.370 -> Enter sleep state
+01:50:05.385 -> ..............................
+01:53:57.385 -> Enter measure state
+01:53:58.669 -> 4.87 kg
+01:53:58.669 -> 22.25 C lower level
+01:53:58.669 -> 22.50 C outside
+01:53:58.669 -> 63.80 % rel
+01:53:58.669 -> 4.89 Vcc
+01:53:58.669 -> Message: "01CA08B10800800080EC18E701E901"
+01:53:58.669 -> Sending uplink packet
+01:53:58.669 -> Enter transmitting state
+01:54:57.398 -> Enter sleep state
+01:55:05.397 -> ..............................
+01:58:57.390 -> Enter measure state
+01:58:58.671 -> 4.88 kg
+01:58:58.671 -> 22.00 C lower level
+01:58:58.671 -> 22.50 C outside
+01:58:58.671 -> 63.60 % rel
+01:58:58.671 -> 4.89 Vcc
+01:58:58.671 -> Message: "01CA08980800800080D818E801E901"
+01:58:58.671 -> Sending uplink packet
+01:58:58.671 -> Enter transmitting state
+01:59:57.389 -> Enter sleep state
+02:00:05.367 -> ..............................
+02:03:57.369 -> Enter measure state
+02:03:58.647 -> 4.88 kg
+02:03:58.647 -> 22.25 C lower level
+02:03:58.647 -> 22.60 C outside
+02:03:58.647 -> 63.40 % rel
+02:03:58.647 -> 4.89 Vcc
+02:03:58.647 -> Message: "01D408B10800800080C418E801E901"
+02:03:58.681 -> Sending uplink packet
+02:03:58.681 -> Enter transmitting state
+02:04:57.369 -> Enter sleep state
+02:05:05.367 -> ..............................
+02:08:57.381 -> Enter measure state
+02:08:58.659 -> 4.89 kg
+02:08:58.659 -> 22.25 C lower level
+02:08:58.659 -> 22.60 C outside
+02:08:58.659 -> 63.10 % rel
+02:08:58.659 -> 4.89 Vcc
+02:08:58.659 -> Message: "01D408B10800800080A618E901E901"
+02:08:58.659 -> Sending uplink packet
+02:08:58.659 -> Enter transmitting state
+02:09:57.388 -> Enter sleep state
+02:10:05.396 -> ..............................
+02:13:57.379 -> Enter measure state
+02:13:58.657 -> 4.89 kg
+02:13:58.657 -> 22.25 C lower level
+02:13:58.657 -> 22.70 C outside
+02:13:58.657 -> 62.90 % rel
+02:13:58.657 -> 4.89 Vcc
+02:13:58.657 -> Message: "01DE08B108008000809218E901E901"
+02:13:58.657 -> Sending uplink packet
+02:13:58.657 -> Enter transmitting state
+02:14:57.361 -> Enter sleep state
+02:15:05.394 -> ..............................
+02:18:57.375 -> Enter measure state
+02:18:58.651 -> 4.90 kg
+02:18:58.651 -> 22.25 C lower level
+02:18:58.651 -> 22.70 C outside
+02:18:58.651 -> 62.80 % rel
+02:18:58.651 -> 4.89 Vcc
+02:18:58.651 -> Message: "01DE08B108008000808818EA01E901"
+02:18:58.651 -> Sending uplink packet
+02:18:58.651 -> Enter transmitting state
+02:19:57.382 -> Enter sleep state
+02:20:05.359 -> ..............................
+02:23:57.378 -> Enter measure state
+02:23:58.655 -> 4.90 kg
+02:23:58.655 -> 22.25 C lower level
+02:23:58.655 -> 22.70 C outside
+02:23:58.655 -> 62.70 % rel
+02:23:58.655 -> 4.89 Vcc
+02:23:58.655 -> Message: "01DE08B108008000807E18EA01E901"
+02:23:58.655 -> Sending uplink packet
+02:23:58.655 -> Enter transmitting state
+02:24:57.358 -> Enter sleep state
+02:25:05.364 -> ..............................
+02:28:57.365 -> Enter measure state
+02:28:58.641 -> 4.90 kg
+02:28:58.641 -> 22.25 C lower level
+02:28:58.641 -> 22.70 C outside
+02:28:58.641 -> 62.50 % rel
+02:28:58.641 -> 4.89 Vcc
+02:28:58.641 -> Message: "01DE08B108008000806A18EA01E901"
+02:28:58.675 -> Sending uplink packet
+02:28:58.675 -> Enter transmitting state
+02:29:57.378 -> Enter sleep state
+02:30:05.363 -> ..............................
+02:33:57.373 -> Enter measure state
+02:33:58.655 -> 4.91 kg
+02:33:58.655 -> 22.25 C lower level
+02:33:58.655 -> 22.70 C outside
+02:33:58.655 -> 62.50 % rel
+02:33:58.655 -> 4.89 Vcc
+02:33:58.655 -> Message: "01DE08B108008000806A18EB01E901"
+02:33:58.655 -> Sending uplink packet
+02:33:58.655 -> Enter transmitting state
+02:34:57.368 -> Enter sleep state
+02:35:05.372 -> ..............................
+02:38:57.383 -> Enter measure state
+02:38:58.653 -> 4.91 kg
+02:38:58.653 -> 22.25 C lower level
+02:38:58.653 -> 22.70 C outside
+02:38:58.653 -> 62.40 % rel
+02:38:58.653 -> 4.89 Vcc
+02:38:58.653 -> Message: "01DE08B108008000806018EB01E901"
+02:38:58.653 -> Sending uplink packet
+02:38:58.653 -> Enter transmitting state
+02:39:57.371 -> Enter sleep state
+02:40:05.381 -> ..............................
+02:43:57.369 -> Enter measure state
+02:43:58.644 -> 4.91 kg
+02:43:58.644 -> 22.25 C lower level
+02:43:58.644 -> 22.80 C outside
+02:43:58.644 -> 62.30 % rel
+02:43:58.644 -> 4.89 Vcc
+02:43:58.644 -> Message: "01E808B108008000805618EB01E901"
+02:43:58.644 -> Sending uplink packet
+02:43:58.644 -> Enter transmitting state
+02:44:57.369 -> Enter sleep state
+02:45:05.351 -> ..............................
+02:48:57.365 -> Enter measure state
+02:48:58.643 -> 4.91 kg
+02:48:58.643 -> 22.25 C lower level
+02:48:58.643 -> 22.80 C outside
+02:48:58.643 -> 62.30 % rel
+02:48:58.643 -> 4.89 Vcc
+02:48:58.643 -> Message: "01E808B108008000805618EB01E901"
+02:48:58.643 -> Sending uplink packet
+02:48:58.643 -> Enter transmitting state
+02:49:57.382 -> Enter sleep state
+02:50:05.355 -> ..............................
+02:53:57.354 -> Enter measure state
+02:53:58.637 -> 4.91 kg
+02:53:58.637 -> 22.25 C lower level
+02:53:58.637 -> 22.80 C outside
+02:53:58.637 -> 62.10 % rel
+02:53:58.637 -> 4.89 Vcc
+02:53:58.637 -> Message: "01E808B108008000804218EB01E901"
+02:53:58.637 -> Sending uplink packet
+02:53:58.637 -> Enter transmitting state
+02:54:57.367 -> Enter sleep state
+02:55:05.351 -> ..............................
+02:58:57.364 -> Enter measure state
+02:58:58.643 -> 4.91 kg
+02:58:58.643 -> 22.25 C lower level
+02:58:58.643 -> 22.80 C outside
+02:58:58.643 -> 62.00 % rel
+02:58:58.643 -> 4.89 Vcc
+02:58:58.643 -> Message: "01E808B108008000803818EB01E901"
+02:58:58.643 -> Sending uplink packet
+02:58:58.643 -> Enter transmitting state
+02:59:57.347 -> Enter sleep state
+03:00:05.352 -> ..............................
+03:03:57.348 -> Enter measure state
+03:03:58.652 -> 4.92 kg
+03:03:58.652 -> 22.25 C lower level
+03:03:58.652 -> 22.80 C outside
+03:03:58.652 -> 62.10 % rel
+03:03:58.652 -> 4.89 Vcc
+03:03:58.652 -> Message: "01E808B108008000804218EC01E901"
+03:03:58.652 -> Sending uplink packet
+03:03:58.652 -> Enter transmitting state
+03:04:57.355 -> Enter sleep state
+03:05:05.369 -> ..............................
+03:08:57.351 -> Enter measure state
+03:08:58.624 -> 4.92 kg
+03:08:58.624 -> 22.25 C lower level
+03:08:58.624 -> 22.80 C outside
+03:08:58.624 -> 62.00 % rel
+03:08:58.624 -> 4.89 Vcc
+03:08:58.659 -> Message: "01E808B108008000803818EC01E901"
+03:08:58.659 -> Sending uplink packet
+03:08:58.659 -> Enter transmitting state
+03:09:57.343 -> Enter sleep state
+03:10:05.367 -> ..............................
+03:13:57.354 -> Enter measure state
+03:13:58.629 -> 4.91 kg
+03:13:58.629 -> 22.25 C lower level
+03:13:58.629 -> 22.80 C outside
+03:13:58.629 -> 61.80 % rel
+03:13:58.629 -> 4.89 Vcc
+03:13:58.629 -> Message: "01E808B108008000802418EB01E901"
+03:13:58.663 -> Sending uplink packet
+03:13:58.663 -> Enter transmitting state
+03:14:57.352 -> Enter sleep state
+03:15:05.363 -> ..............................
+03:18:57.365 -> Enter measure state
+03:18:58.646 -> 4.92 kg
+03:18:58.646 -> 22.25 C lower level
+03:18:58.646 -> 22.80 C outside
+03:18:58.646 -> 61.80 % rel
+03:18:58.646 -> 4.89 Vcc
+03:18:58.646 -> Message: "01E808B108008000802418EC01E901"
+03:18:58.646 -> Sending uplink packet
+03:18:58.646 -> Enter transmitting state
+03:19:57.361 -> Enter sleep state
+03:20:05.340 -> ..............................
+03:23:57.362 -> Enter measure state
+03:23:58.634 -> 4.92 kg
+03:23:58.634 -> 22.25 C lower level
+03:23:58.634 -> 22.80 C outside
+03:23:58.634 -> 61.70 % rel
+03:23:58.634 -> 4.89 Vcc
+03:23:58.634 -> Message: "01E808B108008000801A18EC01E901"
+03:23:58.634 -> Sending uplink packet
+03:23:58.634 -> Enter transmitting state
+03:24:57.342 -> Enter sleep state
+03:25:05.369 -> ..............................
+03:28:57.357 -> Enter measure state
+03:28:58.631 -> 4.92 kg
+03:28:58.631 -> 22.25 C lower level
+03:28:58.631 -> 22.80 C outside
+03:28:58.631 -> 61.70 % rel
+03:28:58.631 -> 4.89 Vcc
+03:28:58.631 -> Message: "01E808B108008000801A18EC01E901"
+03:28:58.631 -> Sending uplink packet
+03:28:58.631 -> Enter transmitting state
+03:29:57.363 -> Enter sleep state
+03:30:05.337 -> ..............................
+03:33:57.339 -> Enter measure state
+03:33:58.621 -> 4.92 kg
+03:33:58.621 -> 22.25 C lower level
+03:33:58.621 -> 22.80 C outside
+03:33:58.621 -> 61.60 % rel
+03:33:58.621 -> 4.89 Vcc
+03:33:58.621 -> Message: "01E808B108008000801018EC01E901"
+03:33:58.656 -> Sending uplink packet
+03:33:58.656 -> Enter transmitting state
+03:34:57.361 -> Enter sleep state
+03:35:05.352 -> ..............................
+03:38:57.365 -> Enter measure state
+03:38:58.611 -> 4.92 kg
+03:38:58.611 -> 22.25 C lower level
+03:38:58.611 -> 22.90 C outside
+03:38:58.646 -> 61.60 % rel
+03:38:58.646 -> 4.89 Vcc
+03:38:58.646 -> Message: "01F208B108008000801018EC01E901"
+03:38:58.646 -> Sending uplink packet
+03:38:58.646 -> Enter transmitting state
+03:39:57.356 -> Enter sleep state
+03:40:05.362 -> ..............................
+03:43:57.349 -> Enter measure state
+03:43:58.627 -> 4.93 kg
+03:43:58.627 -> 22.25 C lower level
+03:43:58.627 -> 22.80 C outside
+03:43:58.627 -> 61.50 % rel
+03:43:58.627 -> 4.89 Vcc
+03:43:58.627 -> Message: "01E808B108008000800618ED01E901"
+03:43:58.627 -> Sending uplink packet
+03:43:58.627 -> Enter transmitting state
+03:44:57.364 -> Enter sleep state
+03:45:05.332 -> ..............................
+03:48:57.338 -> Enter measure state
+03:48:58.614 -> 4.93 kg
+03:48:58.614 -> 22.25 C lower level
+03:48:58.614 -> 22.90 C outside
+03:48:58.614 -> 61.50 % rel
+03:48:58.614 -> 4.89 Vcc
+03:48:58.614 -> Message: "01F208B108008000800618ED01E901"
+03:48:58.648 -> Sending uplink packet
+03:48:58.648 -> Enter transmitting state
+03:49:57.349 -> Enter sleep state
+03:50:05.330 -> ..............................
+03:53:57.327 -> Enter measure state
+03:53:58.635 -> 4.92 kg
+03:53:58.635 -> 22.25 C lower level
+03:53:58.635 -> 22.90 C outside
+03:53:58.635 -> 61.40 % rel
+03:53:58.635 -> 4.89 Vcc
+03:53:58.635 -> Message: "01F208B10800800080FC17EC01E901"
+03:53:58.635 -> Sending uplink packet
+03:53:58.635 -> Enter transmitting state
+03:54:57.356 -> Enter sleep state
+03:55:05.331 -> ..............................
+03:58:57.358 -> Enter measure state
+03:58:58.635 -> 4.93 kg
+03:58:58.635 -> 22.25 C lower level
+03:58:58.635 -> 22.80 C outside
+03:58:58.635 -> 61.40 % rel
+03:58:58.635 -> 4.89 Vcc
+03:58:58.635 -> Message: "01E808B10800800080FC17ED01E901"
+03:58:58.635 -> Sending uplink packet
+03:58:58.635 -> Enter transmitting state
+03:59:57.345 -> Enter sleep state
+04:00:05.352 -> ..............................
+04:03:57.344 -> Enter measure state
+04:03:58.626 -> 4.93 kg
+04:03:58.626 -> 22.25 C lower level
+04:03:58.626 -> 22.90 C outside
+04:03:58.626 -> 61.40 % rel
+04:03:58.626 -> 4.89 Vcc
+04:03:58.626 -> Message: "01F208B10800800080FC17ED01E901"
+04:03:58.626 -> Sending uplink packet
+04:03:58.626 -> Enter transmitting state
+04:04:57.330 -> Enter sleep state
+04:05:05.336 -> ..............................
+04:08:57.338 -> Enter measure state
+04:08:58.613 -> 4.92 kg
+04:08:58.613 -> 22.25 C lower level
+04:08:58.613 -> 22.90 C outside
+04:08:58.613 -> 61.40 % rel
+04:08:58.613 -> 4.89 Vcc
+04:08:58.613 -> Message: "01F208B10800800080FC17EC01E901"
+04:08:58.647 -> Sending uplink packet
+04:08:58.647 -> Enter transmitting state
+04:09:57.326 -> Enter sleep state
+04:10:05.332 -> ..............................
+04:13:57.341 -> Enter measure state
+04:13:58.619 -> 4.92 kg
+04:13:58.619 -> 22.25 C lower level
+04:13:58.619 -> 22.80 C outside
+04:13:58.619 -> 61.20 % rel
+04:13:58.619 -> 4.89 Vcc
+04:13:58.619 -> Message: "01E808B10800800080E817EC01E901"
+04:13:58.619 -> Sending uplink packet
+04:13:58.619 -> Enter transmitting state
+04:14:57.332 -> Enter sleep state
+04:15:05.344 -> ..............................
+04:18:57.323 -> Enter measure state
+04:18:58.630 -> 4.92 kg
+04:18:58.630 -> 22.25 C lower level
+04:18:58.630 -> 22.90 C outside
+04:18:58.630 -> 61.30 % rel
+04:18:58.630 -> 4.89 Vcc
+04:18:58.630 -> Message: "01F208B10800800080F217EC01E901"
+04:18:58.630 -> Sending uplink packet
+04:18:58.630 -> Enter transmitting state
+04:19:57.350 -> Enter sleep state
+04:20:05.322 -> ..............................
+04:23:57.338 -> Enter measure state
+04:23:58.608 -> 4.92 kg
+04:23:58.608 -> 22.25 C lower level
+04:23:58.608 -> 22.90 C outside
+04:23:58.608 -> 61.30 % rel
+04:23:58.608 -> 4.89 Vcc
+04:23:58.608 -> Message: "01F208B10800800080F217EC01E901"
+04:23:58.643 -> Sending uplink packet
+04:23:58.643 -> Enter transmitting state
+04:24:57.331 -> Enter sleep state
+04:25:05.324 -> ..............................
+04:28:57.333 -> Enter measure state
+04:28:58.601 -> 4.92 kg
+04:28:58.601 -> 22.25 C lower level
+04:28:58.601 -> 22.90 C outside
+04:28:58.601 -> 61.20 % rel
+04:28:58.601 -> 4.89 Vcc
+04:28:58.601 -> Message: "01F208B10800800080E817EC01E901"
+04:28:58.636 -> Sending uplink packet
+04:28:58.636 -> Enter transmitting state
+04:29:57.331 -> Enter sleep state
+04:30:05.351 -> ..............................
+04:33:57.344 -> Enter measure state
+04:33:58.619 -> 4.92 kg
+04:33:58.619 -> 22.25 C lower level
+04:33:58.619 -> 22.90 C outside
+04:33:58.619 -> 61.20 % rel
+04:33:58.619 -> 4.89 Vcc
+04:33:58.619 -> Message: "01F208B10800800080E817EC01E901"
+04:33:58.619 -> Sending uplink packet
+04:33:58.619 -> Enter transmitting state
+04:34:57.337 -> Enter sleep state
+04:35:05.347 -> ..............................
+04:38:57.331 -> Enter measure state
+04:38:58.609 -> 4.92 kg
+04:38:58.609 -> 22.50 C lower level
+04:38:58.609 -> 22.90 C outside
+04:38:58.609 -> 61.10 % rel
+04:38:58.609 -> 4.89 Vcc
+04:38:58.609 -> Message: "01F208CA0800800080DE17EC01E901"
+04:38:58.609 -> Sending uplink packet
+04:38:58.609 -> Enter transmitting state
+04:39:57.332 -> Enter sleep state
+04:40:05.339 -> ..............................
+04:43:57.323 -> Enter measure state
+04:43:58.599 -> 4.92 kg
+04:43:58.599 -> 22.25 C lower level
+04:43:58.599 -> 22.90 C outside
+04:43:58.599 -> 61.10 % rel
+04:43:58.599 -> 4.89 Vcc
+04:43:58.599 -> Message: "01F208B10800800080DE17EC01E901"
+04:43:58.633 -> Sending uplink packet
+04:43:58.633 -> Enter transmitting state
+04:44:57.319 -> Enter sleep state
+04:45:05.327 -> ..............................
+04:48:57.319 -> Enter measure state
+04:48:58.603 -> 4.93 kg
+04:48:58.603 -> 22.25 C lower level
+04:48:58.603 -> 22.90 C outside
+04:48:58.603 -> 61.10 % rel
+04:48:58.603 -> 4.89 Vcc
+04:48:58.603 -> Message: "01F208B10800800080DE17ED01E901"
+04:48:58.603 -> Sending uplink packet
+04:48:58.603 -> Enter transmitting state
+04:49:57.319 -> Enter sleep state
+04:50:05.332 -> ..............................
+04:53:57.316 -> Enter measure state
+04:53:58.594 -> 4.92 kg
+04:53:58.594 -> 22.50 C lower level
+04:53:58.594 -> 22.90 C outside
+04:53:58.594 -> 61.10 % rel
+04:53:58.594 -> 4.89 Vcc
+04:53:58.594 -> Message: "01F208CA0800800080DE17EC01E901"
+04:53:58.628 -> Sending uplink packet
+04:53:58.628 -> Enter transmitting state
+04:54:57.323 -> Enter sleep state
+04:55:05.316 -> ..............................
+04:58:57.338 -> Enter measure state
+04:58:58.617 -> 4.92 kg
+04:58:58.617 -> 22.25 C lower level
+04:58:58.617 -> 22.90 C outside
+04:58:58.617 -> 61.00 % rel
+04:58:58.617 -> 4.89 Vcc
+04:58:58.617 -> Message: "01F208B10800800080D417EC01E901"
+04:58:58.617 -> Sending uplink packet
+04:58:58.617 -> Enter transmitting state
+04:59:57.321 -> Enter sleep state
+05:00:05.323 -> ..............................
+05:03:57.320 -> Enter measure state
+05:03:58.598 -> 4.92 kg
+05:03:58.598 -> 22.50 C lower level
+05:03:58.598 -> 22.90 C outside
+05:03:58.598 -> 60.90 % rel
+05:03:58.598 -> 4.89 Vcc
+05:03:58.598 -> Message: "01F208CA0800800080CA17EC01E901"
+05:03:58.598 -> Sending uplink packet
+05:03:58.598 -> Enter transmitting state
+05:04:57.325 -> Enter sleep state
+05:05:05.330 -> ..............................
+05:08:57.332 -> Enter measure state
+05:08:58.610 -> 4.92 kg
+05:08:58.610 -> 22.25 C lower level
+05:08:58.610 -> 22.90 C outside
+05:08:58.610 -> 61.00 % rel
+05:08:58.610 -> 4.89 Vcc
+05:08:58.610 -> Message: "01F208B10800800080D417EC01E901"
+05:08:58.610 -> Sending uplink packet
+05:08:58.610 -> Enter transmitting state
+05:09:57.316 -> Enter sleep state
+05:10:05.329 -> ..............................
+05:13:57.315 -> Enter measure state
+05:13:58.591 -> 4.92 kg
+05:13:58.591 -> 22.50 C lower level
+05:13:58.591 -> 22.90 C outside
+05:13:58.591 -> 61.00 % rel
+05:13:58.591 -> 4.89 Vcc
+05:13:58.591 -> Message: "01F208CA0800800080D417EC01E901"
+05:13:58.625 -> Sending uplink packet
+05:13:58.625 -> Enter transmitting state
+05:14:57.306 -> Enter sleep state
+05:15:05.319 -> ..............................
+05:18:57.301 -> Enter measure state
+05:18:58.612 -> 4.92 kg
+05:18:58.612 -> 22.25 C lower level
+05:18:58.612 -> 22.90 C outside
+05:18:58.612 -> 60.90 % rel
+05:18:58.612 -> 4.89 Vcc
+05:18:58.612 -> Message: "01F208B10800800080CA17EC01E901"
+05:18:58.612 -> Sending uplink packet
+05:18:58.612 -> Enter transmitting state
+05:19:57.326 -> Enter sleep state
+05:20:05.334 -> ..............................
+05:23:57.312 -> Enter measure state
+05:23:58.589 -> 4.92 kg
+05:23:58.589 -> 22.50 C lower level
+05:23:58.589 -> 22.90 C outside
+05:23:58.589 -> 60.90 % rel
+05:23:58.589 -> 4.89 Vcc
+05:23:58.589 -> Message: "01F208CA0800800080CA17EC01E901"
+05:23:58.624 -> Sending uplink packet
+05:23:58.624 -> Enter transmitting state
+05:24:57.320 -> Enter sleep state
+05:25:05.331 -> ..............................
+05:28:57.306 -> Enter measure state
+05:28:58.582 -> 4.92 kg
+05:28:58.582 -> 22.50 C lower level
+05:28:58.582 -> 22.90 C outside
+05:28:58.582 -> 60.90 % rel
+05:28:58.582 -> 4.89 Vcc
+05:28:58.616 -> Message: "01F208CA0800800080CA17EC01E901"
+05:28:58.616 -> Sending uplink packet
+05:28:58.616 -> Enter transmitting state
+05:29:57.319 -> Enter sleep state
+05:30:05.312 -> ..............................
+05:33:57.299 -> Enter measure state
+05:33:58.582 -> 4.92 kg
+05:33:58.582 -> 22.50 C lower level
+05:33:58.582 -> 22.90 C outside
+05:33:58.582 -> 60.80 % rel
+05:33:58.582 -> 4.89 Vcc
+05:33:58.582 -> Message: "01F208CA0800800080C017EC01E901"
+05:33:58.617 -> Sending uplink packet
+05:33:58.617 -> Enter transmitting state
+05:34:57.302 -> Enter sleep state
+05:35:05.329 -> ..............................
+05:38:57.301 -> Enter measure state
+05:38:58.576 -> 4.92 kg
+05:38:58.576 -> 22.25 C lower level
+05:38:58.576 -> 22.90 C outside
+05:38:58.611 -> 60.80 % rel
+05:38:58.611 -> 4.89 Vcc
+05:38:58.611 -> Message: "01F208B10800800080C017EC01E901"
+05:38:58.611 -> Sending uplink packet
+05:38:58.611 -> Enter transmitting state
+05:39:57.299 -> Enter sleep state
+05:40:05.313 -> ..............................
+05:43:57.316 -> Enter measure state
+05:43:58.589 -> 4.92 kg
+05:43:58.589 -> 22.25 C lower level
+05:43:58.589 -> 22.90 C outside
+05:43:58.589 -> 60.90 % rel
+05:43:58.589 -> 4.89 Vcc
+05:43:58.589 -> Message: "01F208B10800800080CA17EC01E901"
+05:43:58.589 -> Sending uplink packet
+05:43:58.589 -> Enter transmitting state
+05:44:57.298 -> Enter sleep state
+05:45:05.307 -> ..............................
+05:48:57.319 -> Enter measure state
+05:48:58.595 -> 4.92 kg
+05:48:58.595 -> 22.25 C lower level
+05:48:58.595 -> 22.90 C outside
+05:48:58.595 -> 60.90 % rel
+05:48:58.595 -> 4.89 Vcc
+05:48:58.595 -> Message: "01F208B10800800080CA17EC01E901"
+05:48:58.595 -> Sending uplink packet
+05:48:58.595 -> Enter transmitting state
+05:49:57.313 -> Enter sleep state
+05:50:05.294 -> ..............................
+05:53:57.322 -> Enter measure state
+05:53:58.599 -> 4.92 kg
+05:53:58.599 -> 22.25 C lower level
+05:53:58.599 -> 22.90 C outside
+05:53:58.599 -> 60.80 % rel
+05:53:58.599 -> 4.89 Vcc
+05:53:58.599 -> Message: "01F208B10800800080C017EC01E901"
+05:53:58.599 -> Sending uplink packet
+05:53:58.599 -> Enter transmitting state
+05:54:57.319 -> Enter sleep state
+05:55:05.327 -> ..............................
+05:58:57.296 -> Enter measure state
+05:58:58.576 -> 4.92 kg
+05:58:58.576 -> 22.25 C lower level
+05:58:58.576 -> 22.90 C outside
+05:58:58.576 -> 60.80 % rel
+05:58:58.576 -> 4.89 Vcc
+05:58:58.576 -> Message: "01F208B10800800080C017EC01E901"
+05:58:58.611 -> Sending uplink packet
+05:58:58.611 -> Enter transmitting state
+05:59:57.308 -> Enter sleep state
+06:00:05.314 -> ..............................
+06:03:57.298 -> Enter measure state
+06:03:58.579 -> 4.92 kg
+06:03:58.579 -> 22.50 C lower level
+06:03:58.579 -> 22.90 C outside
+06:03:58.579 -> 60.70 % rel
+06:03:58.579 -> 4.89 Vcc
+06:03:58.579 -> Message: "01F208CA0800800080B617EC01E901"
+06:03:58.579 -> Sending uplink packet
+06:03:58.579 -> Enter transmitting state
+06:04:57.307 -> Enter sleep state
+06:05:05.296 -> ..............................
+06:08:57.303 -> Enter measure state
+06:08:58.579 -> 4.92 kg
+06:08:58.579 -> 22.25 C lower level
+06:08:58.579 -> 22.90 C outside
+06:08:58.579 -> 60.70 % rel
+06:08:58.579 -> 4.89 Vcc
+06:08:58.579 -> Message: "01F208B10800800080B617EC01E901"
+06:08:58.579 -> Sending uplink packet
+06:08:58.579 -> Enter transmitting state
+06:09:57.319 -> Enter sleep state
+06:10:05.316 -> ..............................
+06:13:57.313 -> Enter measure state
+06:13:58.590 -> 4.92 kg
+06:13:58.590 -> 22.25 C lower level
+06:13:58.590 -> 22.90 C outside
+06:13:58.590 -> 60.80 % rel
+06:13:58.590 -> 4.89 Vcc
+06:13:58.590 -> Message: "01F208B10800800080C017EC01E901"
+06:13:58.590 -> Sending uplink packet
+06:13:58.590 -> Enter transmitting state
+06:14:57.304 -> Enter sleep state
+06:15:05.298 -> ..............................
+06:18:57.311 -> Enter measure state
+06:18:58.586 -> 4.91 kg
+06:18:58.586 -> 22.25 C lower level
+06:18:58.586 -> 22.90 C outside
+06:18:58.586 -> 60.70 % rel
+06:18:58.586 -> 4.89 Vcc
+06:18:58.586 -> Message: "01F208B10800800080B617EB01E901"
+06:18:58.586 -> Sending uplink packet
+06:18:58.586 -> Enter transmitting state
+06:19:57.298 -> Enter sleep state
+06:20:05.299 -> ..............................
+06:23:57.287 -> Enter measure state
+06:23:58.562 -> 4.91 kg
+06:23:58.562 -> 22.50 C lower level
+06:23:58.562 -> 22.90 C outside
+06:23:58.597 -> 60.80 % rel
+06:23:58.597 -> 4.89 Vcc
+06:23:58.597 -> Message: "01F208CA0800800080C017EB01E901"
+06:23:58.597 -> Sending uplink packet
+06:23:58.597 -> Enter transmitting state
+06:24:57.287 -> Enter sleep state
+06:25:05.313 -> ..............................
+06:28:57.305 -> Enter measure state
+06:28:58.583 -> 4.91 kg
+06:28:58.583 -> 22.25 C lower level
+06:28:58.583 -> 22.90 C outside
+06:28:58.583 -> 60.80 % rel
+06:28:58.583 -> 4.89 Vcc
+06:28:58.583 -> Message: "01F208B10800800080C017EB01E901"
+06:28:58.583 -> Sending uplink packet
+06:28:58.583 -> Enter transmitting state
+06:29:57.301 -> Enter sleep state
+06:30:05.314 -> ..............................
+06:33:57.288 -> Enter measure state
+06:33:58.568 -> 4.91 kg
+06:33:58.568 -> 22.25 C lower level
+06:33:58.568 -> 22.90 C outside
+06:33:58.568 -> 60.80 % rel
+06:33:58.568 -> 4.89 Vcc
+06:33:58.568 -> Message: "01F208B10800800080C017EB01E901"
+06:33:58.602 -> Sending uplink packet
+06:33:58.602 -> Enter transmitting state
+06:34:57.307 -> Enter sleep state
+06:35:05.310 -> ..............................
+06:38:57.283 -> Enter measure state
+06:38:58.561 -> 4.91 kg
+06:38:58.561 -> 22.25 C lower level
+06:38:58.561 -> 22.90 C outside
+06:38:58.561 -> 60.70 % rel
+06:38:58.561 -> 4.89 Vcc
+06:38:58.561 -> Message: "01F208B10800800080B617EB01E901"
+06:38:58.596 -> Sending uplink packet
+06:38:58.596 -> Enter transmitting state
+06:39:57.300 -> Enter sleep state
+06:40:05.313 -> ..............................
+06:43:57.278 -> Enter measure state
+06:43:58.556 -> 4.91 kg
+06:43:58.556 -> 22.25 C lower level
+06:43:58.556 -> 22.90 C outside
+06:43:58.590 -> 60.80 % rel
+06:43:58.590 -> 4.89 Vcc
+06:43:58.590 -> Message: "01F208B10800800080C017EB01E901"
+06:43:58.590 -> Sending uplink packet
+06:43:58.590 -> Enter transmitting state
+06:44:57.279 -> Enter sleep state
+06:45:05.291 -> ..............................
+06:48:57.300 -> Enter measure state
+06:48:58.577 -> 4.91 kg
+06:48:58.577 -> 22.25 C lower level
+06:48:58.577 -> 22.90 C outside
+06:48:58.577 -> 60.70 % rel
+06:48:58.577 -> 4.89 Vcc
+06:48:58.577 -> Message: "01F208B10800800080B617EB01E901"
+06:48:58.577 -> Sending uplink packet
+06:48:58.577 -> Enter transmitting state
+06:49:57.290 -> Enter sleep state
+06:50:05.307 -> ..............................
+06:53:57.291 -> Enter measure state
+06:53:58.565 -> 4.91 kg
+06:53:58.565 -> 22.50 C lower level
+06:53:58.565 -> 22.90 C outside
+06:53:58.565 -> 60.60 % rel
+06:53:58.565 -> 4.89 Vcc
+06:53:58.565 -> Message: "01F208CA0800800080AC17EB01E901"
+06:53:58.565 -> Sending uplink packet
+06:53:58.565 -> Enter transmitting state
+06:54:57.306 -> Enter sleep state
+06:55:05.285 -> ..............................
+06:58:57.288 -> Enter measure state
+06:58:58.564 -> 4.91 kg
+06:58:58.564 -> 22.50 C lower level
+06:58:58.564 -> 22.90 C outside
+06:58:58.564 -> 60.70 % rel
+06:58:58.564 -> 4.89 Vcc
+06:58:58.564 -> Message: "01F208CA0800800080B617EB01E901"
+06:58:58.564 -> Sending uplink packet
+06:58:58.564 -> Enter transmitting state
+06:59:57.302 -> Enter sleep state
+07:00:05.280 -> ..............................
+07:03:57.280 -> Enter measure state
+07:03:58.560 -> 4.91 kg
+07:03:58.560 -> 22.50 C lower level
+07:03:58.560 -> 22.90 C outside
+07:03:58.560 -> 60.70 % rel
+07:03:58.560 -> 4.89 Vcc
+07:03:58.560 -> Message: "01F208CA0800800080B617EB01E901"
+07:03:58.594 -> Sending uplink packet
+07:03:58.594 -> Enter transmitting state
+07:04:57.276 -> Enter sleep state
+07:05:05.275 -> ..............................
+07:08:57.278 -> Enter measure state
+07:08:58.552 -> 4.91 kg
+07:08:58.552 -> 22.25 C lower level
+07:08:58.552 -> 22.90 C outside
+07:08:58.552 -> 60.70 % rel
+07:08:58.552 -> 4.89 Vcc
+07:08:58.552 -> Message: "01F208B10800800080B617EB01E901"
+07:08:58.586 -> Sending uplink packet
+07:08:58.586 -> Enter transmitting state
+07:09:57.281 -> Enter sleep state
+07:10:05.289 -> ..............................
+07:13:57.274 -> Enter measure state
+07:13:58.549 -> 4.90 kg
+07:13:58.549 -> 22.25 C lower level
+07:13:58.549 -> 22.90 C outside
+07:13:58.549 -> 60.90 % rel
+07:13:58.549 -> 4.89 Vcc
+07:13:58.584 -> Message: "01F208B10800800080CA17EA01E901"
+07:13:58.584 -> Sending uplink packet
+07:13:58.584 -> Enter transmitting state
+07:14:57.283 -> Enter sleep state
+07:15:05.275 -> ..............................
+07:18:57.289 -> Enter measure state
+07:18:58.565 -> 4.90 kg
+07:18:58.565 -> 22.25 C lower level
+07:18:58.565 -> 22.70 C outside
+07:18:58.565 -> 58.90 % rel
+07:18:58.565 -> 4.89 Vcc
+07:18:58.565 -> Message: "01DE08B108008000800217EA01E901"
+07:18:58.565 -> Sending uplink packet
+07:18:58.565 -> Enter transmitting state

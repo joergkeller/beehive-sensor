@@ -41,6 +41,8 @@ class DraginoLoRa {
       LMIC_setupChannel(7, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
       LMIC_setupChannel(8, 868100000, DR_RANGE_MAP(DR_FSK, DR_FSK),   BAND_MILLI);      // g2-band
 
+      LMIC_disableChannel (8);
+
       // Disable link check validation
       LMIC_setLinkCheckMode(0);
   
@@ -65,6 +67,10 @@ class DraginoLoRa {
         // Next TX is scheduled after TX_COMPLETE event.
     }
 
+    void clear() {
+      LMIC_clrTxData();
+    }
+
     bool isTransmitting() {
       return LMIC.opmode & OP_TXRXPEND;
     }
@@ -81,9 +87,12 @@ class DraginoLoRa {
 
 };
 
+static bool txPending = false;
+
 void onEvent(ev_t ev) {
     if (ev == EV_TXCOMPLETE) {
         Serial.println(F("EV_TXCOMPLETE"));
+        txPending = false;
         // includes waiting for RX windows
         if (LMIC.txrxFlags & TXRX_ACK) {
           Serial.println(F("Received ack"));

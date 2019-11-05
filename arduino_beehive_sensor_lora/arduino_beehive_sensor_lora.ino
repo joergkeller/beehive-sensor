@@ -46,6 +46,9 @@ union {
   byte bytes[1+8+2+2+2];
 } message;
 
+enum States { INITIAL, SETUP, MEASURE, TRANSMIT, SLEEP };
+enum States lastState = INITIAL;
+
 unsigned long lastTransmissionMs = 0L;
 
 SensorReader sensor = SensorReader();
@@ -75,18 +78,24 @@ void setup() {
 void loop() {
   if (millis() < SETUP_DURATION) {
     Serial.println();
+    enter(SETUP, "Enter setup state");
     sensor.listRawWeight();
     readSensors();
     printSensorData();
   } else if (lastTransmissionMs == 0L || millis() >= lastTransmissionMs + INTERVAL) {
     lastTransmissionMs = millis();
     Serial.println();
+    enter(MEASURE, "Enter measure state");
     readSensors();
     printSensorData();
     radio.send(message.bytes, sizeof(message));
-  } else if (radio.isTransmitting() && millis() < lastTransmissionMs + TRANSMISSION_WAIT) {
+    txPending = true;
+  } else if ((radio.isTransmitting() || txPending) && millis() < lastTransmissionMs + TRANSMISSION_WAIT) {
+    enter(TRANSMIT, "Enter transmitting state");
     // Wait for transmission complete
   } else {
+    enter(SLEEP, "Enter sleep state");
+    radio.clear();
     sleep();
   }
 
@@ -94,6 +103,13 @@ void loop() {
 }
 
 /* Helper methods ******************************************/
+
+void enter(enum States thisState, char* msg) {
+  if (lastState != thisState) {
+    Serial.println(msg);
+    lastState = thisState;
+  }
+}
 
 short asShort(float value) {
   if (isnan(value) || value == -127.0) return WINT_MIN;

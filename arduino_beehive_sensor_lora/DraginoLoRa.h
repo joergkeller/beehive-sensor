@@ -24,36 +24,42 @@ class DraginoLoRa {
   public:
 
     void begin() {
-      // Reset the MAC state. Session and pending data transfers will be discarded.
-      LMIC_reset();
-  
-      // Set static session parameters.
-      LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
-
-      // Set up the channels used by the things network
+      // Set up the channels used by the things network - EU863-870
+      // https://www.thethingsnetwork.org/docs/lorawan/frequency-plans.html
       LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(1, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7B), BAND_CENTI);      // g-band
-      LMIC_setupChannel(2, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(3, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(4, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(5, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(6, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(7, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
-      LMIC_setupChannel(8, 868100000, DR_RANGE_MAP(DR_FSK, DR_FSK),   BAND_MILLI);      // g2-band
-
-      LMIC_disableChannel (8);
+      LMIC_setupChannel(1, 868300000, DR_RANGE_MAP(DR_SF12, DR_SF7B), BAND_CENTI);      // g-band
+      LMIC_setupChannel(2, 868500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(3, 867100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(4, 867300000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(5, 867500000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(6, 867700000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(7, 867900000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
+      LMIC_setupChannel(8, 868800000, DR_RANGE_MAP(DR_FSK,  DR_FSK),  BAND_MILLI);      // g2-band
 
       // Disable link check validation
       LMIC_setLinkCheckMode(0);
   
       // TTN uses SF9 for its RX2 window.
       LMIC.dn2Dr = DR_SF9;
+
+      reset(0);
+    }
+
+    void reset(unsigned long seqNumber) {
+      // Reset the MAC state. Session and pending data transfers will be discarded.
+      LMIC_reset();
+  
+      // Set static session parameters.
+      LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
+
+      // set sequence counter for uplink
+      LMIC.seqnoUp = seqNumber;
   
       // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
       LMIC_setDrTxpow(DR_SF12, 14);
     }
 
-    void send(uint8_t *message, uint8_t len) {
+    void send(uint8_t *message, uint8_t len, bool confirmation) {
         // Check if there is not a current TX/RX job running
         if (isTransmitting()) {
             Serial.println(F("OP_TXRXPEND, not sending"));
@@ -61,10 +67,14 @@ class DraginoLoRa {
             // Prepare upstream data transmission at the next possible time.
             Serial.print("Message: ");
             printBufferAsString(message, len); 
-            LMIC_setTxData2(1, message, len, 1);
+            LMIC_setTxData2(1, message, len, confirmation ? 1 : 0);
             Serial.println(F("Sending uplink packet"));
         }
         // Next TX is scheduled after TX_COMPLETE event.
+    }
+
+    unsigned long seqNumber() {
+      return LMIC.seqnoUp;
     }
 
     void clear() {

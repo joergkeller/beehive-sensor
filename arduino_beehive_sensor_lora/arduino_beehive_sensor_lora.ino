@@ -3,8 +3,9 @@
  * LoRa messages.
  * ---
  * After setup, the sensors are read in intervals and the 
- * sensor data message is sent using LoRa.
- * - USB voltage measurement
+ * sensor data message is sent using LoRa. The controller
+ * then goes to deep sleep to reduce power.
+ * - USB voltage measurement (internal)
  * - DS18B20 temperature sensors (multiple) are read from pin D3
  * - DHT22 temperature/humidity sensor is read from pin D4
  * - Weight measured with load cell and HX711 ADC from pins A0/A1
@@ -13,7 +14,7 @@
  *  0: sensor data v0
  **********************************************************/
 
-//#include <LowPower.h>
+#include <LowPower.h>
 #include "SensorReader.h"
 #include "DraginoLoRa.h"
 
@@ -37,19 +38,22 @@ typedef struct beesensor_t {
 #define MIN (60*SEC)
 
 #define MESSAGE_VERSION 0
-#define INTERVAL          (5*MIN)
-#define TRANSMISSION_WAIT (30*SEC)
-#define SETUP_DURATION    (2*MIN)
+#define SETUP_DURATION    (0*SEC)
+#define INTERVAL          (10*MIN)
+#define CONFIRMATION      false
+#define TRANSMISSION_WAIT (10*SEC)
 
 union {
   beesensor_t sensor;
   byte bytes[1+8+2+2+2];
 } message;
 
-enum States { INITIAL, SETUP, MEASURE, TRANSMIT, SLEEP };
+enum States { INITIAL, SETUP, MEASURE, TRANSMIT, PENDING, SLEEP };
 enum States lastState = INITIAL;
 
+unsigned long seqNumber = 0L;
 unsigned long lastTransmissionMs = 0L;
+unsigned long sleptMs = 0L;
 
 SensorReader sensor = SensorReader();
 DraginoLoRa radio = DraginoLoRa();
@@ -76,23 +80,26 @@ void setup() {
 /* Loop ******************************************/
 
 void loop() {
-  if (millis() < SETUP_DURATION) {
+  if (getTime() < SETUP_DURATION) {
     Serial.println();
     enter(SETUP, "Enter setup state");
     sensor.listRawWeight();
     readSensors();
     printSensorData();
-  } else if (lastTransmissionMs == 0L || millis() >= lastTransmissionMs + INTERVAL) {
-    lastTransmissionMs = millis();
+  } else if (lastTransmissionMs == 0L || getTime() >= lastTransmissionMs + INTERVAL) {
+    lastTransmissionMs = getTime();
     Serial.println();
     enter(MEASURE, "Enter measure state");
+    radio.reset(seqNumber);
     readSensors();
     printSensorData();
-    radio.send(message.bytes, sizeof(message));
     txPending = true;
-  } else if ((radio.isTransmitting() || txPending) && millis() < lastTransmissionMs + TRANSMISSION_WAIT) {
+    radio.send(message.bytes, sizeof(message), CONFIRMATION);
+    seqNumber = radio.seqNumber();
+  } else if (radio.isTransmitting() && getTime() < lastTransmissionMs + TRANSMISSION_WAIT) {
     enter(TRANSMIT, "Enter transmitting state");
-    // Wait for transmission complete
+  } else if (txPending && getTime() < lastTransmissionMs + TRANSMISSION_WAIT) {
+    enter(PENDING, "Enter pending state");
   } else {
     enter(SLEEP, "Enter sleep state");
     radio.clear();
@@ -103,6 +110,10 @@ void loop() {
 }
 
 /* Helper methods ******************************************/
+
+unsigned long getTime() {
+  return millis() + sleptMs;
+}
 
 void enter(enum States thisState, char* msg) {
   if (lastState != thisState) {
@@ -172,8 +183,9 @@ void sleep() {
 
   // for lower power consumption use deep sleep mode 
   // (as long a possible, will be approx. 8 sec).
-  delay(8000);
-  //LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  //delay(8000);
+  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  sleptMs += 8000UL;
 
   // wake up
   #ifdef USBCON

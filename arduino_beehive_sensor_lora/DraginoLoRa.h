@@ -59,7 +59,7 @@ class DraginoLoRa {
       LMIC_setDrTxpow(DR_SF12, 14);
     }
 
-    void send(uint8_t *message, uint8_t len, bool confirmation) {
+    unsigned long send(uint8_t *message, uint8_t len, bool confirmation) {
         // Check if there is not a current TX/RX job running
         if (isTransmitting()) {
             Serial.println(F("OP_TXRXPEND, not sending"));
@@ -70,7 +70,7 @@ class DraginoLoRa {
             LMIC_setTxData2(1, message, len, confirmation ? 1 : 0);
             Serial.println(F("Sending uplink packet"));
         }
-        // Next TX is scheduled after TX_COMPLETE event.
+        return seqNumber();
     }
 
     unsigned long seqNumber() {
@@ -97,12 +97,9 @@ class DraginoLoRa {
 
 };
 
-static bool txPending = false;
-
 void onEvent(ev_t ev) {
     if (ev == EV_TXCOMPLETE) {
         Serial.println(F("EV_TXCOMPLETE"));
-        txPending = false;
         // includes waiting for RX windows
         if (LMIC.txrxFlags & TXRX_ACK) {
           Serial.println(F("Received ack"));

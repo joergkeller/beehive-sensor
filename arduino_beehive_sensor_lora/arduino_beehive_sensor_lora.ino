@@ -18,6 +18,7 @@
 #include "SensorReader.h"
 #include "DraginoLoRa.h"
 
+#define MESSAGE_VERSION 0
 typedef struct beesensor_t {
   byte version;
   struct { 
@@ -37,7 +38,6 @@ typedef struct beesensor_t {
 #define SEC (1000*MS)
 #define MIN (60*SEC)
 
-#define MESSAGE_VERSION 0
 #define SETUP_DURATION    (0*SEC)
 #define INTERVAL          (10*MIN)
 #define CONFIRMATION      false
@@ -48,8 +48,8 @@ union {
   byte bytes[1+8+2+2+2];
 } message;
 
-enum States { INITIAL, SETUP, MEASURE, TRANSMIT, PENDING, SLEEP };
-enum States lastState = INITIAL;
+enum States { INITIAL, SETUP, MEASURE, TRANSMIT, SLEEP };
+enum States currentState = INITIAL;
 
 unsigned long seqNumber = 0L;
 unsigned long lastTransmissionMs = 0L;
@@ -74,36 +74,49 @@ void setup() {
   sensor.begin();
   radio.begin();
 
+  currentState = SETUP;
+  Serial.println("Do Setup");
   sensor.listTemperatureSensors();
 }
 
 /* Loop ******************************************/
 
 void loop() {
-  if (getTime() < SETUP_DURATION) {
-    Serial.println();
-    enter(SETUP, "Enter setup state");
+  if (currentState == SETUP) {
+    // SETUP ---------------------------
     sensor.listRawWeight();
     readSensors();
     printSensorData();
-  } else if (lastTransmissionMs == 0L || getTime() >= lastTransmissionMs + INTERVAL) {
-    lastTransmissionMs = getTime();
-    Serial.println();
-    enter(MEASURE, "Enter measure state");
-    radio.reset(seqNumber);
+    if (getTime() >= SETUP_DURATION) {
+      currentState = MEASURE;
+      Serial.println("\nDo Measure");
+    }
+  } else if (currentState == MEASURE) {
+    // MEASURE ---------------------------
     readSensors();
     printSensorData();
-    txPending = true;
-    radio.send(message.bytes, sizeof(message), CONFIRMATION);
-    seqNumber = radio.seqNumber();
-  } else if (radio.isTransmitting() && getTime() < lastTransmissionMs + TRANSMISSION_WAIT) {
-    enter(TRANSMIT, "Enter transmitting state");
-  } else if (txPending && getTime() < lastTransmissionMs + TRANSMISSION_WAIT) {
-    enter(PENDING, "Enter pending state");
+    lastTransmissionMs = getTime();
+    seqNumber = radio.send(message.bytes, sizeof(message), CONFIRMATION);
+    {
+      currentState = TRANSMIT;
+      Serial.println("Do Transmit");
+    }
+  } else if (currentState == TRANSMIT) {
+    // TRANSMIT ---------------------------
+    if (!radio.isTransmitting() || getTime() >= lastTransmissionMs + TRANSMISSION_WAIT) {
+      if (radio.isTransmitting()) radio.clear();
+      currentState = SLEEP;
+      Serial.println("Go Sleep");
+      powerDown();
+    }
   } else {
-    enter(SLEEP, "Enter sleep state");
-    radio.clear();
+    // SLEEP ---------------------------
     sleep();
+    if (getTime() >= lastTransmissionMs + INTERVAL) {
+      powerUp();
+      currentState = MEASURE;
+      Serial.println("\nDo Measure");
+    }
   }
 
   os_runloop_once();
@@ -115,20 +128,12 @@ unsigned long getTime() {
   return millis() + sleptMs;
 }
 
-void enter(enum States thisState, char* msg) {
-  if (lastState != thisState) {
-    Serial.println(msg);
-    lastState = thisState;
-  }
-}
-
 short asShort(float value) {
   if (isnan(value) || value == -127.0) return WINT_MIN;
   return value * 100;
 }
 
 void readSensors() {
-  sensor.powerUp();
   sensor.startReading();
   
   message.sensor.temperature.upper = asShort(sensor.getUpperTemperature());
@@ -173,21 +178,25 @@ void printSensorData() {
   }
 }
 
-void sleep() {
-  // shut down
+void powerDown() {
   sensor.powerDown();
+}
+
+void powerUp() {
+  Serial.println('|');
+  sensor.powerUp();
+  radio.reset(seqNumber);
+}
+
+void sleep() {
   Serial.flush();
   #ifdef USBCON
     USBDevice.detach();
   #endif
 
-  // for lower power consumption use deep sleep mode 
-  // (as long a possible, will be approx. 8 sec).
-  //delay(8000);
   LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
   sleptMs += 8000UL;
 
-  // wake up
   #ifdef USBCON
     USBDevice.init();
     USBDevice.attach();

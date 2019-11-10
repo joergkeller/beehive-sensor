@@ -1,0 +1,36 @@
+{
+  "time": "2019-11-10T21:22:00.946690957Z",
+  "frequency": 868.1,
+  "modulation": "LORA",
+  "data_rate": "SF12BW125",
+  "coding_rate": "4/5",
+  "gateways": [
+    {
+      "gtw_id": "ttn_gtw_ent_keller",
+      "gtw_trusted": true,
+      "timestamp": 1195762708,
+      "time": "2019-11-10T21:22:00Z",
+      "channel": 0,
+      "rssi": -120,
+      "snr": -20.25,
+      "rf_chain": 1,
+      "latitude": 47.49847,
+      "longitude": 8.747001,
+      "altitude": 450,
+      "location_source": "registry"
+    },
+    {
+      "gtw_id": "eui-0005fcc23d116aa3",
+      "timestamp": 2214226108,
+      "time": "",
+      "channel": 0,
+      "rssi": -109,
+      "snr": 3.8,
+      "rf_chain": 1,
+      "latitude": 47.490482,
+      "longitude": 8.746677,
+      "altitude": 481,
+      "location_source": "registry"
+    }
+  ]
+}

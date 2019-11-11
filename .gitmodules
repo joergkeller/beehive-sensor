@@ -1,3 +1,0 @@
-[submodule "libraries/arduino-lmic"]
-	path = libraries/arduino-lmic
-	url = https://github.com/matthijskooijman/arduino-lmic

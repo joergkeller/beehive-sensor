@@ -5,21 +5,27 @@
  * After setup, the sensors are read in intervals and the 
  * sensor data message is sent using LoRa. The controller
  * then goes to deep sleep to reduce power.
- * - USB voltage measurement (internal)
- * - DS18B20 temperature sensors (multiple) are read from pin D3
- * - DHT22 temperature/humidity sensor is read from pin D4
- * - Weight measured with load cell and HX711 ADC from pins A0/A1
+ * - USB/Battery voltage measurement (internal)
+ * - DS18B20 temperature sensors (multiple) are read from pin D3 (GPIO5)
+ * - DHT22 temperature/humidity sensor is read from pin D4 (GPIO4)
+ * - Weight measured with load cell and HX711 ADC from pins A0/A1 (GPIO2/3)
  * ---
  * message version (aka command):
- *  0: sensor data v0
+ *  0: sensor data v0 (short/100)
  **********************************************************/
 
-#include <LowPower.h>
+#if defined(__ASR6501__)
+  #include "CubeCellLoRa.h"
+#else
+  #include <LowPower.h>
+  #include "DraginoLoRa.h"
+#endif
 #include "SensorReader.h"
-#include "DraginoLoRa.h"
 
+#define UNDEFINED_VALUE -32768
 #define MESSAGE_VERSION 0
-typedef struct beesensor_t {
+
+typedef struct {
   byte version;
   struct { 
     short outer;
@@ -32,12 +38,12 @@ typedef struct beesensor_t {
   } humidity;
   short weight;
   short battery;
-};
+}__attribute((packed)) beesensor_t;
 
-typedef union message_t {
+typedef union {
   beesensor_t sensor;
   byte bytes[1+8+2+2+2];
-};
+} message_t;
 
 #define MS 1L
 #define SEC (1000*MS)
@@ -47,73 +53,117 @@ typedef union message_t {
 #define MEASURE_INTERVAL        (5*MIN)
 #define UNCONDITIONAL_INTERVAL  (30*MIN)
 #define CONFIRMATION            false
+#define JOIN_WAIT               (60*MIN)
 #define TRANSMISSION_WAIT       (10*SEC)
+
+#define LIMIT_WEIGHT_DIFF       10  // 0.100 kg
+#define LIMIT_TEMPERATURE_DIFF  50  // 0.50 degrees
+#define LIMIT_HUMIDITY_DIFF    200  // 2.0 %
 
 message_t message[2];
 byte lastMsgIndex = 0;
 
-enum States { INITIAL, SETUP, MEASURE, TRANSMIT, SLEEP };
+enum States { INITIAL, SETUP, JOIN, MEASURE, TRANSMIT, SLEEP };
 enum States currentState = INITIAL;
 
 unsigned long seqNumber = 0L;
+unsigned long lastJoinMs = 0L;
 unsigned long lastMeasureMs = 0L;
 unsigned long lastTransmissionMs = 0L;
 unsigned long sleptMs = 0L;
 
 SensorReader sensor = SensorReader();
-DraginoLoRa radio = DraginoLoRa();
+#if defined(__ASR6501__)
+  TimerEvent_t wakeup;
+  CubeCellLoRa radio = CubeCellLoRa();
+#else
+  DraginoLoRa radio = DraginoLoRa();
+#endif
   
 
 /* Setup ******************************************/
 
 void setup() {
   Serial.begin(115200);
-  Serial.print("Start LoRa test script with sensor message v");
-  Serial.println(MESSAGE_VERSION);
+  delay(500);
 
-  initializeMessage();
-
-  os_init();
-  
+  #if defined(__ASR6501__)
+    BoardInitMcu();
+    TimerInit(&wakeup, onWakeup);
+  #endif
   sensor.begin();
+  initializeMessage();
   radio.begin();
 
-  currentState = SETUP;
-  Serial.println("Do Setup");
-  sensor.listTemperatureSensors();
+  if (SETUP_DURATION > 0) {
+    currentState = SETUP;
+    Serial.println("\nDo Setup");
+  } else {
+    currentState = JOIN;
+    Serial.println("\nDo Join");
+    lastJoinMs = getTime();
+    radio.join();
+  }
 }
 
 void initializeMessage() {
+  Serial.print("Start Beehive LoRa script with sensor message v");
+  Serial.println(MESSAGE_VERSION);
   message[0].sensor.version = MESSAGE_VERSION;
   message[1].sensor.version = MESSAGE_VERSION;
-  message[lastMsgIndex].sensor.temperature.upper = WINT_MIN;
-  message[lastMsgIndex].sensor.temperature.middle = WINT_MIN;
-  message[lastMsgIndex].sensor.temperature.lower = WINT_MIN;
-  message[lastMsgIndex].sensor.temperature.outer = WINT_MIN;
-  message[lastMsgIndex].sensor.humidity.outer = WINT_MIN;
-  message[lastMsgIndex].sensor.weight = WINT_MIN;
-  message[lastMsgIndex].sensor.battery = WINT_MIN;
+  message[lastMsgIndex].sensor.temperature.upper = UNDEFINED_VALUE;
+  message[lastMsgIndex].sensor.temperature.middle = UNDEFINED_VALUE;
+  message[lastMsgIndex].sensor.temperature.lower = UNDEFINED_VALUE;
+  message[lastMsgIndex].sensor.temperature.outer = UNDEFINED_VALUE;
+  message[lastMsgIndex].sensor.humidity.outer = UNDEFINED_VALUE;
+  message[lastMsgIndex].sensor.weight = UNDEFINED_VALUE;
+  message[lastMsgIndex].sensor.battery = UNDEFINED_VALUE;
 }
 
 /* Loop ******************************************/
 
+bool hasChanged(byte index);
+bool hasChangedWeight(short lastValue, short nextValue);
+bool hasChangedTemperature(short lastValue, short nextValue);
+bool hasChangedHumidity(short lastValue, short nextValue);
+
 void loop() {
   if (currentState == SETUP) {
     // SETUP ---------------------------
+    sensor.listTemperatureSensors();
     sensor.listRawWeight();
     readSensors(1);
     printSensorData(1);
     if (getTime() >= SETUP_DURATION) {
-      currentState = MEASURE;
-      Serial.println("\nDo Measure");
+      currentState = JOIN;
+      Serial.println("\nDo Join");
+      lastJoinMs = getTime();
+      radio.join();
+    }
+  } else if (currentState == JOIN) {
+    // JOIN ---------------------------
+    if (!radio.isJoining() || getTime() >= lastJoinMs + JOIN_WAIT) {
+      if (radio.isJoining()) {
+        lastJoinMs = getTime();
+        radio.join();
+      } else {
+        currentState = MEASURE;
+        Serial.println("\nDo Measure");
+      }
     }
   } else if (currentState == MEASURE) {
     // MEASURE ---------------------------
-    byte index = (lastMsgIndex + 1) % 2;
     lastMeasureMs = getTime();
+    byte index = (lastMsgIndex + 1) % 2;
     readSensors(index);
     printSensorData(index);
-    if (hasChanged(index) || getTime() >= lastTransmissionMs + UNCONDITIONAL_INTERVAL) {
+    unsigned long transmissionInterval = getTime() - lastTransmissionMs;
+    boolean unconditionalTransmit = transmissionInterval >= (UNCONDITIONAL_INTERVAL - (MEASURE_INTERVAL/2));
+    if (unconditionalTransmit) {
+      Serial.print(transmissionInterval / 1000);
+      Serial.println("s since transmission");
+    }
+    if (unconditionalTransmit || hasChanged(index)) {
       lastTransmissionMs = getTime();
       seqNumber = radio.send(message[index].bytes, sizeof(message[index]), CONFIRMATION);
       lastMsgIndex = index;
@@ -135,15 +185,33 @@ void loop() {
     }
   } else {
     // SLEEP ---------------------------
-    sleep();
-    if (getTime() >= lastMeasureMs + MEASURE_INTERVAL) {
-      powerUp();
-      currentState = MEASURE;
-      Serial.println("\nDo Measure");
-    }
+    Serial.print('.');
+    delay(1);
+    Serial.flush();
+    #ifdef USBCON
+      USBDevice.detach();
+    #endif
+
+    #if defined(__ASR6501__)
+      LowPower_Handler();
+    #else
+      //  delay(8000);
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      sleptMs += 8000UL;
+      if (getTime() >= lastMeasureMs + MEASURE_INTERVAL) {
+        powerUp();
+        currentState = MEASURE;
+        Serial.println("\nDo Measure");
+      }
+    #endif
+
+    #ifdef USBCON
+      USBDevice.init();
+      USBDevice.attach();
+    #endif
   }
 
-  os_runloop_once();
+  radio.tick();
 }
 
 /* Helper methods ******************************************/
@@ -153,7 +221,7 @@ unsigned long getTime() {
 }
 
 short asShort(float value) {
-  if (isnan(value) || value == -127.0) return WINT_MIN;
+  if (isnan(value) || value == -127.0f) return UNDEFINED_VALUE;
   return value * 100;
 }
 
@@ -172,79 +240,55 @@ void readSensors(byte index) {
 }
 
 void printSensorData(byte index) {
-  if (message[index].sensor.weight > WINT_MIN) {
-    Serial.print(message[index].sensor.weight / 100.0);
-    Serial.println(" kg");
+  print(message[index].sensor.weight, " kg");
+  print(message[index].sensor.temperature.lower, " C lower level");
+  print(message[index].sensor.temperature.middle, " C middle level");
+  print(message[index].sensor.temperature.upper, " C upper level");
+  print(message[index].sensor.temperature.outer, " C outside");
+  print(message[index].sensor.humidity.outer, " % rel");
+  print(message[index].sensor.battery, " Vbat");
+}
+
+void print(short compactValue, String suffix) {
+  if (compactValue != UNDEFINED_VALUE) {
+    Serial.print(compactValue / 100.0);
+    Serial.println(suffix);
   }
-  if (message[index].sensor.temperature.lower > WINT_MIN) {
-    Serial.print(message[index].sensor.temperature.lower / 100.0);
-    Serial.println(" C lower level");
-  }
-  if (message[index].sensor.temperature.middle > WINT_MIN) {
-    Serial.print(message[index].sensor.temperature.middle / 100.0);
-    Serial.println(" C middle level");
-  }
-  if (message[index].sensor.temperature.upper > WINT_MIN) {
-    Serial.print(message[index].sensor.temperature.upper / 100.0);
-    Serial.println(" C upper level");
-  }
-  if (message[index].sensor.temperature.outer > WINT_MIN) {
-    Serial.print(message[index].sensor.temperature.outer / 100.0);
-    Serial.println(" C outside");
-  }
-  if (message[index].sensor.humidity.outer > WINT_MIN) {
-    Serial.print(message[index].sensor.humidity.outer / 100.0);
-    Serial.println(" % rel");
-  }
-  if (message[index].sensor.battery > WINT_MIN) {
-    Serial.print(message[index].sensor.battery / 100.0);
-    Serial.println(" Vcc");
-  }
+}
+
+bool hasChangedValue(short lastValue, short nextValue, short limit) {
+  return abs(lastValue - nextValue) >= limit;
 }
 
 bool hasChanged(byte index) {
-  return hasChangedWeight(message[lastMsgIndex].sensor.weight, message[index].sensor.weight)
-      || hasChangedTemperature(message[lastMsgIndex].sensor.temperature.lower, message[index].sensor.temperature.lower)
-      || hasChangedTemperature(message[lastMsgIndex].sensor.temperature.middle, message[index].sensor.temperature.middle)
-      || hasChangedTemperature(message[lastMsgIndex].sensor.temperature.upper, message[index].sensor.temperature.upper)
-      || hasChangedTemperature(message[lastMsgIndex].sensor.temperature.outer, message[index].sensor.temperature.outer)
-      || hasChangedHumidity(message[lastMsgIndex].sensor.humidity.outer, message[index].sensor.humidity.outer);
-}
-
-bool hasChangedWeight(short lastValue, short nextValue) {
-  return abs(lastValue - nextValue) >= 5; // 0.05 kg
-}
-
-bool hasChangedTemperature(short lastValue, short nextValue) {
-  return abs(lastValue - nextValue) >= 50; // 0.50 degrees
-}
-
-bool hasChangedHumidity(short lastValue, short nextValue) {
-  return abs(lastValue - nextValue) >= 50; // 0.50 %
+  return hasChangedValue(message[lastMsgIndex].sensor.weight, message[index].sensor.weight, LIMIT_WEIGHT_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.temperature.lower, message[index].sensor.temperature.lower, LIMIT_TEMPERATURE_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.temperature.middle, message[index].sensor.temperature.middle, LIMIT_TEMPERATURE_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.temperature.upper, message[index].sensor.temperature.upper, LIMIT_TEMPERATURE_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.temperature.outer, message[index].sensor.temperature.outer, LIMIT_TEMPERATURE_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.humidity.outer, message[index].sensor.humidity.outer, LIMIT_HUMIDITY_DIFF);
 }
 
 void powerDown() {
   sensor.powerDown();
+  delay(1);
+  #if defined(__ASR6501__)
+    uint32_t timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
+    Serial.print(timeToWake / 1000); Serial.println(" s sleeping");
+    TimerSetValue(&wakeup, timeToWake);
+    TimerStart(&wakeup);
+    sleptMs += timeToWake;
+  #endif
 }
+
+void onWakeup() {
+  powerUp();
+  currentState = MEASURE;
+  Serial.println("\nDo Measure");
+} 
 
 void powerUp() {
   Serial.println('|');
   sensor.powerUp();
   radio.reset(seqNumber);
-}
-
-void sleep() {
-  Serial.flush();
-  #ifdef USBCON
-    USBDevice.detach();
-  #endif
-
-  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-  sleptMs += 8000UL;
-
-  #ifdef USBCON
-    USBDevice.init();
-    USBDevice.attach();
-  #endif
-  Serial.print('.');
 }

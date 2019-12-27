@@ -24,6 +24,8 @@ class DraginoLoRa {
   public:
 
     void begin() {
+      os_init();
+  
       // Set up the channels used by the things network - EU863-870
       // https://www.thethingsnetwork.org/docs/lorawan/frequency-plans.html
       LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7),  BAND_CENTI);      // g-band
@@ -42,21 +44,30 @@ class DraginoLoRa {
       // TTN uses SF9 for its RX2 window.
       LMIC.dn2Dr = DR_SF9;
 
-      reset(0);
+      // Reset the MAC state. Session and pending data transfers will be discarded.
+      LMIC_reset();
+    }
+
+    void tick() {
+      os_runloop_once();
+    }
+
+    void join() {
+      // Set static session parameters.
+      LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
+
+      // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
+      LMIC_setDrTxpow(DR_SF12, 14);
     }
 
     void reset(unsigned long seqNumber) {
       // Reset the MAC state. Session and pending data transfers will be discarded.
       LMIC_reset();
   
-      // Set static session parameters.
-      LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
-
+      join();
+      
       // set sequence counter for uplink
       LMIC.seqnoUp = seqNumber;
-  
-      // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
-      LMIC_setDrTxpow(DR_SF12, 14);
     }
 
     unsigned long send(uint8_t *message, uint8_t len, bool confirmation) {
@@ -83,6 +94,10 @@ class DraginoLoRa {
 
     bool isTransmitting() {
       return LMIC.opmode & OP_TXRXPEND;
+    }
+
+    bool isJoining() {
+      return false;
     }
 
   private:

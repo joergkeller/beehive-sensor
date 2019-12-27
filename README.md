@@ -54,5 +54,5 @@ Local installation of 'git' assumed.
 git clone https://github.com/joergkeller/beehive-sensor.git
 cd beehive-sensor
 git submodule init
-git submodule init
+git submodule update
 ~~~

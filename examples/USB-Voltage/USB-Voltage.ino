@@ -17,7 +17,7 @@ long readVcc() {
 }
 
 void loop() {
-  Serial.print(readVcc() / 1023.0);
+  Serial.print(readVcc() / 1000.0);
   Serial.println(" V");
   delay(1000);
 }

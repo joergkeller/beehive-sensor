@@ -1,0 +1,63 @@
+{
+  "body": "{\"app_id\":\"test-987\",\"dev_id\":\"test-987\",\"hardware_serial\":\"1234567812345678\",\"port\":1,\"counter\":0,\"is_retry\":true,\"payload_raw\":\"AHgAAAAAgACAUiaqAHwB\",\"payload_fields\":{\"field1\":0,\"field2\":null,\"field3\":null,\"field4\":1.2,\"field6\":98.1,\"field7\":3.8,\"field8\":1.7,\"sensor\":{\"battery\":3.8,\"humidity\":{\"outer\":98.1},\"temperature\":{\"lower\":0,\"middle\":null,\"outer\":1.2,\"upper\":null},\"version\":0,\"weight\":1.7},\"status\":\"version 0, 3.8 V\"},\"metadata\":{\"time\":\"2019-12-16T05:54:35.630735468Z\",\"frequency\":868.3,\"modulation\":\"LORA\",\"data_rate\":\"SF12BW125\",\"coding_rate\":\"4/5\",\"gateways\":[{\"gtw_id\":\"eui-0005fcc23d116aa3\",\"timestamp\":1472638276,\"time\":\"2019-12-16T05:54:35.610213Z\",\"channel\":1,\"rssi\":-117,\"snr\":-14.8,\"rf_chain\":1,\"latitude\":47.490482,\"longitude\":8.746677,\"altitude\":481,\"location_source\":\"registry\"}]},\"downlink_url\":\"https://integrations.thethingsnetwork.org/ttn-eu/api/v2/down/test-987/beehive-recorder?key=ttn-account-v2.k3Yv6f9GBoh5djWfURR5-9gsw5VgS1i5Gukl4gi6kfo\"}",
+  "resource": "/beehive",
+  "path": "/beehive",
+  "httpMethod": "POST",
+  "isBase64Encoded": false,
+  "queryStringParameters": {
+  },
+  "pathParameters": {
+  },
+  "stageVariables": {
+    "baz": "qux"
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Encoding": "gzip",
+    "Accept-Language": "en-US,en;q=0.8",
+    "Cache-Control": "max-age=0",
+    "CloudFront-Forwarded-Proto": "https",
+    "CloudFront-Is-Desktop-Viewer": "true",
+    "CloudFront-Is-Mobile-Viewer": "false",
+    "CloudFront-Is-SmartTV-Viewer": "false",
+    "CloudFront-Is-Tablet-Viewer": "false",
+    "CloudFront-Viewer-Country": "US",
+    "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "http-ttn/2.6.0",
+    "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
+    "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
+    "X-Forwarded-For": "127.0.0.1, 127.0.0.2",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https",
+    "Content-Length": "976",
+    "Content-Type": "application/json",
+    "X-Api-Key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "resourceId": "123456",
+    "stage": "v0",
+    "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef",
+    "requestTime": "09/Apr/2015:12:34:56 +0000",
+    "requestTimeEpoch": 1428582896000,
+    "identity": {
+      "cognitoIdentityPoolId": null,
+      "accountId": null,
+      "cognitoIdentityId": null,
+      "caller": null,
+      "accessKey": null,
+      "sourceIp": "127.0.0.1",
+      "cognitoAuthenticationType": null,
+      "cognitoAuthenticationProvider": null,
+      "userArn": null,
+      "userAgent": "Custom User Agent String",
+      "user": null
+    },
+    "path": "/v0/beehive",
+    "resourcePath": "/beehive",
+    "httpMethod": "POST",
+    "apiId": "1234567890",
+    "protocol": "HTTP/1.1"
+  }
+}

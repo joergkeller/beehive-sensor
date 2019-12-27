@@ -12,16 +12,21 @@
 #include <HX711.h>
 #include "calibration.h"
 
-#define DHT_PIN 4
+#if defined(__ASR6501__)
+  #define DHT_PIN            GPIO4
+  #define ONEWIRE_PIN        GPIO5
+  #define LOADCELL_DOUT_PIN  GPIO2
+  #define LOADCELL_SCK_PIN   GPIO3
+#else
+  #define DHT_PIN             4
+  #define ONEWIRE_PIN         3
+  #define LOADCELL_DOUT_PIN  A0
+  #define LOADCELL_SCK_PIN   A1
+#endif
 
-#define ONEWIRE_PIN 3
 #define TEMPERATURE_PRECISION 12
-
-#define LOADCELL_DOUT_PIN  A0
-#define LOADCELL_SCK_PIN  A1
 #define SETUP_SAMPLING 100
 #define OPERATIONAL_SAMPLING 10
-
 
 class SensorReader {
   public:
@@ -39,6 +44,7 @@ class SensorReader {
 
     void powerUp() {
       scale.power_up();
+      dht.begin();
     }
 
     void listTemperatureSensors() {
@@ -72,7 +78,9 @@ class SensorReader {
     }
 
     void startReading() {
+      sensors.setResolution(TEMPERATURE_PRECISION);
       sensors.requestTemperatures();
+      dht.read(true);
     }
 
     void stopReading() {}
@@ -93,10 +101,10 @@ class SensorReader {
     float getVoltage() { return readVcc() / 1000.0; }
 
   private:
-    const DHT dht = DHT(DHT_PIN, DHT22);
-    const OneWire oneWire = OneWire(ONEWIRE_PIN);
-    const DallasTemperature sensors = DallasTemperature(&oneWire);
-    const HX711 scale = HX711();
+    DHT dht = DHT(DHT_PIN, DHT22);
+    OneWire oneWire = OneWire(ONEWIRE_PIN);
+    DallasTemperature sensors = DallasTemperature(&oneWire);
+    HX711 scale = HX711();
 
     void printBufferAsArray(byte* buffer, int length) {
       Serial.print("{ 0x");
@@ -108,18 +116,25 @@ class SensorReader {
       Serial.println(" }");
     }
 
-    // see https://forum.arduino.cc/index.php?topic=120693.msg908179#msg908179
     long readVcc() {
-      long result;
-      // Read 1.1V reference against AVcc
-      ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
-      delay(2); // Wait for Vref to settle
-      ADCSRA |= _BV(ADSC); // Convert
-      while (bit_is_set(ADCSRA,ADSC));
-      result = ADCL;
-      result |= ADCH<<8;
-      result = 1126400L / result; // Back-calculate AVcc in mV
-      return result;
+      #if defined(__ASR6501__)
+        pinMode(ADC_CTL, OUTPUT);
+        digitalWrite(ADC_CTL, LOW);
+        long result = analogRead(ADC) * 2;
+        digitalWrite(ADC_CTL, HIGH);
+        return result;
+      #else
+        // see https://forum.arduino.cc/index.php?topic=120693.msg908179#msg908179
+        // Read 1.1V reference against AVcc
+        ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+        delay(2); // Wait for Vref to settle
+        ADCSRA |= _BV(ADSC); // Convert
+        while (bit_is_set(ADCSRA, ADSC));
+        long result = ADCL;
+        result |= ADCH<<8;
+        result = 1126400L / result; // Back-calculate AVcc in mV
+        return result;
+      #endif
     }
 
 };

@@ -21,6 +21,7 @@
   #include "DraginoLoRa.h"
 #endif
 #include "SensorReader.h"
+#include "StateMachine.h"
 
 #define UNDEFINED_VALUE -32768
 #define MESSAGE_VERSION 0
@@ -63,14 +64,15 @@ typedef union {
 message_t message[2];
 byte lastMsgIndex = 0;
 
-enum States { INITIAL, SETUP, JOIN, MEASURE, TRANSMIT, SLEEP };
-enum States currentState = INITIAL;
-
 unsigned long seqNumber = 0L;
 unsigned long lastJoinMs = 0L;
 unsigned long lastMeasureMs = 0L;
 unsigned long lastTransmissionMs = 0L;
 unsigned long sleptMs = 0L;
+
+typedef enum               { SETUP,   JOIN,   MEASURE,   TRANSMIT,   SLEEP } States;
+const char* stateNames[] = {"Setup", "Join", "Measure", "Transmit", "Sleep"};
+StateMachine node(stateNames);
 
 SensorReader sensor = SensorReader();
 #if defined(__ASR6501__)
@@ -95,14 +97,15 @@ void setup() {
   initializeMessage();
   radio.begin();
 
+  node.onEnter(JOIN, onBeginJoin);
+  node.onEnter(TRANSMIT, sendMessage);
+  node.onEnter(SLEEP, powerDown);
+  node.onExit(SLEEP, powerUp);
+
   if (SETUP_DURATION > 0) {
-    currentState = SETUP;
-    Serial.println("\nDo Setup");
+    node.toState(SETUP);
   } else {
-    currentState = JOIN;
-    Serial.println("\nDo Join");
-    lastJoinMs = getTime();
-    radio.join();
+    node.toState(JOIN);
   }
 }
 
@@ -128,30 +131,25 @@ bool hasChangedTemperature(short lastValue, short nextValue);
 bool hasChangedHumidity(short lastValue, short nextValue);
 
 void loop() {
-  if (currentState == SETUP) {
+  if (node.state() == SETUP) {
     // SETUP ---------------------------
     sensor.listTemperatureSensors();
     sensor.listRawWeight();
     readSensors(1);
     printSensorData(1);
     if (getTime() >= SETUP_DURATION) {
-      currentState = JOIN;
-      Serial.println("\nDo Join");
-      lastJoinMs = getTime();
-      radio.join();
+      node.toState(JOIN);
     }
-  } else if (currentState == JOIN) {
+  } else if (node.state() == JOIN) {
     // JOIN ---------------------------
     if (!radio.isJoining() || getTime() >= lastJoinMs + JOIN_WAIT) {
       if (radio.isJoining()) {
-        lastJoinMs = getTime();
-        radio.join();
+        node.toState(JOIN);
       } else {
-        currentState = MEASURE;
-        Serial.println("\nDo Measure");
+        node.toState(MEASURE);
       }
     }
-  } else if (currentState == MEASURE) {
+  } else if (node.state() == MEASURE) {
     // MEASURE ---------------------------
     lastMeasureMs = getTime();
     byte index = (lastMsgIndex + 1) % 2;
@@ -164,24 +162,16 @@ void loop() {
       Serial.println("s since transmission");
     }
     if (unconditionalTransmit || hasChanged(index)) {
-      lastTransmissionMs = getTime();
-      seqNumber = radio.send(message[index].bytes, sizeof(message[index]), CONFIRMATION);
-      lastMsgIndex = index;
-      currentState = TRANSMIT;
-      Serial.println("Do Transmit");
+      node.toState(TRANSMIT);
     } else {
       Serial.println("No relevant change");
-      currentState = SLEEP;
-      Serial.println("Go Sleep");
-      powerDown();
+      node.toState(SLEEP);
     }
-  } else if (currentState == TRANSMIT) {
+  } else if (node.state() == TRANSMIT) {
     // TRANSMIT ---------------------------
     if (!radio.isTransmitting() || getTime() >= lastTransmissionMs + TRANSMISSION_WAIT) {
       if (radio.isTransmitting()) radio.clear();
-      currentState = SLEEP;
-      Serial.println("Go Sleep");
-      powerDown();
+      node.toState(SLEEP);
     }
   } else {
     // SLEEP ---------------------------
@@ -199,9 +189,7 @@ void loop() {
       LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
       sleptMs += 8000UL;
       if (getTime() >= lastMeasureMs + MEASURE_INTERVAL) {
-        powerUp();
-        currentState = MEASURE;
-        Serial.println("\nDo Measure");
+        node.toState(MEASURE);
       }
     #endif
 
@@ -212,6 +200,42 @@ void loop() {
   }
 
   radio.tick();
+}
+
+/* Event handler ******************************************/
+
+void onBeginJoin() {
+  lastJoinMs = getTime();
+  radio.join();
+}
+
+void sendMessage() {
+  byte index = (lastMsgIndex + 1) % 2;
+  lastTransmissionMs = getTime();
+  seqNumber = radio.send(message[index].bytes, sizeof(message[index]), CONFIRMATION);
+  lastMsgIndex = index;
+}
+
+void powerDown() {
+  sensor.powerDown();
+  delay(1);
+  #if defined(__ASR6501__)
+    uint32_t timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
+    Serial.print(timeToWake / 1000); Serial.println(" s sleeping");
+    TimerSetValue(&wakeup, timeToWake);
+    TimerStart(&wakeup);
+    sleptMs += timeToWake;
+  #endif
+}
+
+void onWakeup() {
+  node.toState(MEASURE);
+} 
+
+void powerUp() {
+  Serial.println('|');
+  sensor.powerUp();
+  radio.reset(seqNumber);
 }
 
 /* Helper methods ******************************************/
@@ -267,28 +291,4 @@ bool hasChanged(byte index) {
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.upper, message[index].sensor.temperature.upper, LIMIT_TEMPERATURE_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.outer, message[index].sensor.temperature.outer, LIMIT_TEMPERATURE_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.humidity.outer, message[index].sensor.humidity.outer, LIMIT_HUMIDITY_DIFF);
-}
-
-void powerDown() {
-  sensor.powerDown();
-  delay(1);
-  #if defined(__ASR6501__)
-    uint32_t timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
-    Serial.print(timeToWake / 1000); Serial.println(" s sleeping");
-    TimerSetValue(&wakeup, timeToWake);
-    TimerStart(&wakeup);
-    sleptMs += timeToWake;
-  #endif
-}
-
-void onWakeup() {
-  powerUp();
-  currentState = MEASURE;
-  Serial.println("\nDo Measure");
-} 
-
-void powerUp() {
-  Serial.println('|');
-  sensor.powerUp();
-  radio.reset(seqNumber);
 }

@@ -97,9 +97,14 @@ void setup() {
   initializeMessage();
   radio.begin();
 
-  node.onEnter(JOIN, onBeginJoin);
+  node.onState(SETUP, initialMeasure);
+  node.onEnter(JOIN, beginJoin);
+  node.onState(JOIN, joining);
+  node.onState(MEASURE, measure);
   node.onEnter(TRANSMIT, sendMessage);
+  node.onState(TRANSMIT, transmitting);
   node.onEnter(SLEEP, powerDown);
+  node.onState(SLEEP, sleeping);
   node.onExit(SLEEP, powerUp);
 
   if (SETUP_DURATION > 0) {
@@ -131,83 +136,63 @@ bool hasChangedTemperature(short lastValue, short nextValue);
 bool hasChangedHumidity(short lastValue, short nextValue);
 
 void loop() {
-  if (node.state() == SETUP) {
-    // SETUP ---------------------------
-    sensor.listTemperatureSensors();
-    sensor.listRawWeight();
-    readSensors(1);
-    printSensorData(1);
-    if (getTime() >= SETUP_DURATION) {
-      node.toState(JOIN);
-    }
-  } else if (node.state() == JOIN) {
-    // JOIN ---------------------------
-    if (!radio.isJoining() || getTime() >= lastJoinMs + JOIN_WAIT) {
-      if (radio.isJoining()) {
-        node.toState(JOIN);
-      } else {
-        node.toState(MEASURE);
-      }
-    }
-  } else if (node.state() == MEASURE) {
-    // MEASURE ---------------------------
-    lastMeasureMs = getTime();
-    byte index = (lastMsgIndex + 1) % 2;
-    readSensors(index);
-    printSensorData(index);
-    unsigned long transmissionInterval = getTime() - lastTransmissionMs;
-    boolean unconditionalTransmit = transmissionInterval >= (UNCONDITIONAL_INTERVAL - (MEASURE_INTERVAL/2));
-    if (unconditionalTransmit) {
-      Serial.print(transmissionInterval / 1000);
-      Serial.println("s since transmission");
-    }
-    if (unconditionalTransmit || hasChanged(index)) {
-      node.toState(TRANSMIT);
-    } else {
-      Serial.println("No relevant change");
-      node.toState(SLEEP);
-    }
-  } else if (node.state() == TRANSMIT) {
-    // TRANSMIT ---------------------------
-    if (!radio.isTransmitting() || getTime() >= lastTransmissionMs + TRANSMISSION_WAIT) {
-      if (radio.isTransmitting()) radio.clear();
-      node.toState(SLEEP);
-    }
-  } else {
-    // SLEEP ---------------------------
-    Serial.print('.');
-    delay(1);
-    Serial.flush();
-    #ifdef USBCON
-      USBDevice.detach();
-    #endif
-
-    #if defined(__ASR6501__)
-      LowPower_Handler();
-    #else
-      //  delay(8000);
-      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-      sleptMs += 8000UL;
-      if (getTime() >= lastMeasureMs + MEASURE_INTERVAL) {
-        node.toState(MEASURE);
-      }
-    #endif
-
-    #ifdef USBCON
-      USBDevice.init();
-      USBDevice.attach();
-    #endif
-  }
-
+  node.loop();
   radio.tick();
 }
 
 /* Event handler ******************************************/
 
-void onBeginJoin() {
+// SETUP ---------------------------
+
+void initialMeasure() {
+  sensor.listTemperatureSensors();
+  sensor.listRawWeight();
+  readSensors(1);
+  printSensorData(1);
+  if (getTime() >= SETUP_DURATION) {
+    node.toState(JOIN);
+  }
+}
+  
+// JOIN ---------------------------
+
+void beginJoin() {
   lastJoinMs = getTime();
   radio.join();
 }
+
+void joining() {
+  if (!radio.isJoining() || getTime() >= lastJoinMs + JOIN_WAIT) {
+    if (radio.isJoining()) {
+      node.toState(JOIN);
+    } else {
+      node.toState(MEASURE);
+    }
+  }
+}
+
+// MEASURE ---------------------------
+
+void measure() {
+  lastMeasureMs = getTime();
+  byte index = (lastMsgIndex + 1) % 2;
+  readSensors(index);
+  printSensorData(index);
+  unsigned long transmissionInterval = getTime() - lastTransmissionMs;
+  boolean unconditionalTransmit = transmissionInterval >= (UNCONDITIONAL_INTERVAL - (MEASURE_INTERVAL/2));
+  if (unconditionalTransmit) {
+    Serial.print(transmissionInterval / 1000);
+    Serial.println("s since transmission");
+  }
+  if (unconditionalTransmit || hasChanged(index)) {
+    node.toState(TRANSMIT);
+  } else {
+    Serial.println("No relevant change");
+    node.toState(SLEEP);
+  }
+}
+
+// TRANSMIT ---------------------------
 
 void sendMessage() {
   byte index = (lastMsgIndex + 1) % 2;
@@ -215,6 +200,15 @@ void sendMessage() {
   seqNumber = radio.send(message[index].bytes, sizeof(message[index]), CONFIRMATION);
   lastMsgIndex = index;
 }
+
+void transmitting() {
+  if (!radio.isTransmitting() || getTime() >= lastTransmissionMs + TRANSMISSION_WAIT) {
+    if (radio.isTransmitting()) radio.clear();
+    node.toState(SLEEP);
+  }
+}
+
+// SLEEP ---------------------------
 
 void powerDown() {
   sensor.powerDown();
@@ -225,6 +219,31 @@ void powerDown() {
     TimerSetValue(&wakeup, timeToWake);
     TimerStart(&wakeup);
     sleptMs += timeToWake;
+  #endif
+}
+
+void sleeping() {
+  Serial.print('.');
+  delay(1);
+  Serial.flush();
+  #ifdef USBCON
+    USBDevice.detach();
+  #endif
+
+  #if defined(__ASR6501__)
+    LowPower_Handler();
+  #else
+    //  delay(8000);
+    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+    sleptMs += 8000UL;
+    if (getTime() >= lastMeasureMs + MEASURE_INTERVAL) {
+      node.toState(MEASURE);
+    }
+  #endif
+
+  #ifdef USBCON
+    USBDevice.init();
+    USBDevice.attach();
   #endif
 }
 

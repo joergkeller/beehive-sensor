@@ -16,21 +16,20 @@ class StateMachine {
     StateMachine(int stateCount, const char** names) 
     : stateNames(names), 
       enterHandler(new StateHandler[stateCount]), 
+      stateHandler(new StateHandler[stateCount]), 
       exitHandler(new StateHandler[stateCount]) {
       for (int i = 0; i < stateCount; i++) {
         enterHandler[i] = 0;
+        stateHandler[i] = 0;
         exitHandler[i] = 0;
       }
     }
 
     void toState(int state) {
-      if (currentState != INVALID_STATE) {
-        onExitState(currentState);
+      if (nextState != INVALID_STATE) {
+        Serial.println("Error! Not processed state transition.");
       }
-      currentState = state;
-      if (currentState != INVALID_STATE) {
-        onEnterState(currentState);
-      }
+      nextState = state;
     }
 
     inline
@@ -45,15 +44,45 @@ class StateMachine {
       enterHandler[state] = handler;
     }
 
+    void onState(int state, StateHandler handler) {
+      stateHandler[state] = handler;
+    }
+
     void onExit(int state, StateHandler handler) {
       exitHandler[state] = handler;
     }
 
+    void loop() {
+      if (nextState != INVALID_STATE) {
+        changeState(nextState);
+        nextState = INVALID_STATE;
+      }
+      if (currentState != INVALID_STATE) {
+        onLoopState(currentState);
+      }
+    }
+
   protected:
+    void changeState(int nextState) {
+      if (currentState != INVALID_STATE) {
+        onExitState(currentState);
+      }
+      currentState = nextState;
+      if (currentState != INVALID_STATE) {
+        onEnterState(currentState);
+      }
+    }
+  
     void onEnterState(int newState) {
       Serial.print("\nEnter state "); Serial.println(stateName(newState));
       if (enterHandler[newState] != 0) {
         enterHandler[newState]();
+      }
+    }
+    
+    void onLoopState(int state) {
+      if (stateHandler[state] != 0) {
+        stateHandler[state]();
       }
     }
     
@@ -66,8 +95,10 @@ class StateMachine {
 
   private:
     int currentState = INVALID_STATE;
+    int nextState = INVALID_STATE;
     const char** stateNames;
     StateHandler* enterHandler;
+    StateHandler* stateHandler;
     StateHandler* exitHandler;
 };
 

@@ -53,11 +53,9 @@ class DraginoLoRa {
     }
 
     void join() {
-      // Set static session parameters.
+      Serial.println(F("ABP join"));
       LMIC_setSession (0x1, DEVADDR, NWKSKEY, APPSKEY);
-
-      // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
-      LMIC_setDrTxpow(DR_SF12, 14);
+      LMIC_setDrTxpow(DR_SF12, 14); // note: txpow seems to be ignored by the library
     }
 
     void reset(unsigned long seqNumber) {
@@ -76,7 +74,7 @@ class DraginoLoRa {
             Serial.println(F("OP_TXRXPEND, not sending"));
         } else {
             // Prepare upstream data transmission at the next possible time.
-            Serial.print("Message: ");
+            Serial.print(F("Message: "));
             printBufferAsString(message, len); 
             LMIC_setTxData2(1, message, len, confirmation ? 1 : 0);
             Serial.println(F("Sending uplink packet"));

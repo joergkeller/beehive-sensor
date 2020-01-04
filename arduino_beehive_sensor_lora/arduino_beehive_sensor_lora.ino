@@ -50,6 +50,8 @@ typedef union {
 #define SEC (1000*MS)
 #define MIN (60*SEC)
 
+unsigned long getTime();
+
 #define SETUP_DURATION          (0*SEC)
 #define MEASURE_INTERVAL        (5*MIN)
 #define UNCONDITIONAL_INTERVAL  (30*MIN)
@@ -65,18 +67,17 @@ message_t message[2];
 byte lastMsgIndex = 0;
 
 unsigned long seqNumber = 0L;
-unsigned long lastJoinMs = 0L;
 unsigned long lastMeasureMs = 0L;
 unsigned long lastTransmissionMs = 0L;
 unsigned long sleptMs = 0L;
 
 typedef enum               { SETUP,   JOIN,   MEASURE,   TRANSMIT,   SLEEP } States;
 const char* stateNames[] = {"Setup", "Join", "Measure", "Transmit", "Sleep"};
-StateMachine node(5, stateNames);
+StateMachine node(5, stateNames, getTime);
 
 SensorReader sensor = SensorReader();
 #if defined(__ASR6501__)
-  TimerEvent_t wakeup;
+  TimerEvent_t wakeupTimer;
   CubeCellLoRa radio = CubeCellLoRa();
 #else
   DraginoLoRa radio = DraginoLoRa();
@@ -91,20 +92,24 @@ void setup() {
 
   #if defined(__ASR6501__)
     BoardInitMcu();
-    TimerInit(&wakeup, onWakeup);
+    TimerInit(&wakeupTimer, onSleepTimeout);
   #endif
   sensor.begin();
   initializeMessage();
   radio.begin();
 
   node.onState(SETUP, initialMeasure);
+  node.onTimeout(SETUP, SETUP_DURATION, onSetupTimeout);
   node.onEnter(JOIN, beginJoin);
   node.onState(JOIN, joining);
+  node.onTimeout(JOIN, JOIN_WAIT, onJoinTimeout);
   node.onState(MEASURE, measure);
   node.onEnter(TRANSMIT, sendMessage);
   node.onState(TRANSMIT, transmitting);
+  node.onTimeout(TRANSMIT, TRANSMISSION_WAIT, onTransmitTimeout);
   node.onEnter(SLEEP, powerDown);
   node.onState(SLEEP, sleeping);
+  node.onTimeout(SLEEP, MEASURE_INTERVAL, onSleepTimeout);
   node.onExit(SLEEP, powerUp);
 
   if (SETUP_DURATION > 0) {
@@ -149,26 +154,26 @@ void initialMeasure() {
   sensor.listRawWeight();
   readSensors(1);
   printSensorData(1);
-  if (getTime() >= SETUP_DURATION) {
-    node.toState(JOIN);
-  }
+}
+
+void onSetupTimeout() {
+  node.toState(JOIN);
 }
   
 // JOIN ---------------------------
 
 void beginJoin() {
-  lastJoinMs = getTime();
   radio.join();
 }
 
 void joining() {
-  if (!radio.isJoining() || getTime() >= lastJoinMs + JOIN_WAIT) {
-    if (radio.isJoining()) {
-      node.toState(JOIN);
-    } else {
-      node.toState(MEASURE);
-    }
+  if (!radio.isJoining()) {
+    node.toState(MEASURE);
   }
+}
+
+void onJoinTimeout() {
+  node.toState(JOIN); // try again
 }
 
 // MEASURE ---------------------------
@@ -178,13 +183,7 @@ void measure() {
   byte index = (lastMsgIndex + 1) % 2;
   readSensors(index);
   printSensorData(index);
-  unsigned long transmissionInterval = getTime() - lastTransmissionMs;
-  boolean unconditionalTransmit = transmissionInterval >= (UNCONDITIONAL_INTERVAL - (MEASURE_INTERVAL/2));
-  if (unconditionalTransmit) {
-    Serial.print(transmissionInterval / 1000);
-    Serial.println("s since transmission");
-  }
-  if (unconditionalTransmit || hasChanged(index)) {
+  if (unconditionalTransmit() || hasChanged(index)) {
     node.toState(TRANSMIT);
   } else {
     Serial.println("No relevant change");
@@ -202,28 +201,22 @@ void sendMessage() {
 }
 
 void transmitting() {
-  if (!radio.isTransmitting() || getTime() >= lastTransmissionMs + TRANSMISSION_WAIT) {
-    if (radio.isTransmitting()) radio.clear();
+  if (!radio.isTransmitting()) {
     node.toState(SLEEP);
   }
+}
+
+void onTransmitTimeout() {
+  radio.clear();
+  node.toState(SLEEP);
 }
 
 // SLEEP ---------------------------
 
 void powerDown() {
   sensor.powerDown();
-  delay(1);
-  #if defined(__ASR6501__)
-    uint32_t timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
-    Serial.print(timeToWake / 1000); Serial.println(" s sleeping");
-    TimerSetValue(&wakeup, timeToWake);
-    TimerStart(&wakeup);
-    sleptMs += timeToWake;
-  #endif
-}
-
-void sleeping() {
-  Serial.print('.');
+  uint32_t timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
+  Serial.print(timeToWake / 1000); Serial.println(" s sleeping");
   delay(1);
   Serial.flush();
   #ifdef USBCON
@@ -231,28 +224,43 @@ void sleeping() {
   #endif
 
   #if defined(__ASR6501__)
-    LowPower_Handler();
-  #else
-    //  delay(8000);
-    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-    sleptMs += 8000UL;
-    if (getTime() >= lastMeasureMs + MEASURE_INTERVAL) {
-      node.toState(MEASURE);
-    }
-  #endif
-
-  #ifdef USBCON
-    USBDevice.init();
-    USBDevice.attach();
+    TimerSetValue(&wakeupTimer, timeToWake);
+    TimerStart(&wakeupTimer);
+    sleptMs += timeToWake;
   #endif
 }
 
-void onWakeup() {
+void sleeping() {
+  #if defined(__ASR6501__)
+    LowPower_Handler();
+  #else
+    unsigned long timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
+    //  delay(timeToWake);
+    if (timeToWake >= 8000) {
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      sleptMs += 8000;
+    } else if (timeToWake >= 4000) {
+      LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
+      sleptMs += 4000;
+    } else if (timeToWake >= 2000) {
+      LowPower.powerDown(SLEEP_2S, ADC_OFF, BOD_OFF);
+      sleptMs += 2000;
+    } else {
+      LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
+      sleptMs += 1000;
+    }
+  #endif
+}
+
+void onSleepTimeout() {
   node.toState(MEASURE);
 } 
 
 void powerUp() {
-  Serial.println('|');
+  #ifdef USBCON
+    USBDevice.init();
+    USBDevice.attach();
+  #endif
   sensor.powerUp();
   radio.reset(seqNumber);
 }
@@ -263,6 +271,7 @@ unsigned long getTime() {
   return millis() + sleptMs;
 }
 
+inline
 short asShort(float value) {
   if (isnan(value) || value == -127.0f) return UNDEFINED_VALUE;
   return value * 100;
@@ -292,6 +301,7 @@ void printSensorData(byte index) {
   print(message[index].sensor.battery, " Vbat");
 }
 
+inline
 void print(short compactValue, String suffix) {
   if (compactValue != UNDEFINED_VALUE) {
     Serial.print(compactValue / 100.0);
@@ -299,10 +309,22 @@ void print(short compactValue, String suffix) {
   }
 }
 
+inline
+bool unconditionalTransmit() {
+  unsigned long transmissionInterval = getTime() - lastTransmissionMs;
+  boolean unconditionalTransmit = transmissionInterval >= (UNCONDITIONAL_INTERVAL - (MEASURE_INTERVAL/2));
+  if (unconditionalTransmit) {
+    Serial.print(transmissionInterval / 1000); Serial.println("s since transmission");
+  }
+  return unconditionalTransmit;
+}
+
+inline
 bool hasChangedValue(short lastValue, short nextValue, short limit) {
   return abs(lastValue - nextValue) >= limit;
 }
 
+inline
 bool hasChanged(byte index) {
   return hasChangedValue(message[lastMsgIndex].sensor.weight, message[index].sensor.weight, LIMIT_WEIGHT_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.lower, message[index].sensor.temperature.lower, LIMIT_TEMPERATURE_DIFF)

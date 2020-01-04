@@ -13,15 +13,23 @@ typedef void (*StateHandler)();
 
 class StateMachine {
   public:
-    StateMachine(const char** names) : stateNames(names) {}
+    StateMachine(int stateCount, const char** names) 
+    : stateNames(names), 
+      enterHandler(new StateHandler[stateCount]), 
+      exitHandler(new StateHandler[stateCount]) {
+      for (int i = 0; i < stateCount; i++) {
+        enterHandler[i] = 0;
+        exitHandler[i] = 0;
+      }
+    }
 
     void toState(int state) {
       if (currentState != INVALID_STATE) {
-        onEnterState(currentState);
+        onExitState(currentState);
       }
       currentState = state;
       if (currentState != INVALID_STATE) {
-        onExitState(currentState);
+        onEnterState(currentState);
       }
     }
 
@@ -59,8 +67,8 @@ class StateMachine {
   private:
     int currentState = INVALID_STATE;
     const char** stateNames;
-    StateHandler* enterHandler = new StateHandler[sizeof(stateNames)/sizeof(stateNames[0])];
-    StateHandler* exitHandler = new StateHandler[sizeof(stateNames)/sizeof(stateNames[0])];
+    StateHandler* enterHandler;
+    StateHandler* exitHandler;
 };
 
 #endif

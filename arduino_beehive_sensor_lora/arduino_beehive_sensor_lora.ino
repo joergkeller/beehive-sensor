@@ -72,7 +72,7 @@ unsigned long sleptMs = 0L;
 
 typedef enum               { SETUP,   JOIN,   MEASURE,   TRANSMIT,   SLEEP } States;
 const char* stateNames[] = {"Setup", "Join", "Measure", "Transmit", "Sleep"};
-StateMachine node(stateNames);
+StateMachine node(5, stateNames);
 
 SensorReader sensor = SensorReader();
 #if defined(__ASR6501__)

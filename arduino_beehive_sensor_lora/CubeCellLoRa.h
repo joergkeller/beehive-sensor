@@ -1,6 +1,5 @@
 /**********************************************************
  * Wrapper code for the loRa-Mac libray.
- * ---
  **********************************************************/
 #ifndef __CUBECELLLORA_H__
 #define __CUBECELLLORA_H__

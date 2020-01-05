@@ -19,7 +19,7 @@
   #define LOADCELL_SCK_PIN   GPIO3
 #else
   #define DHT_PIN             4
-  #define ONEWIRE_PIN         3
+  #define ONEWIRE_PIN         5
   #define LOADCELL_DOUT_PIN  A0
   #define LOADCELL_SCK_PIN   A1
 #endif

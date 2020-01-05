@@ -1,6 +1,10 @@
 /**********************************************************
  * Handling of user push-button and LED to switch to 
  * manual-mode (disable measure/send).
+ * ---
+ * Arduino Uno/Dragino Mini Dev: Only digital pins 2/3 can
+ * be used with interrupts.
+ * - capacitor (eg. 200nF) parallel to the button to debounce?
  **********************************************************/
 #ifndef __INTERACTION_H__
 #define __INTERACTION_H__

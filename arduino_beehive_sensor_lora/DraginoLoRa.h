@@ -3,7 +3,7 @@
  * ---
  * Code from https://github.com/SensorsIot/LoRa
  * Initialization and sending moved to a class, other code
- * seems to be obsolete (testing required).
+ * is obsolete.
  **********************************************************/
 #ifndef __DRAGINOLORA_H__
 #define __DRAGINOLORA_H__

@@ -49,7 +49,7 @@ class SensorReader {
 
     void listTemperatureSensors() {
       byte deviceCount = sensors.getDeviceCount();
-      Serial.print("Found ");
+      Serial.print("\nFound ");
       Serial.print(deviceCount, DEC);
       Serial.println(" temperature sensor");
 

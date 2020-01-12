@@ -19,14 +19,14 @@
   #define LOADCELL_SCK_PIN   GPIO3
 #else
   #define DHT_PIN             4
-  #define ONEWIRE_PIN         3
+  #define ONEWIRE_PIN         5
   #define LOADCELL_DOUT_PIN  A0
   #define LOADCELL_SCK_PIN   A1
 #endif
 
 #define TEMPERATURE_PRECISION 12
-#define SETUP_SAMPLING 100
-#define OPERATIONAL_SAMPLING 10
+#define SETUP_SAMPLING        20
+#define OPERATIONAL_SAMPLING  10
 
 class SensorReader {
   public:
@@ -49,7 +49,7 @@ class SensorReader {
 
     void listTemperatureSensors() {
       byte deviceCount = sensors.getDeviceCount();
-      Serial.print("Found ");
+      Serial.print("\nFound ");
       Serial.print(deviceCount, DEC);
       Serial.println(" temperature sensor");
 

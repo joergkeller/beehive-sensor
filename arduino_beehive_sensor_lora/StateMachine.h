@@ -3,6 +3,11 @@
  * ---
  * - handling of user-defined states with names
  * - handle entry and exit of states
+ * - handle state callback on loop
+ * - handle state timeout
+ * Client code moves direct state transitions, there are no
+ * application-level events that map to specific transitions.
+ * All potential state transitions are allowed.
  **********************************************************/
 #ifndef __STATEMACHINE_H__
 #define __STATEMACHINE_H__
@@ -127,7 +132,7 @@ class StateMachine {
   private:
     unsigned long startTime;
     int currentState = INVALID_STATE;
-    int nextState = INVALID_STATE;
+    volatile int nextState = INVALID_STATE;
     const char** stateNames;
     TimeFunction timeFunction;
     StateHandler* enterHandler;

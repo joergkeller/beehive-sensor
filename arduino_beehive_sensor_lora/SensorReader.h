@@ -25,8 +25,8 @@
 #endif
 
 #define TEMPERATURE_PRECISION 12
-#define SETUP_SAMPLING 100
-#define OPERATIONAL_SAMPLING 10
+#define SETUP_SAMPLING        20
+#define OPERATIONAL_SAMPLING  10
 
 class SensorReader {
   public:

@@ -1,5 +1,5 @@
 /**********************************************************
- * Handling of user push-button and LED to switch to 
+ * Handling of user push-button and LED to switch to
  * manual-mode (disable measure/send).
  * ---
  * Arduino Uno/Dragino Mini Dev: Only digital pins 2/3 can
@@ -10,7 +10,7 @@
 #define __INTERACTION_H__
 
 #if defined(__ASR6501__)
-  #define BUTTON_PIN  GPIO0
+  #define BUTTON_PIN  GPIO7
   #define LED_PIN     GPIO1
 #else
   #define BUTTON_PIN  3
@@ -21,7 +21,7 @@ typedef void (*ButtonHandler)();
 
 class Interaction {
   public:
-    Interaction(ButtonHandler handler) {
+    void begin(ButtonHandler handler) {
       pinMode(LED_PIN, OUTPUT);
       setLed(false);
       pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -29,7 +29,7 @@ class Interaction {
     }
 
     bool checkSwitchPressed() {
-      delayMicroseconds(5000);    
+      delayMicroseconds(5000);
       return ! digitalRead(BUTTON_PIN);
     }
 

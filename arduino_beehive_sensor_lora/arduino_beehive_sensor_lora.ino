@@ -2,15 +2,15 @@
  * LoRa sample code snipped: Reading sensors and sending
  * LoRa messages.
  * ---
- * The sensors are read in intervals and the sensor data message 
- * is sent using LoRa. The controller then goes to deep sleep to 
+ * The sensors are read in intervals and the sensor data message
+ * is sent using LoRa. The controller then goes to deep sleep to
  * reduce power.
  * A manual mode stops sending data but continuous to read raw data.
  * - USB/Battery voltage measurement (internal)
  * - DS18B20 temperature sensors (multiple) are read from pin D5 (GPIO5)
  * - DHT22 temperature/humidity sensor is read from pin D4 (GPIO4)
  * - Weight measured with load cell and HX711 ADC from pins A0/A1 (GPIO2/3)
- * - Push Button to switch to manual mode with pullup on pin D3 (GPIO0)
+ * - Push Button to switch to manual mode with pullup on pin D3 (GPIO7)
  * - LED to indicate manual mode (active low) on pin A2 (GPIO1)
  * ---
  * message version (aka command):
@@ -80,7 +80,7 @@ typedef enum               {JOIN,   MEASURE,   TRANSMIT,   SLEEP,   MANUAL } Sta
 const char* stateNames[] = {"Join", "Measure", "Transmit", "Sleep", "Manual"};
 StateMachine node(5, stateNames, getTime);
 
-Interaction interaction(onSwitchManualMode);
+Interaction interaction;
 
 SensorReader sensor = SensorReader();
 #if defined(__ASR6501__)
@@ -103,6 +103,7 @@ void setup() {
   sensor.begin();
   initializeMessage();
   radio.begin();
+  interaction.begin(onSwitchManualMode);
 
   node.onEnter(JOIN, beginJoin);
   node.onState(JOIN, joining);
@@ -210,7 +211,11 @@ void powerDown() {
   uint32_t timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
   Serial.print(timeToWake / 1000); Serial.println(" s sleeping");
   delay(1);
-  
+  Serial.flush();
+  #ifdef USBCON
+    USBDevice.detach();
+  #endif
+
   #if defined(__ASR6501__)
     TimerInit(&wakeupTimer, onSleepTimeout);
     TimerSetValue(&wakeupTimer, timeToWake);
@@ -220,23 +225,24 @@ void powerDown() {
 }
 
 void sleeping() {
-  Serial.flush();
-  #ifdef USBCON
-    USBDevice.detach();
-  #endif
-
   #if defined(__ASR6501__)
     LowPower_Handler();
   #else
-    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-    sleptMs += 8000;
+    unsigned long timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
+    if (timeToWake >= 8000) {
+      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+      sleptMs += 8000;
+    } else if (timeToWake >= 4000) {
+      LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
+      sleptMs += 4000;
+    } else if (timeToWake >= 2000) {
+      LowPower.powerDown(SLEEP_2S, ADC_OFF, BOD_OFF);
+      sleptMs += 2000;
+    } else {
+      LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
+      sleptMs += 1000;
+    }
   #endif
-
-  #ifdef USBCON
-    USBDevice.init();
-    USBDevice.attach();
-  #endif
-  delay(1);
 }
 
 void onSleepTimeout() {
@@ -244,6 +250,10 @@ void onSleepTimeout() {
 } 
 
 void powerUp() {
+  #ifdef USBCON
+    USBDevice.init();
+    USBDevice.attach();
+  #endif
   sensor.powerUp();
   radio.reset(seqNumber);
 }
@@ -273,6 +283,11 @@ void beginManual() {
 
 void onManualTimeout() {
   measureRawData();
+
+  #if defined(__ASR6501__)
+    TimerStart(&wakeupTimer);
+    sleptMs += RAW_MEASURE_INTERVAL;
+  #endif
   // remain in manual state
 }
 
@@ -314,6 +329,7 @@ void measureRawData() {
   sensor.listRawWeight();
   readSensors(1);
   printSensorData(1);
+  delay(1);
   interaction.setLed(false);
 }
 
@@ -330,6 +346,7 @@ unsigned long getTime() {
   return millis() + sleptMs;
 }
 
+inline
 short asShort(float value) {
   if (isnan(value) || value == -127.0f) return UNDEFINED_VALUE;
   return value * 100;
@@ -359,6 +376,7 @@ void printSensorData(byte index) {
   print(message[index].sensor.battery, " Vbat");
 }
 
+inline
 void print(short compactValue, String suffix) {
   if (compactValue != UNDEFINED_VALUE) {
     Serial.print(compactValue / 100.0);
@@ -366,6 +384,7 @@ void print(short compactValue, String suffix) {
   }
 }
 
+inline
 bool unconditionalTransmit() {
   unsigned long transmissionInterval = getTime() - lastTransmissionMs;
   boolean unconditionalTransmit = transmissionInterval >= (UNCONDITIONAL_INTERVAL - (MEASURE_INTERVAL/2));
@@ -375,10 +394,12 @@ bool unconditionalTransmit() {
   return unconditionalTransmit;
 }
 
+inline
 bool hasChangedValue(short lastValue, short nextValue, short limit) {
   return abs(lastValue - nextValue) >= limit;
 }
 
+inline
 bool hasChanged(byte index) {
   return hasChangedValue(message[lastMsgIndex].sensor.weight, message[index].sensor.weight, LIMIT_WEIGHT_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.lower, message[index].sensor.temperature.lower, LIMIT_TEMPERATURE_DIFF)

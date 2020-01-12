@@ -8,7 +8,7 @@ Weight, temperature and humidity measurement in a beehive using Arduino and LoRa
     - Weight cell with HX711 converter (Dout: A0/GPIO2, Sck: A1/GPIO3)
     - LoRaWan connection (TTN)
     - Solar power with rechargeable battery
-    - Button (D3/GPIO0) with LED (A2/GPIO1) to disable temporary (manual mode)
+    - Button (D3/GPIO7) with LED (A2/GPIO1) to disable temporary (manual mode)
     - Evtl. slave devices with RS-485?
     
 - TTN-Gateway/Network/Application

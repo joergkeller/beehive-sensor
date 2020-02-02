@@ -1,4 +1,7 @@
-const axios = require('axios')
+const axios = require('axios');
+const AWS = require('aws-sdk');
+AWS.config.update({region: region});
+const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 
 const region = 'eu-central-1';
 const dbTable = 'SensorData';
@@ -65,10 +68,6 @@ async function sendToThingspeak(device, payload) {
 }
 
 async function sendToDb(payload) {
-    var AWS = require('aws-sdk');
-    AWS.config.update({region: region});
-    var docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
-
     payload.timestamp = payload.metadata.time;
     var params = {
         TableName: dbTable,

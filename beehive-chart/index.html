@@ -7,39 +7,46 @@
 </head>
 <body>
     <h1>Bienenstock Sensor Daten</h1>
+    <div id="app">
+        <h2>{{current.temperature}}°C Aussentemperatur</h2>
+        <canvas id="outerChart" width="600" height="200"></canvas>
 
-    <h2>9.5°C Aussentemperatur</h2>
-    <canvas id="chart" width="600" height="200"></canvas>
+        <h2>{{current.humidity}}% Luftfeuchtigkeit</h2>
+        <canvas id="humidityChart" width="600" height="200"></canvas>
 
-    <h2>9.5°C Aussentemperatur</h2>
-    <canvas id="outerChart" width="600" height="200"></canvas>
+        <h2>{{current.weight}}kg Gewicht</h2>
+        <canvas id="weightChart" width="600" height="200"></canvas>
 
-    <h2>76.8% Luftfeuchtigkeit</h2>
-    <canvas id="humidityChart" width="600" height="200"></canvas>
-
-    <h2>2.73kg Gewicht</h2>
-    <canvas id="weightChart" width="600" height="200"></canvas>
-
-    <h2>4.08V Batteriespannung</h2>
-    <canvas id="batteryChart" width="600" height="200"></canvas>
+        <h2>{{current.battery}}V Batteriespannung</h2>
+        <canvas id="batteryChart" width="600" height="200"></canvas>
+    </div>
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script>
+    var current = {
+        temperature: 0,
+        humidity: 0,
+        weight: 0,
+        battery: 0
+    };
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Bees!',
+            current: current
+        }
+    });
+
     const devId = 'cube-cell-1';
     const days = 3;
+    const collapsed = true;
     const fromDate = moment().subtract(days-1, 'day').format('YYYY-MM-DD');
     const url = "https://ibq5ng1v73.execute-api.eu-central-1.amazonaws.com/v0/sensor/" + devId + "?from=" + fromDate;
-
-    const timeSeries = (data, selector) => data.readings.map(reading => (
-        {
-            t: reading.timestamp,
-            y: selector(reading)
-        }
-    ));
 
     const timeAxis = {
         type: "time",
@@ -54,7 +61,22 @@
         },
         scaleLabel: {
             display:     true,
-            labelString: 'Time'
+            labelString: 'Zeit'
+        }
+    };
+
+    const hourAxis = {
+        type: "time",
+        time:  {
+            unit: 'hour',
+            parser: "HH:mm:ss",
+            displayFormats: {
+                hour: 'HH:mm'
+            }
+        },
+        scaleLabel: {
+            display:     true,
+            labelString: 'Zeit'
         }
     };
 
@@ -64,7 +86,7 @@
             labelString: '°C'
         },
         ticks: {
-            suggestedMin: 5,
+            suggestedMin: 0,
             suggestedMax: 25
         }
     };
@@ -87,7 +109,7 @@
         },
         ticks: {
             suggestedMin: 0,
-            suggestedMax: 25
+            suggestedMax: 10
         }
     };
 
@@ -97,10 +119,26 @@
             labelString: 'Volt'
         },
         ticks: {
-            suggestedMin: 4.0,
+            suggestedMin: 3.7,
             suggestedMax: 4.1
         }
     };
+
+    const redColorStyle = index => 'rgba(255,' + inRange(128,0,days,index) + ',0, ' + inRange(0.3,1,days,index) + ')';
+    const greenColorStyle = index => 'rgba(' + inRange(255,0,days,index) + ',255,0, ' + inRange(0.5,1,days,index) + ')';
+    const blueColorStyle = index => 'rgba(' + inRange(128,0,days,index) + ',0,255, ' + inRange(0.3,1,days,index) + ')';
+    const blueishColorStyle = index => 'rgba(64,' + inRange(192,0,days,index) + ',255, ' + inRange(0.3,1,days,index) + ')';
+    const redBgColorStyle = index => index === days - 1 ? 'rgba(255,0,0,0.1)' : 'rgba(0,0,0,0)';
+    const greenBgColorStyle = index => index === days - 1 ? 'rgba(0,255,0,0.1)' : 'rgba(0,0,0,0)';
+    const blueBgColorStyle = index => index === days - 1 ? 'rgba(0,0,255,0.1)' : 'rgba(0,0,0,0)';
+    const blueishBgColorStyle = index => index === days - 1 ? 'rgba(64,64,255,0.1)' : 'rgba(0,0,0,0)';
+
+    const timeSeries = (data, selector) => data.readings.map(reading => (
+        {
+            t: reading.timestamp,
+            y: selector(reading)
+        }
+    ));
 
     function createChart(element, label, data, axis, color, bgColor) {
         return new Chart(document.getElementById(element), {
@@ -121,59 +159,63 @@
                 }
             }
         });
-    };
+    }
 
-    function renderChart(data) {
-        console.log(data);
+    function inRange(min, max, count, index) {
+        const step = (max - min) / (count - 1);
+        return min + index * step;
+    }
+
+    function splitDays(data, selector, colorStyle, bgColorStyle) {
+        const dashStyle = index => (index === days - 1 ? [] : [(index+1)*3, index+1]);
         const multidaySeries = _.groupBy(data.readings, r => r.timestamp.substring(0,10));
-
-        const inRange = (min, max, count, index) => {
-            const step = (max - min) / (count - 1);
-            return min + index * step;
-        };
-        const dashStyle = index => (index == days - 1 ? [] : [(index+1)*3, index+1]);
-        const colorStyle = index => 'rgba(255,' + inRange(128,0,days,index) + ',0, ' + inRange(0.3,1,days,index) + ')';
-        const bgColorStyle = index => index == days - 1 ? 'rgba(255,0,0,0.1)' : 'rgba(0,0,0,0)';
         const dataset = Object.keys(multidaySeries).map((date, index) => ({
-            label: moment(date).format('D. MMM.'),
+            label: moment(date).format('D. MMM. YYYY'),
             cubicInterpolationMode: 'monotone',
             borderDash: dashStyle(index),
             borderColor: colorStyle(index),
             backgroundColor: bgColorStyle(index),
-            data: multidaySeries[date].map(r => ({t: r.timestamp.substring(11,19), y: r.sensor.temperature.outer}))
+            data: multidaySeries[date].map(r => ({t: r.timestamp.substring(11,19), y: selector(r)}))
         }));
         console.log(dataset);
-        const stripTime = timestamp => timestamp.substring(11,19);
-        new Chart(document.getElementById('chart'), {
+        return dataset;
+    }
+
+    function createMultidayChart(elementId, dataset, axis) {
+        return new Chart(document.getElementById(elementId), {
             type: 'line',
             data: {
                 datasets: dataset
             },
             options: {
                 scales: {
-                    xAxes: [{
-                        type: "time",
-                        time:  {
-                            unit: 'hour',
-                            parser: "HH:mm:ss",
-                            displayFormats: {
-                                hour: 'HH:mm'
-                            }
-                        },
-                        scaleLabel: {
-                            display:     true,
-                            labelString: 'Time'
-                        }
-                    }],
-                    yAxes: [temperatureAxis]
+                    xAxes: [hourAxis],
+                    yAxes: [axis]
                 }
             }
         });
+    }
 
-        createChart('outerChart', 'Aussentemperatur [°C]', timeSeries(data, r => r.sensor.temperature.outer), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
-        createChart('humidityChart', 'Luftfeuchtigkeit [%rel]', timeSeries(data, r => r.sensor.humidity.outer), humidityAxis, "rgba(64, 128, 255, 0.9)", "rgba(64, 128, 255, 0.1)");
-        createChart('weightChart', 'Gewicht [kg]', timeSeries(data, r => r.sensor.weight), weightAxis, "rgba(0, 200, 0, 0.9)", "rgba(0, 200, 0, 0.1)");
-        createChart('batteryChart', 'Batterie [V]', timeSeries(data, r => r.sensor.battery), batteryAxis, "rgba(0, 0, 200, 0.9)", "rgba(0, 0, 200, 0.1)");
+    const last = array => array.slice(-1)[0];
+
+    function renderChart(data) {
+        console.log(data);
+        current.temperature = last(data.readings).sensor.temperature.outer;
+        current.humidity = last(data.readings).sensor.humidity.outer;
+        current.weight = last(data.readings).sensor.weight;
+        current.battery = last(data.readings).sensor.battery;
+
+        if (collapsed) {
+            createMultidayChart('outerChart', splitDays(data, r => r.sensor.temperature.outer, redColorStyle, redBgColorStyle), temperatureAxis);
+            createMultidayChart('humidityChart', splitDays(data, r => r.sensor.humidity.outer, blueishColorStyle, blueishBgColorStyle), humidityAxis);
+            createMultidayChart('weightChart', splitDays(data, r => r.sensor.weight, greenColorStyle, greenBgColorStyle), weightAxis);
+            createMultidayChart('batteryChart', splitDays(data, r => r.sensor.battery, blueColorStyle, blueBgColorStyle), batteryAxis);
+        } else {
+            createChart('outerChart', 'Aussentemperatur [°C]', timeSeries(data, r => r.sensor.temperature.outer), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
+            createChart('humidityChart', 'Luftfeuchtigkeit [%rel]', timeSeries(data, r => r.sensor.humidity.outer), humidityAxis, "rgba(64, 128, 255, 0.9)", "rgba(64, 128, 255, 0.1)");
+            createChart('weightChart', 'Gewicht [kg]', timeSeries(data, r => r.sensor.weight), weightAxis, "rgba(0, 200, 0, 0.9)", "rgba(0, 200, 0, 0.1)");
+            createChart('batteryChart', 'Batterie [V]', timeSeries(data, r => r.sensor.battery), batteryAxis, "rgba(0, 0, 200, 0.9)", "rgba(0, 0, 200, 0.1)");
+        }
     }
 
     axios.get(url)

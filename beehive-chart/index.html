@@ -8,22 +8,30 @@
 <body>
     <h1>Bienenstock Sensor Daten</h1>
 
-    <h2>Aussentemperatur</h2>
+    <h2>9.5°C Aussentemperatur</h2>
+    <canvas id="chart" width="600" height="200"></canvas>
+
+    <h2>9.5°C Aussentemperatur</h2>
     <canvas id="outerChart" width="600" height="200"></canvas>
 
-    <h2>Luftfeuchtigkeit</h2>
+    <h2>76.8% Luftfeuchtigkeit</h2>
     <canvas id="humidityChart" width="600" height="200"></canvas>
 
-    <h2>Batteriespannung</h2>
+    <h2>2.73kg Gewicht</h2>
+    <canvas id="weightChart" width="600" height="200"></canvas>
+
+    <h2>4.08V Batteriespannung</h2>
     <canvas id="batteryChart" width="600" height="200"></canvas>
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>
 <script>
     const devId = 'cube-cell-1';
-    const fromDate = moment().subtract(1, 'day').format('YYYY-MM-DD');
+    const days = 3;
+    const fromDate = moment().subtract(days-1, 'day').format('YYYY-MM-DD');
     const url = "https://ibq5ng1v73.execute-api.eu-central-1.amazonaws.com/v0/sensor/" + devId + "?from=" + fromDate;
 
     const timeSeries = (data, selector) => data.readings.map(reading => (
@@ -72,6 +80,17 @@
         }
     };
 
+    const weightAxis = {
+        scaleLabel: {
+            display:     true,
+            labelString: 'kg'
+        },
+        ticks: {
+            suggestedMin: 0,
+            suggestedMax: 25
+        }
+    };
+
     const batteryAxis = {
         scaleLabel: {
             display:     true,
@@ -105,9 +124,56 @@
     };
 
     function renderChart(data) {
-        createChart('outerChart', 'Aussentemperatur [°C]', timeSeries(data, r => r.sensor.temperature.outer), temperatureAxis, "rgba(255, 0, 0, 0.9)", "rgba(255, 0, 0, 0.1)");
+        console.log(data);
+        const multidaySeries = _.groupBy(data.readings, r => r.timestamp.substring(0,10));
+
+        const inRange = (min, max, count, index) => {
+            const step = (max - min) / (count - 1);
+            return min + index * step;
+        };
+        const dashStyle = index => (index == days - 1 ? [] : [(index+1)*3, index+1]);
+        const colorStyle = index => 'rgba(255,' + inRange(128,0,days,index) + ',0, ' + inRange(0.3,1,days,index) + ')';
+        const bgColorStyle = index => index == days - 1 ? 'rgba(255,0,0,0.1)' : 'rgba(0,0,0,0)';
+        const dataset = Object.keys(multidaySeries).map((date, index) => ({
+            label: moment(date).format('D. MMM.'),
+            cubicInterpolationMode: 'monotone',
+            borderDash: dashStyle(index),
+            borderColor: colorStyle(index),
+            backgroundColor: bgColorStyle(index),
+            data: multidaySeries[date].map(r => ({t: r.timestamp.substring(11,19), y: r.sensor.temperature.outer}))
+        }));
+        console.log(dataset);
+        const stripTime = timestamp => timestamp.substring(11,19);
+        new Chart(document.getElementById('chart'), {
+            type: 'line',
+            data: {
+                datasets: dataset
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time:  {
+                            unit: 'hour',
+                            parser: "HH:mm:ss",
+                            displayFormats: {
+                                hour: 'HH:mm'
+                            }
+                        },
+                        scaleLabel: {
+                            display:     true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [temperatureAxis]
+                }
+            }
+        });
+
+        createChart('outerChart', 'Aussentemperatur [°C]', timeSeries(data, r => r.sensor.temperature.outer), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
         createChart('humidityChart', 'Luftfeuchtigkeit [%rel]', timeSeries(data, r => r.sensor.humidity.outer), humidityAxis, "rgba(64, 128, 255, 0.9)", "rgba(64, 128, 255, 0.1)");
-        createChart('batteryChart', 'Batterie [V]', timeSeries(data, r => r.sensor.battery), batteryAxis, "rgba(0, 0, 255, 0.9)", "rgba(0, 0, 255, 0.1)");
+        createChart('weightChart', 'Gewicht [kg]', timeSeries(data, r => r.sensor.weight), weightAxis, "rgba(0, 200, 0, 0.9)", "rgba(0, 200, 0, 0.1)");
+        createChart('batteryChart', 'Batterie [V]', timeSeries(data, r => r.sensor.battery), batteryAxis, "rgba(0, 0, 200, 0.9)", "rgba(0, 0, 200, 0.1)");
     }
 
     axios.get(url)

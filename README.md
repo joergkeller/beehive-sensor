@@ -48,14 +48,14 @@ Three boards have been tested:
     
 Used pins:
 
-| Pin Function | Arduino / Dragino | CubeCell |
-| -------- | ------- | -------- |
-| 1-wire Temp sensor | D5 | GPIO5 |
-| DHT-11/22 | D4 | GPIO4 |
-| HX711 Dout | A0 | GPIO2 |
-| HX711 Sck | A1 | GPIO3 |
-| Push-Button (to GND) | D3 | GPIO7 |
-| LED (to VCC) | A2 | GPIO1 |
+| Pin Function | Wiring | Arduino / Dragino | CubeCell |
+| ------------ | ------ | ----------------- | -------- |
+| 1-wire Temp sensor | pull-up resistor 4k7 to VCC | D5 | GPIO5 |
+| DHT-11/22 | pull-up resistor 4k7 to VCC | D4 | GPIO4 |
+| HX711 Dout | | A0 | GPIO2 |
+| HX711 Sck | | A1 | GPIO3 |
+| Push-Button | to GND (active low) | D3 | GPIO7 |
+| LED | to VCC (active low) | A2 | GPIO1 |
        
 ## Transmitted LoRa message (binary encoded)
 - Fixed size and order of measured values

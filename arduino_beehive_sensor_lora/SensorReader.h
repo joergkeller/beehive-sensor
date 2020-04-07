@@ -100,6 +100,10 @@ class SensorReader {
     // battery voltage
     float getVoltage() { return readVcc() / 1000.0; }
 
+    float getWeightCompensation(float temperature) {
+      return (temperature * TEMPERATURE_FACTOR) + TEMPERATURE_OFFSET;
+    }
+
   private:
     DHT dht = DHT(DHT_PIN, DHT22);
     OneWire oneWire = OneWire(ONEWIRE_PIN);

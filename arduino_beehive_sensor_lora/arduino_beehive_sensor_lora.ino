@@ -347,20 +347,33 @@ unsigned long getTime() {
 }
 
 inline
+boolean isUndefined(float value) {
+  return isnan(value) || value == -127.0f;
+}
+
+inline
+boolean isDefined(float value) { return ! isUndefined(value); }
+
+inline
 short asShort(float value) {
-  if (isnan(value) || value == -127.0f) return UNDEFINED_VALUE;
+  if (isUndefined(value)) return UNDEFINED_VALUE;
   return value * 100;
 }
 
 void readSensors(byte index) {
   sensor.startReading();
+  float outerTemperature = sensor.getOuterTemperature();
+  float weight = sensor.getWeight();
+  if (isDefined(outerTemperature) && isDefined(weight)) {
+    weight -= sensor.getWeightCompensation(outerTemperature);
+  }
   
   message[index].sensor.temperature.upper = asShort(sensor.getUpperTemperature());
   message[index].sensor.temperature.middle = asShort(sensor.getMiddleTemperature());
   message[index].sensor.temperature.lower = asShort(sensor.getLowerTemperature());
-  message[index].sensor.temperature.outer = asShort(sensor.getOuterTemperature());
+  message[index].sensor.temperature.outer = asShort(outerTemperature);
   message[index].sensor.humidity.outer = asShort(sensor.getOuterHumidity());
-  message[index].sensor.weight = asShort(sensor.getWeight());
+  message[index].sensor.weight = asShort(weight);
   message[index].sensor.battery = asShort(sensor.getVoltage());
 
   sensor.stopReading();

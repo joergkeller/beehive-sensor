@@ -127,14 +127,21 @@ void initializeMessage() {
   Serial.print("Start Beehive LoRa script with sensor message v");
   Serial.println(MESSAGE_VERSION);
   message[0].sensor.version = MESSAGE_VERSION;
+  message[0].sensor.temperature.upper = UNDEFINED_VALUE;
+  message[0].sensor.temperature.middle = UNDEFINED_VALUE;
+  message[0].sensor.temperature.lower = UNDEFINED_VALUE;
+  message[0].sensor.temperature.outer = UNDEFINED_VALUE;
+  message[0].sensor.humidity.outer = UNDEFINED_VALUE;
+  message[0].sensor.weight = UNDEFINED_VALUE;
+  message[0].sensor.battery = UNDEFINED_VALUE;
   message[1].sensor.version = MESSAGE_VERSION;
-  message[lastMsgIndex].sensor.temperature.upper = UNDEFINED_VALUE;
-  message[lastMsgIndex].sensor.temperature.middle = UNDEFINED_VALUE;
-  message[lastMsgIndex].sensor.temperature.lower = UNDEFINED_VALUE;
-  message[lastMsgIndex].sensor.temperature.outer = UNDEFINED_VALUE;
-  message[lastMsgIndex].sensor.humidity.outer = UNDEFINED_VALUE;
-  message[lastMsgIndex].sensor.weight = UNDEFINED_VALUE;
-  message[lastMsgIndex].sensor.battery = UNDEFINED_VALUE;
+  message[1].sensor.temperature.upper = UNDEFINED_VALUE;
+  message[1].sensor.temperature.middle = UNDEFINED_VALUE;
+  message[1].sensor.temperature.lower = UNDEFINED_VALUE;
+  message[1].sensor.temperature.outer = UNDEFINED_VALUE;
+  message[1].sensor.humidity.outer = UNDEFINED_VALUE;
+  message[1].sensor.weight = UNDEFINED_VALUE;
+  message[1].sensor.battery = UNDEFINED_VALUE;
 }
 
 /* Loop ******************************************/
@@ -354,7 +361,7 @@ short asShort(float value) {
 
 void readSensors(byte index) {
   sensor.startReading();
-  
+
   message[index].sensor.temperature.upper = asShort(sensor.getUpperTemperature());
   message[index].sensor.temperature.middle = asShort(sensor.getMiddleTemperature());
   message[index].sensor.temperature.lower = asShort(sensor.getLowerTemperature());

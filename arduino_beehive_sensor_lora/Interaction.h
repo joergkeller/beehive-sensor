@@ -17,7 +17,7 @@
   #define LED_PIN    A2
 #endif
 
-#if (LORAWAN_RGB==1)
+#if(LoraWan_RGB==1)
 #include "Adafruit_NeoPixel.h"
 Adafruit_NeoPixel pixel(1, RGB, NEO_GRB + NEO_KHZ800);
 
@@ -46,7 +46,6 @@ void RGB_OFF(void) {
 }
 #endif
 
-
 typedef void (*ButtonHandler)();
 
 class Interaction {
@@ -57,7 +56,7 @@ class Interaction {
       setLed(false);
 
       // internal Neopixel
-      #if (LORAWAN_RGB==1)
+      #if(LoraWan_RGB==1)
       pinMode(Vext,OUTPUT);
       #endif
 
@@ -73,7 +72,7 @@ class Interaction {
 
     void setLed(bool state) {
       digitalWrite(LED_PIN, state ? LOW : HIGH); // LED is active low
-      #if (LORAWAN_RGB==1)
+      #if(LoraWan_RGB==1)
         if (state) {
           RGB_SET(255, 0, 0);
         } else {

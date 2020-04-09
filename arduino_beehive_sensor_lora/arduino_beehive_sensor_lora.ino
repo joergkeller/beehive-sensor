@@ -57,7 +57,7 @@ typedef union {
 unsigned long getTime();
 void onSwitchManualMode();
 
-#define RAW_MEASURE_INTERVAL    (4*SEC)   // Dragino only allows 8s, 4s, 2s, 1s
+#define RAW_MEASURE_INTERVAL    (8*SEC)   // Dragino only allows 8s, 4s, 2s, 1s
 #define MEASURE_INTERVAL        (5*MIN)
 #define UNCONDITIONAL_INTERVAL  (30*MIN)
 #define CONFIRMATION            false

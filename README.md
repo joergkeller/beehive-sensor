@@ -79,20 +79,38 @@ Used pins:
 ~~~   
    
 ## Checkout this project
-Local installation of 'git' assumed.
+Local installation of `git` and `Arduino IDE` assumed.\
+Install the CubeCell board: https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/quick_start.html
 ~~~
 git clone https://github.com/joergkeller/beehive-sensor.git
 cd beehive-sensor
 git submodule init
 git submodule update
 ~~~
+
+| Arduino Settings      | Value |
+| ----------------------|-------|
+| File > Preferences > Settings > Board Manager URLs | `http://resource.heltec.cn/download/package_CubeCell_index.json`
+| File > Preferences > Settings > Sketchbook location | `C:\...\beehive-sensor` |
+| File > Open... | `C:\...\beehive-sensor\arduino_beehive_sensor_lora\arduino_beehive_sensor_lora.ino` |
+| Tools > Board | `CubeCell-Board` |
+| Tools > LORAWAN_REGION | `REGION_EU868` or your region |
+| Tools > LORAWAN_CLASS | `CLASS_A` |
+| Tools > LORAWAN_NETMODE | `OTAA` |
+| Tools > LORAWAN_ADR | `ON` |
+| Tools > LORAWAN_UPLINKMODE | `UNCONFIRMED` |
+| Tools > LORAWAN_NET_RESERVATION | `OFF` |
+| Tools > LORAWAN_AT_SUPPORT | `OFF` |
+| Tools > LORAWAN_RGB | `ACTIVE` or `DEACTIVE` |
+
 Then
 - Create TTN account/application/device and enter OTAA/ABP authorization codes in `credentials.h`
 - Compile/upload sketch
-- Activation with OTAA takes some time
+- Activation with OTAA takes some time (even half an hour or so)
 - Press button to enter 'manual mode'
-    - no LoRa messages sending, blinking LED instead
-    - continous weight measuring for calibration, calculate offset/scale (eg. see [Excel sheet](./docs/Gewicht%20Eichung%20Loadcell.xlsx)) 
+    - no LoRa messages sending, blinking LED instead (useful if you work on your beehive)
+    - continous weight measuring for calibration, calculate offset/scale (eg. see [Excel sheet](./docs/Gewicht%20Eichung%20Loadcell.xlsx))
+    - for temperature compensation, measure weights at different temperatures also 
     - scanning 1-wire temperature sensors one by one, note ids
     - press button again to start LoRa activation again
 - Enter 1-wire sensor ids and weight calibration to `calibration.h`

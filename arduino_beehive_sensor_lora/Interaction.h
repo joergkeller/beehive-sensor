@@ -11,9 +11,11 @@
 
 #if defined(__ASR6501__)
   #define BUTTON_PIN  GPIO7
+  #define BUTTON_INTERRUPT BUTTON_PIN
   #define LED_PIN     GPIO1
 #else
   #define BUTTON_PIN  3
+  #define BUTTON_INTERRUPT digitalPinToInterrupt(BUTTON_PIN)
   #define LED_PIN    A2
 #endif
 
@@ -21,7 +23,7 @@
 #include "Adafruit_NeoPixel.h"
 Adafruit_NeoPixel pixel(1, RGB, NEO_GRB + NEO_KHZ800);
 
-void RGB_SET(uint8_t red, uint8_t green, uint8_t blue) {
+void setRGB(uint8_t red, uint8_t green, uint8_t blue) {
   digitalWrite(Vext, LOW);  // Set power
   delay(1);
   pixel.begin();            // Initialize RGB strip object (REQUIRED)
@@ -29,18 +31,18 @@ void RGB_SET(uint8_t red, uint8_t green, uint8_t blue) {
   pixel.show();             // Send the updated pixel colors to the hardware.
 }
 
-void RGB_ON(uint32_t color, uint32_t time) {
+void turnOnRGB(uint32_t color, uint32_t time) {
   uint8_t red,green,blue;
   red=(uint8_t)(color>>16);
   green=(uint8_t)(color>>8);
   blue=(uint8_t)color;
-  RGB_SET(red, green, blue);
+  setRGB(red, green, blue);
   if (time > 0) {
     delay(time);
   }
 }
 
-void RGB_OFF(void) {
+void turnOffRGB(void) {
   pixel.clear();            // Set all pixel colors to 'off'
   digitalWrite(Vext, HIGH); // Cut power
 }
@@ -62,7 +64,7 @@ class Interaction {
 
       // internal/external user button
       pinMode(BUTTON_PIN, INPUT_PULLUP);
-      attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), handler, FALLING);
+      attachInterrupt(BUTTON_INTERRUPT, handler, FALLING);
     }
 
     bool checkSwitchPressed() {
@@ -74,9 +76,9 @@ class Interaction {
       digitalWrite(LED_PIN, state ? LOW : HIGH); // LED is active low
       #if(LoraWan_RGB==1)
         if (state) {
-          RGB_SET(255, 0, 0);
+          setRGB(255, 0, 0);
         } else {
-          RGB_OFF();
+          turnOffRGB();
         }
       #endif
     }

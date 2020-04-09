@@ -57,7 +57,7 @@ typedef union {
 unsigned long getTime();
 void onSwitchManualMode();
 
-#define RAW_MEASURE_INTERVAL    (8*SEC)   // Dragino only allows 8s, 4s, 2s, 1s
+#define RAW_MEASURE_INTERVAL    (4*SEC)   // Dragino only allows 8s, 4s, 2s, 1s
 #define MEASURE_INTERVAL        (5*MIN)
 #define UNCONDITIONAL_INTERVAL  (30*MIN)
 #define CONFIRMATION            false
@@ -98,7 +98,7 @@ void setup() {
   delay(500);
 
   #if defined(__ASR6501__)
-    BoardInitMcu();
+    boardInitMcu();
   #endif
   sensor.begin();
   initializeMessage();
@@ -233,7 +233,7 @@ void powerDown() {
 
 void sleeping() {
   #if defined(__ASR6501__)
-    LowPower_Handler();
+    lowPowerHandler();
   #else
     unsigned long timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
     if (timeToWake >= 8000) {
@@ -305,7 +305,7 @@ void manualMode() {
   #endif
 
   #if defined(__ASR6501__)
-    LowPower_Handler();
+    lowPowerHandler();
   #else
     #if RAW_MEASURE_INTERVAL >= 8000
       LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);

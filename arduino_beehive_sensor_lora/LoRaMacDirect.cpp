@@ -7,7 +7,7 @@
 #include "LoRaMacDirect.h"
 
 /* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
-bool KeepNet = LORAWAN_Net_Reserve;
+bool keepNet = LORAWAN_NET_RESERVE;
 
 LoRaMacPrimitives_t macPrimitive;
 LoRaMacCallback_t macCallback;

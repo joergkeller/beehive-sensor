@@ -54,7 +54,7 @@ Used pins:
 | DHT-11/22 | pull-up resistor 4k7 to VCC | D4 | GPIO4 |
 | HX711 Dout | | A0 | GPIO2 |
 | HX711 Sck | | A1 | GPIO3 |
-| Push-Button | to GND (active low) | D3 | GPIO7 |
+| Push-Button | to GND (active low) | D3 | GPIO7 (& battery test control) |
 | LED | to VCC (active low) | A2 | GPIO1 |
        
 ## Transmitted LoRa message (binary encoded)

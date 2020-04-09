@@ -42,7 +42,8 @@ class StateMachine {
 
     void toState(int state) {
       if (nextState != INVALID_STATE) {
-        Serial.println("Error! Not processed state transition.");
+        Serial.print("Error! Not processed state transition to ");
+        Serial.println(stateName(nextState));
       }
       nextState = state;
     }

@@ -8,6 +8,8 @@
   // load cell calibration (calculate from raw values during setup phase)
   #define LOADCELL_OFFSET -43496    // zero_reading: raw value measured with zero weight
   #define LOADCELL_DIVIDER 25365    // real_weight / (weighted_reading - zero_reading)
+  #define TEMPERATURE_FACTOR 0.0e0  // gradient of trendline
+  #define TEMPERATURE_OFFSET 0.0e0  // offset of trendline
 
   // set unique DS18B20 addresses of used sensors
   const DeviceAddress lowerThermometer =  { 0x28, 0xC2, 0xE1, 0x78, 0x0A, 0x00, 0x00, 0x26 };

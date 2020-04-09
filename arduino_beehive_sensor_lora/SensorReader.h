@@ -117,6 +117,7 @@ class SensorReader {
     }
 
     long readVcc() {
+      noInterrupts();
       #if defined(__ASR6501__)
         pinMode(ADC_CTL, OUTPUT);
         digitalWrite(ADC_CTL, LOW);
@@ -135,6 +136,7 @@ class SensorReader {
         result = 1126400L / result; // Back-calculate AVcc in mV
         return result;
       #endif
+      interrupts();
     }
 
 };

@@ -1,9 +1,8 @@
-name: Test arduino compile for the device script
 on: [push, pull_request]
 
 jobs:
   build:
-    name: Test arduino compile for the device script
+    name: Arduino compile test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -14,7 +13,7 @@ jobs:
       - name: Install CubeCell core
         run: |
           arduino-cli core update-index
-          arduino-cli core install CubeCell:CubeCell@0.5.0
+          arduino-cli core install CubeCell:CubeCell@0.0.5
 
       - name: Prepare code and submodules
         run: |

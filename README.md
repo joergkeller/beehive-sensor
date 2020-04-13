@@ -1,6 +1,8 @@
 # Beehive sensor data
 Weight, temperature and humidity measurement in a beehive using Arduino and LoRaWan (TTN).
 
+![Arduino compile test](https://github.com/joergkeller/beehive-sensor/workflows/.github/workflows/test.yaml/badge.svg)
+
 ## Overview
 - Arduino (Uno + Dragino LoRa Shield, Dragino LoRa Mini Dev, CubeCell LoRa Dev)
     - Temperature sensors using 1-wire
@@ -85,6 +87,12 @@ Install the CubeCell board: https://heltec-automation-docs.readthedocs.io/en/lat
 git clone https://github.com/joergkeller/beehive-sensor.git
 cd beehive-sensor
 git submodule init
+git submodule update
+~~~
+To fetch updates:
+~~~
+cd beehive-sensor
+git pull
 git submodule update
 ~~~
 

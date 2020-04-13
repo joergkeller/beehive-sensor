@@ -2,6 +2,16 @@
  * Wrapper code for HX711, DHT-xx and DallasTemperature sensors.
  * ---
  * Acquiring sensor data from several sources.
+ * Sensor names:
+   - 1. Outer temperature - Aussentemperatur (used for weight compensation)
+   - 2. Drop temperature - Kälteloch
+   - 3. Lower temperature - Temperatur 200mm
+   - 4. Middle temperature - Temperatur 300mm
+   - 5. Upper temperature - Temperatur 400mm
+   - 6. Roof temperature - Dachtemperatur (DHT22)
+   - 7. Roof humidity - Dachfeuchtigkeit (DHT22)
+   - 8. Weight - Gewicht
+   - X. Battery voltage - Akkuspannung
  **********************************************************/
 #ifndef __SENSORREADER_H__
 #define __SENSORREADER_H__
@@ -86,13 +96,15 @@ class SensorReader {
     void stopReading() {}
 
     // DS18B20 temperature sensors on one-wire bus
+    float getOuterTemperature() { return sensors.getTempC(outerThermometer); }
+    float getDropTemperature() { return sensors.getTempC(dropThermometer); }
     float getLowerTemperature() { return sensors.getTempC(lowerThermometer); }
     float getMiddleTemperature() { return sensors.getTempC(middleThermometer); }
     float getUpperTemperature() { return sensors.getTempC(upperThermometer); }
 
     // DHTxx sensor
-    float getOuterTemperature() { return dht.readTemperature(); }
-    float getOuterHumidity() { return dht.readHumidity(); }
+    float getRoofTemperature() { return dht.readTemperature(); }
+    float getRoofHumidity() { return dht.readHumidity(); }
 
     // HX711 with load cell
     float getWeight() { return scale.get_units(OPERATIONAL_SAMPLING); }

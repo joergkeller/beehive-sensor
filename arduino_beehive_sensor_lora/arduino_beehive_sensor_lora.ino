@@ -32,17 +32,19 @@
 
 typedef struct {
   byte version;
-  struct { 
-    short outer;
-    short lower;
-    short middle;
-    short upper;
-  } temperature; 
-  struct {
-    short outer;
-  } humidity;
-  short weight;
   short battery;
+  short weight;
+  struct {
+    short roof;
+    short upper;
+    short middle;
+    short lower;
+    short drop;
+    short outer;
+  } temperature;
+  struct {
+    short roof;
+  } humidity;
 }__attribute((packed)) beesensor_t;
 
 typedef union {
@@ -130,16 +132,20 @@ void initializeMessage() {
   message[0].sensor.temperature.upper = UNDEFINED_VALUE;
   message[0].sensor.temperature.middle = UNDEFINED_VALUE;
   message[0].sensor.temperature.lower = UNDEFINED_VALUE;
+  message[0].sensor.temperature.drop = UNDEFINED_VALUE;
   message[0].sensor.temperature.outer = UNDEFINED_VALUE;
-  message[0].sensor.humidity.outer = UNDEFINED_VALUE;
+  message[0].sensor.temperature.roof = UNDEFINED_VALUE;
+  message[0].sensor.humidity.roof = UNDEFINED_VALUE;
   message[0].sensor.weight = UNDEFINED_VALUE;
   message[0].sensor.battery = UNDEFINED_VALUE;
   message[1].sensor.version = MESSAGE_VERSION;
   message[1].sensor.temperature.upper = UNDEFINED_VALUE;
   message[1].sensor.temperature.middle = UNDEFINED_VALUE;
   message[1].sensor.temperature.lower = UNDEFINED_VALUE;
+  message[1].sensor.temperature.drop = UNDEFINED_VALUE;
   message[1].sensor.temperature.outer = UNDEFINED_VALUE;
-  message[1].sensor.humidity.outer = UNDEFINED_VALUE;
+  message[1].sensor.temperature.roof = UNDEFINED_VALUE;
+  message[1].sensor.humidity.roof = UNDEFINED_VALUE;
   message[1].sensor.weight = UNDEFINED_VALUE;
   message[1].sensor.battery = UNDEFINED_VALUE;
 }
@@ -378,8 +384,10 @@ void readSensors(byte index) {
   message[index].sensor.temperature.upper = asShort(sensor.getUpperTemperature());
   message[index].sensor.temperature.middle = asShort(sensor.getMiddleTemperature());
   message[index].sensor.temperature.lower = asShort(sensor.getLowerTemperature());
+  message[index].sensor.temperature.drop = asShort(sensor.getDropTemperature());
   message[index].sensor.temperature.outer = asShort(outerTemperature);
-  message[index].sensor.humidity.outer = asShort(sensor.getOuterHumidity());
+  message[index].sensor.temperature.roof = asShort(sensor.getRoofTemperature());
+  message[index].sensor.humidity.roof = asShort(sensor.getRoofHumidity());
   message[index].sensor.weight = asShort(weight);
   message[index].sensor.battery = asShort(sensor.getVoltage());
 
@@ -388,11 +396,13 @@ void readSensors(byte index) {
 
 void printSensorData(byte index) {
   print(message[index].sensor.weight, " kg");
-  print(message[index].sensor.temperature.lower, " C lower level");
-  print(message[index].sensor.temperature.middle, " C middle level");
   print(message[index].sensor.temperature.upper, " C upper level");
+  print(message[index].sensor.temperature.middle, " C middle level");
+  print(message[index].sensor.temperature.lower, " C lower level");
+  print(message[index].sensor.temperature.drop, " C drop");
   print(message[index].sensor.temperature.outer, " C outside");
-  print(message[index].sensor.humidity.outer, " % rel");
+  print(message[index].sensor.temperature.roof, " C roof");
+  print(message[index].sensor.humidity.roof, " % rel roof");
   print(message[index].sensor.battery, " Vbat");
 }
 
@@ -422,9 +432,11 @@ bool hasChangedValue(short lastValue, short nextValue, short limit) {
 inline
 bool hasChanged(byte index) {
   return hasChangedValue(message[lastMsgIndex].sensor.weight, message[index].sensor.weight, LIMIT_WEIGHT_DIFF)
-      || hasChangedValue(message[lastMsgIndex].sensor.temperature.lower, message[index].sensor.temperature.lower, LIMIT_TEMPERATURE_DIFF)
-      || hasChangedValue(message[lastMsgIndex].sensor.temperature.middle, message[index].sensor.temperature.middle, LIMIT_TEMPERATURE_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.upper, message[index].sensor.temperature.upper, LIMIT_TEMPERATURE_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.temperature.middle, message[index].sensor.temperature.middle, LIMIT_TEMPERATURE_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.temperature.lower, message[index].sensor.temperature.lower, LIMIT_TEMPERATURE_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.temperature.drop, message[index].sensor.temperature.drop, LIMIT_TEMPERATURE_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.outer, message[index].sensor.temperature.outer, LIMIT_TEMPERATURE_DIFF)
-      || hasChangedValue(message[lastMsgIndex].sensor.humidity.outer, message[index].sensor.humidity.outer, LIMIT_HUMIDITY_DIFF);
+      || hasChangedValue(message[lastMsgIndex].sensor.temperature.roof, message[index].sensor.temperature.roof, LIMIT_TEMPERATURE_DIFF)
+      || hasChangedValue(message[lastMsgIndex].sensor.humidity.roof, message[index].sensor.humidity.roof, LIMIT_HUMIDITY_DIFF);
 }

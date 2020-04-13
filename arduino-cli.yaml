@@ -1,0 +1,5 @@
+board_manager:
+  additional_urls:
+    - http://resource.heltec.cn/download/package_CubeCell_index.json
+directories:
+  user: ./

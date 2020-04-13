@@ -1,0 +1,8 @@
+name: Test arduino compile for the device script
+on: [Push]
+
+jobs:
+  build:
+    name: Hello
+    runs-on: ubuntu-latest
+    steps: []

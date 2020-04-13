@@ -6,7 +6,7 @@ jobs:
     name: Test arduino compile for the device script
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout
+      - uses: actions/checkout@master
 
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1.0.0
@@ -14,9 +14,14 @@ jobs:
       - name: Install CubeCell core
         run: |
           arduino-cli core update-index
-          arduino-cli core install CubeCell:CubeCell
+          arduino-cli core install CubeCell:CubeCell@0.5.0
+
+      - name: Prepare code and submodules
+        run: |
+          git submodule init
+          git submodule update
+          mv arduino_beehive_sensor_lora/credentials-template.h arduino_beehive_sensor_lora/credentials.h
 
       - name: Compile script
         run: |
-          mv arduino_beehive_sensor_lora/credentials-template.h arduino_beehive_sensor_lora/credentials.h
           arduino-cli compile --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=5,LORAWAN_CLASS=0,LORAWAN_NETMODE=0,LORAWAN_ADR=0,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=1,LORAWAN_RGB=1,LORAWAN_DebugLevel=0 arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino

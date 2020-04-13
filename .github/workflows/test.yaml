@@ -1,12 +1,12 @@
 name: Test arduino compile for the device script
-on: [Push]
+on: [push, pull_request]
 
 jobs:
   build:
     name: Test arduino compile for the device script
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout
+      - uses: actions/checkout@master
 
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1.0.0

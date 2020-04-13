@@ -1,25 +1,11 @@
-const axios = require('axios');
+const axios = require('axios')
 const AWS = require('aws-sdk');
-AWS.config.update({region: region});
-const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 
 const region = 'eu-central-1';
 const dbTable = 'SensorData';
 const url = 'https://api.thingspeak.com/update.json';
 
-const devices = [{
-    dev_id: 'cube-cell-1',
-    thingspeak: {
-        channel_id: 941478,
-        api_key: 'L4I0S01H3X70958G',
-    }
-},{
-    dev_id: 'test-987',
-    thingspeak: {
-        channel_id: 941478,
-        api_key: 'L4I0S01H3X70958G',
-    }
-}];
+const devices = [];
 
 /**
  * Handler to define in AWS lambda as 'src/app.lambdaHandler'
@@ -37,7 +23,7 @@ const devices = [{
 exports.lambdaHandler = async (event, context) => {
     try {
         const body = JSON.parse(event.body);
-        await sendToDb(body);
+        sendToDb(body);
         console.log('Payload recorded');
         const device = findDevice(body.dev_id);
         if (device && device.thingspeak) {
@@ -46,8 +32,7 @@ exports.lambdaHandler = async (event, context) => {
         }
         const feed = {message: 'Hello world, ' + body.dev_id};
         return {
-            statusCode: 201,
-            body: feed
+            statusCode: 201
         };
     } catch (err) {
         console.log(err);
@@ -73,5 +58,8 @@ async function sendToDb(payload) {
         TableName: dbTable,
         Item: payload
     };
+
+    AWS.config.update({region: region});
+    const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
     return docClient.put(params).promise();
 }

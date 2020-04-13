@@ -2,33 +2,37 @@ function Decoder(bytes, port) {
   // Decode an ThingSpeak formatted uplink message from a buffer
   // (array) of bytes to an object of fields.
 
-  // Payload: 2A 12 FD 12 07 80 07 ED 07 8F 19 0E 06 4B 01 (15 bytes)
-  // {
-  //   "field1": 18.1,
-  //   "field2": 19.2,
-  //   "field3": 20.29,
-  //   "field4": -7.5,
-  //   "field6": 65.43,
-  //   "field7": 3.31,
-  //   "field8": 15.5,
-  //   "sensor": {
-  //     "battery": 3.31,
-  //     "humidity": {
-  //       "outer": 65.43
-  //     },
-  //     "temperature": {
-  //       "lower": 18.1,
-  //       "middle": 19.2,
-  //       "outer": -7.5,
-  //       "upper": 20.29
-  //     },
-  //     "version": 42,
-  //     "weight": 15.5
-  //   },
-  //   "status": "version 42, 3.31 V"
-  // }
+  // Payload: 00 7E 01 AB 00 00 80 00 80 00 80 00 80 00 80 00 80 00 80 (19 bytes)
+  //   {
+  //     "field1": null, // Aussentemperatur
+  //     "field2": null, // Kälteloch
+  //     "field3": null, // Temperatur 200mm
+  //     "field4": null, // Temperatur 300mm
+  //     "field5": null, // Temperatur 400mm
+  //     "field6": null, // Dachtemperatur (DHT22)
+  //     "field7": null, // Dachfeuchtigkeit (DHT22)
+  //     "field8": 1.71, // Gewicht
+  //     "status": "version 0, 3.82 V",
+  //     "sensor": {
+  //       "version": 0,
+  //       "battery": 3.82,
+  //       "weight": 1.71,
+  //       "humidity": {
+  //         "roof": null
+  //       },
+  //       "temperature": {
+  //         "roof": null,
+  //         "upper": null,
+  //         "middle": null,
+  //         "lower": null,
+  //         "drop": null,
+  //         "outer": null
+  //       }
+  //     }
+  //   }
 
   function asShort(index) {
+    if (bytes.length < index) return null;
     var x = (bytes[index+1] << 8) | bytes[index];
     if ((x & 0x8000) > 0) {
       return -(x ^ 0xffff) - 1;
@@ -38,7 +42,7 @@ function Decoder(bytes, port) {
 
   function asFloat(index) {
     var value = asShort(index);
-    if (value == -32768) {
+    if (!value || value == -32768) {
       return null;
     } else {
       return value / 100.0;
@@ -47,26 +51,29 @@ function Decoder(bytes, port) {
 
   var sensorData = {
     version: bytes[0],
-    temperature: {
-      outer: asFloat(1),
-      lower:  asFloat(3),
-      middle:  asFloat(5),
-      upper:   asFloat(7)
-    },
+    battery: asFloat(1),
+    weight: asFloat(3),
     humidity: {
-      outer: asFloat(9)
+      roof: asFloat(5)
     },
-    weight: asFloat(11),
-    battery: asFloat(13)
+    temperature: {
+      roof: asFloat(7),
+      upper: asFloat(9),
+      middle: asFloat(11),
+      lower: asFloat(13),
+      drop: asFloat(15),
+      outer: asFloat(17)
+    }
   };
 
   return { // ThingSpeak format
-    field1: sensorData.temperature.lower,
-    field2: sensorData.temperature.middle,
-    field3: sensorData.temperature.upper,
-    field4: sensorData.temperature.outer,
-    field6: sensorData.humidity.outer,
-    field7: sensorData.battery,
+    field1: sensorData.temperature.outer,
+    field2: sensorData.temperature.drop,
+    field3: sensorData.temperature.lower,
+    field4: sensorData.temperature.middle,
+    field5: sensorData.temperature.upper,
+    field6: sensorData.temperature.roof,
+    field7: sensorData.humidity.roof,
     field8: sensorData.weight,
     status: 'version ' + sensorData.version + ', ' + sensorData.battery + " V",
     sensor: sensorData // ignored by ThingSpeak

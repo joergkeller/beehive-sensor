@@ -36,15 +36,15 @@ typedef struct {
   short weight;
   struct {
     short roof;
+  } humidity;
+  struct {
+    short roof;
     short upper;
     short middle;
     short lower;
     short drop;
     short outer;
   } temperature;
-  struct {
-    short roof;
-  } humidity;
 }__attribute((packed)) beesensor_t;
 
 typedef union {

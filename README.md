@@ -1,7 +1,7 @@
 # Beehive sensor data
 Weight, temperature and humidity measurement in a beehive using Arduino and LoRaWan (TTN).
 
-![Arduino compile test](https://github.com/joergkeller/beehive-sensor/workflows/.github/workflows/test.yaml/badge.svg)
+![Arduino compile test](https://github.com/joergkeller/beehive-sensor/workflows/Arduino%20compile%20test/badge.svg)
 
 ## Overview
 - Arduino (Uno + Dragino LoRa Shield, Dragino LoRa Mini Dev, CubeCell LoRa Dev)
@@ -110,6 +110,7 @@ git submodule update
 | Tools > LORAWAN_NET_RESERVATION | `OFF` |
 | Tools > LORAWAN_AT_SUPPORT | `OFF` |
 | Tools > LORAWAN_RGB | `ACTIVE` or `DEACTIVE` |
+| Monitor baud rate | `115200` |
 
 Then
 - Create TTN account/application/device and enter OTAA/ABP authorization codes in `credentials.h`

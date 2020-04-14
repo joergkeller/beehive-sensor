@@ -58,11 +58,11 @@ function Decoder(bytes, port) {
     },
     temperature: {
       roof: asFloat(7),
-      upper: asFloat(9),
-      middle: asFloat(11),
+      outer: asFloat(9),
+      drop: asFloat(11),
       lower: asFloat(13),
-      drop: asFloat(15),
-      outer: asFloat(17)
+      middle: asFloat(15),
+      upper: asFloat(17)
     }
   };
 

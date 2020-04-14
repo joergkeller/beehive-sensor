@@ -39,17 +39,13 @@ typedef struct {
   } humidity;
   struct {
     short roof;
-    short upper;
-    short middle;
-    short lower;
-    short drop;
-    short outer;
+    short other[THERMOMETER_COUNT];
   } temperature;
 }__attribute((packed)) beesensor_t;
 
 typedef union {
   beesensor_t sensor;
-  byte bytes[1+8+2+2+2];
+  byte bytes[1+2+2+2+2+(THERMOMETER_COUNT*2)];
 } message_t;
 
 #define MS 1L
@@ -128,26 +124,16 @@ void setup() {
 void initializeMessage() {
   Serial.print("Start Beehive LoRa script with sensor message v");
   Serial.println(MESSAGE_VERSION);
-  message[0].sensor.version = MESSAGE_VERSION;
-  message[0].sensor.temperature.upper = UNDEFINED_VALUE;
-  message[0].sensor.temperature.middle = UNDEFINED_VALUE;
-  message[0].sensor.temperature.lower = UNDEFINED_VALUE;
-  message[0].sensor.temperature.drop = UNDEFINED_VALUE;
-  message[0].sensor.temperature.outer = UNDEFINED_VALUE;
-  message[0].sensor.temperature.roof = UNDEFINED_VALUE;
-  message[0].sensor.humidity.roof = UNDEFINED_VALUE;
-  message[0].sensor.weight = UNDEFINED_VALUE;
-  message[0].sensor.battery = UNDEFINED_VALUE;
-  message[1].sensor.version = MESSAGE_VERSION;
-  message[1].sensor.temperature.upper = UNDEFINED_VALUE;
-  message[1].sensor.temperature.middle = UNDEFINED_VALUE;
-  message[1].sensor.temperature.lower = UNDEFINED_VALUE;
-  message[1].sensor.temperature.drop = UNDEFINED_VALUE;
-  message[1].sensor.temperature.outer = UNDEFINED_VALUE;
-  message[1].sensor.temperature.roof = UNDEFINED_VALUE;
-  message[1].sensor.humidity.roof = UNDEFINED_VALUE;
-  message[1].sensor.weight = UNDEFINED_VALUE;
-  message[1].sensor.battery = UNDEFINED_VALUE;
+  for (int m = 0; m < 2; m++) {
+    message[m].sensor.version = MESSAGE_VERSION;
+    message[m].sensor.battery = UNDEFINED_VALUE;
+    message[m].sensor.weight = UNDEFINED_VALUE;
+    message[m].sensor.humidity.roof = UNDEFINED_VALUE;
+    message[m].sensor.temperature.roof = UNDEFINED_VALUE;
+    for (int i = 0; i < THERMOMETER_COUNT; i++) {
+      message[m].sensor.temperature.other[i] = UNDEFINED_VALUE;
+    }
+  }
 }
 
 /* Loop ******************************************/
@@ -375,32 +361,21 @@ short asShort(float value) {
 
 void readSensors(byte index) {
   sensor.startReading();
-  float outerTemperature = sensor.getOuterTemperature();
-  float weight = sensor.getWeight();
-  if (isDefined(outerTemperature) && isDefined(weight)) {
-    weight -= sensor.getWeightCompensation(outerTemperature);
-  }
-
-  message[index].sensor.temperature.upper = asShort(sensor.getUpperTemperature());
-  message[index].sensor.temperature.middle = asShort(sensor.getMiddleTemperature());
-  message[index].sensor.temperature.lower = asShort(sensor.getLowerTemperature());
-  message[index].sensor.temperature.drop = asShort(sensor.getDropTemperature());
-  message[index].sensor.temperature.outer = asShort(outerTemperature);
-  message[index].sensor.temperature.roof = asShort(sensor.getRoofTemperature());
-  message[index].sensor.humidity.roof = asShort(sensor.getRoofHumidity());
-  message[index].sensor.weight = asShort(weight);
   message[index].sensor.battery = asShort(sensor.getVoltage());
-
+  message[index].sensor.weight = asShort(sensor.getCompensatedWeight());
+  message[index].sensor.humidity.roof = asShort(sensor.getRoofHumidity());
+  message[index].sensor.temperature.roof = asShort(sensor.getRoofTemperature());
+  for (int i = 0; i < THERMOMETER_COUNT; i++) {
+    message[index].sensor.temperature.other[i] = asShort(sensor.getTemperature(i));
+  }
   sensor.stopReading();
 }
 
 void printSensorData(byte index) {
   print(message[index].sensor.weight, " kg");
-  print(message[index].sensor.temperature.upper, " C upper level");
-  print(message[index].sensor.temperature.middle, " C middle level");
-  print(message[index].sensor.temperature.lower, " C lower level");
-  print(message[index].sensor.temperature.drop, " C drop");
-  print(message[index].sensor.temperature.outer, " C outside");
+  for (int i = 0; i < THERMOMETER_COUNT; i++) {
+    print(message[index].sensor.temperature.other[i], " C level" + i);
+  }
   print(message[index].sensor.temperature.roof, " C roof");
   print(message[index].sensor.humidity.roof, " % rel roof");
   print(message[index].sensor.battery, " Vbat");
@@ -431,12 +406,12 @@ bool hasChangedValue(short lastValue, short nextValue, short limit) {
 
 inline
 bool hasChanged(byte index) {
+  for (int i = 0; i < THERMOMETER_COUNT; i++) {
+    if (hasChangedValue(message[lastMsgIndex].sensor.temperature.other[i], message[index].sensor.temperature.other[i], LIMIT_TEMPERATURE_DIFF)) {
+      return true;
+    }
+  }
   return hasChangedValue(message[lastMsgIndex].sensor.weight, message[index].sensor.weight, LIMIT_WEIGHT_DIFF)
-      || hasChangedValue(message[lastMsgIndex].sensor.temperature.upper, message[index].sensor.temperature.upper, LIMIT_TEMPERATURE_DIFF)
-      || hasChangedValue(message[lastMsgIndex].sensor.temperature.middle, message[index].sensor.temperature.middle, LIMIT_TEMPERATURE_DIFF)
-      || hasChangedValue(message[lastMsgIndex].sensor.temperature.lower, message[index].sensor.temperature.lower, LIMIT_TEMPERATURE_DIFF)
-      || hasChangedValue(message[lastMsgIndex].sensor.temperature.drop, message[index].sensor.temperature.drop, LIMIT_TEMPERATURE_DIFF)
-      || hasChangedValue(message[lastMsgIndex].sensor.temperature.outer, message[index].sensor.temperature.outer, LIMIT_TEMPERATURE_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.roof, message[index].sensor.temperature.roof, LIMIT_TEMPERATURE_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.humidity.roof, message[index].sensor.humidity.roof, LIMIT_HUMIDITY_DIFF);
 }

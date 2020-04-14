@@ -96,11 +96,7 @@ class SensorReader {
     void stopReading() {}
 
     // DS18B20 temperature sensors on one-wire bus
-    float getOuterTemperature() { return sensors.getTempC(outerThermometer); }
-    float getDropTemperature() { return sensors.getTempC(dropThermometer); }
-    float getLowerTemperature() { return sensors.getTempC(lowerThermometer); }
-    float getMiddleTemperature() { return sensors.getTempC(middleThermometer); }
-    float getUpperTemperature() { return sensors.getTempC(upperThermometer); }
+    float getTemperature(int index) { return sensors.getTempC(thermometer[index]); }
 
     // DHTxx sensor
     float getRoofTemperature() { return dht.readTemperature(); }
@@ -109,12 +105,18 @@ class SensorReader {
     // HX711 with load cell
     float getWeight() { return scale.get_units(OPERATIONAL_SAMPLING); }
 
+    float getCompensatedWeight() {
+      float weight = getWeight();
+      float outerTemperature = sensors.getTempC(thermometer[THERMOMETER_OUTER]);
+      if (isnan(outerTemperature) || outerTemperature == -127.0f) {
+        return weight;
+      } else {
+        return weight - (TEMPERATURE_FACTOR * outerTemperature) - TEMPERATURE_OFFSET;
+      }
+    }
+
     // battery voltage
     float getVoltage() { return readVcc() / 1000.0; }
-
-    float getWeightCompensation(float temperature) {
-      return (temperature * TEMPERATURE_FACTOR) + TEMPERATURE_OFFSET;
-    }
 
   private:
     DHT dht = DHT(DHT_PIN, DHT22);

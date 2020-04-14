@@ -17,6 +17,9 @@
  *  0: sensor data v0 (short/100)
  **********************************************************/
 
+// see credentials.h, calibration.h
+#define DEVICE_NAME cube-cell-1
+
 #if defined(__ASR6501__)
   #include "CubeCellLoRa.h"
 #else
@@ -121,9 +124,15 @@ void setup() {
   node.toState(JOIN);
 }
 
+#define xstr(x) str(x)
+#define str(x) #x
+#define ABOUT_MESSAGE "Start '" xstr(DEVICE_NAME) "' beehive LoRa script with sensor message v" xstr(MESSAGE_VERSION)
+
 void initializeMessage() {
-  Serial.print("Start Beehive LoRa script with sensor message v");
-  Serial.println(MESSAGE_VERSION);
+  Serial.print(ABOUT_MESSAGE);
+  Serial.print(" (");
+  Serial.print(sizeof(message[0]));
+  Serial.println(" bytes)");
   for (int m = 0; m < 2; m++) {
     message[m].sensor.version = MESSAGE_VERSION;
     message[m].sensor.battery = UNDEFINED_VALUE;

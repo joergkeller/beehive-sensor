@@ -13,6 +13,7 @@
     "test": "mocha test/js/"
   },
   "devDependencies": {
+    "aws-sdk-mock": "^5.1.0",
     "chai": "^4.2.0",
     "mocha": "^6.2.3"
   }

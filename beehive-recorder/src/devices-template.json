@@ -1,0 +1,21 @@
+[
+    {
+        "dev_id": "krokus",
+        "thingspeak": {
+            "channel_id": 123,
+            "api_key": "dummy"
+        }
+    },{
+        "dev_id": "shakra",
+        "thingspeak": {
+            "channel_id": 456,
+            "api_key": "dummy"
+        }
+    },{
+        "dev_id": "gotthard",
+        "thingspeak": {
+            "channel_id": 789,
+            "api_key": "dummy"
+        }
+    }
+]

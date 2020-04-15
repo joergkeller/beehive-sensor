@@ -5,7 +5,7 @@ const region = 'eu-central-1';
 const dbTable = 'SensorData';
 const url = 'https://api.thingspeak.com/update.json';
 
-const devices = [];
+const devices = require('./devices.json');
 
 /**
  * Handler to define in AWS lambda as 'src/app.lambdaHandler'
@@ -30,7 +30,6 @@ exports.lambdaHandler = async (event, context) => {
             await sendToThingspeak(device, body.payload_fields);
             console.log('Device shown on Thingspeak #' + device.thingspeak.channel_id);
         }
-        const feed = {message: 'Hello world, ' + body.dev_id};
         return {
             statusCode: 201
         };

@@ -96,7 +96,24 @@ class SensorReader {
     void stopReading() {}
 
     // DS18B20 temperature sensors on one-wire bus
-    float getTemperature(int index) { return sensors.getTempC(thermometer[index]); }
+    float getTemperature(int index) {
+      Serial.print("Thermometer ");
+      Serial.print(index);
+      float temperature = getTemperatureDirect(thermometer[index]);
+      Serial.print(" shows ");
+      Serial.print(temperature);
+      Serial.println("C");
+      return temperature; 
+    }
+
+    float getTemperatureDirect(const uint8_t* addr) {
+      Serial.print(" @ 0x");
+      for (int i = 0; i < 8; i++) {
+          if (addr[i] < 0x10) Serial.print('0');
+          Serial.print(addr[i], HEX);
+      }
+      return sensors.getTempC(addr);
+    }
 
     // DHTxx sensor
     float getRoofTemperature() { return dht.readTemperature(); }

@@ -9,8 +9,8 @@ To support bee keepers in monitoring their bees with minimal interference, a set
 * Low cost. Small microcontrollers are very affordable and sufficient for the task.
 
 ## System Overview
-- Arduino (alternatively Uno + Dragino LoRa Shield, Dragino LoRa Mini Dev, or CubeCell LoRa Dev)\
-  A small microcontroller has enough power to measure every couple of minutes. A rechargeable battery serves as buffer to measure during the night and cloudy wheather.\
+- **Arduino** (alternatively Uno + Dragino LoRa Shield, Dragino LoRa Mini Dev, or CubeCell LoRa Dev)\
+  A small microcontroller has enough power to measure every couple of minutes. A rechargeable battery serves as buffer to measure during night and cloudy weather.\
   The device works without any human intervention except a button to put it to a 'manual mode' when working with the beehive.
     - 3-4 DS18B20 temperature sensors using 1-wire
     - DHT11/22 temperature and humidity sensor
@@ -20,15 +20,15 @@ To support bee keepers in monitoring their bees with minimal interference, a set
     - Push-Button with LED to disable temporary (manual mode)
     - Evtl. slave devices with RS-485?
     
-- LoRaWAN TTN-Gateway/Network/Application\
-  Beehives usually have not wired internet connection and high-speed connections using GSM and WLAN should be avoided to keep radiation low.\
+- **LoRaWAN** TTN-Gateway/Network/Application\
+  Beehives usually have no wired internet connection and high-speed connections using GSM and WLAN should be avoided to keep radiation low.\
   [TheThingsNetwork](https://www.thethingsnetwork.org/) TTN is a global open LoRa network. If no gateway is available within some km near the beehives, an additional gateway can easily be installed. 
     - Transmits messages from the LoRa gateways to the internet, handles authorization (OTAA/ABP) and encoding/decoding of messages
-    - Allows direct ThingSpeak integration plugin (only 1 device per application with 1 channel)
-    - HTTP Integration plugin allows to address any possible backend (many devices per application)
+    - Allows direct ThingSpeak integration (only 1 device per application with 1 channel)
+    - HTTP integration allows to address any possible backend (many devices per application, see below)
     - see [TTN application](./docs/ttn-application.md)
     
-- Dashboard and visualization with ThingSpeak channel\
+- Dashboard and visualization with **ThingSpeak** channel\
   This is the quick and simple way to display the sensor data.
     - Simple to setup and share
     - Mobile app available
@@ -37,13 +37,13 @@ To support bee keepers in monitoring their bees with minimal interference, a set
     - No linking of multiple channels (beehives)
     - Limited user interaction (drilldown)
 
-- Mapping and routing sensor data eg. AWS Api Gateway\
+- **Mapping and routing** sensor data eg. AWS Api Gateway\
   Alternative to the ThingSpeak display. 
   Such a back-end application can be used to collect the sensor data and to feed a web application.
     - Simple extension eg. AWS Lambda (data store, device specific routing, alarming, custom app)
     - see [AWS serverless](./docs/aws-serverless.md)
-    - Storing sensor docs in DynamoDb, see [AWS recording](./docs/aws-recorder.md)
-    - Single TTN application can handle an unlimited number of devices
+    - Forwarding to ThingSpeak channels as above, but allowing many devices/channels per TTN application
+    - Additionally storing sensor docs in DynamoDb, see [AWS recording](./docs/aws-recorder.md)
     - No restrictions of the number of fields or the way sensor data is displayed 
     - WebApp to show charts of the collected sensor data
     

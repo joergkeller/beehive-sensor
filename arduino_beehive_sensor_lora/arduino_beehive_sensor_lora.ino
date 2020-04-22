@@ -387,7 +387,7 @@ void readSensors(byte index) {
 void printSensorData(byte index) {
   print(message[index].sensor.weight, " kg");
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
-    print(message[index].sensor.temperature.other[i], " C level" + i);
+    print(message[index].sensor.temperature.other[i], String(" C level ") + i);
   }
   print(message[index].sensor.temperature.roof, " C roof");
   print(message[index].sensor.humidity.roof, " % rel roof");

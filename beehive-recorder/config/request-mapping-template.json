@@ -1,0 +1,16 @@
+{
+  "TableName": "SensorData",
+  "KeyConditionExpression": "dev_id=:dev AND #ts>=:ts",
+  "ExpressionAttributeNames": {
+    "#ts": "timestamp"
+  },
+  "ExpressionAttributeValues": {
+    ":dev": {
+      "S": "$input.params('devid')"
+    },
+    ":ts": {
+      "S": "$input.params('from')"
+    }
+  },
+  "ProjectionExpression": "#ts,payload_fields.sensor,metadata"
+}

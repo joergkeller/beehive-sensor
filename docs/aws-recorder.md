@@ -31,7 +31,7 @@ Mapping template application/json:
         "S": "$input.params('from')"
       }
     },
-    "ProjectionExpression": "#ts,payload_fields.sensor,metadata.data_rate"
+    "ProjectionExpression": "#ts,payload_fields.sensor,metadata"
 }
 ~~~
 
@@ -44,21 +44,39 @@ Integration response 200 - Mapping template application/json:
     "readings": [
         #foreach($elem in $inputRoot.Items) {
             "timestamp": "$elem.timestamp.S",
-            "data_rate": "$elem.metadata.M.data_rate.S",
             "sensor": {
                 "version": "$elem.payload_fields.M.sensor.M.version.N",
+                "battery": "$elem.payload_fields.M.sensor.M.battery.N",
                 "weight": "$elem.payload_fields.M.sensor.M.weight.N",
                 "temperature": {
-                    "lower": "$elem.payload_fields.M.sensor.M.temperature.M.lower.N",
-                    "middle": "$elem.payload_fields.M.sensor.M.temperature.M.middle.N",
+                    "roof": "$elem.payload_fields.M.sensor.M.temperature.M.roof.N",
                     "upper": "$elem.payload_fields.M.sensor.M.temperature.M.upper.N",
+                    "middle": "$elem.payload_fields.M.sensor.M.temperature.M.middle.N",
+                    "lower": "$elem.payload_fields.M.sensor.M.temperature.M.lower.N",
+                    "drop": "$elem.payload_fields.M.sensor.M.temperature.M.drop.N",
                     "outer": "$elem.payload_fields.M.sensor.M.temperature.M.outer.N"
                 },
                 "humidity": {
-                    "outer": "$elem.payload_fields.M.sensor.M.humidity.M.outer.N"
-                },
-                "battery": "$elem.payload_fields.M.sensor.M.battery.N"
-            }
+                    "roof": "$elem.payload_fields.M.sensor.M.humidity.M.roof.N"
+                }
+            },
+            "data_rate": "$elem.metadata.M.data_rate.S",
+            "gtw_id": "$elem.metadata.M.gateways.L[0].M.gtw_id.S",
+            "rssi": "$elem.metadata.M.gateways.L[0].M.rssi.N",
+            "snr": "$elem.metadata.M.gateways.L[0].M.snr.N",
+            "frequency": "$elem.metadata.M.frequency.N",
+            "gateways": [
+                #foreach($gw in $elem.metadata.M.gateways.L) {
+                  "gtw_id": "$gw.M.gtw_id.S",
+                  "channel": "$gw.M.channel.N",
+                  "rssi": "$gw.M.rssi.N",
+                  "snr": "$gw.M.snr.N",
+                  "latitude": "$gw.M.latitude.N",
+                  "longitude": "$gw.M.longitude.N",
+                  "altitude": "$gw.M.altitude.N"
+                }#if($foreach.hasNext),#end
+            #end
+            ]
         }#if($foreach.hasNext),#end
 	#end
     ]

@@ -1,0 +1,485 @@
+{
+  "count": 15,
+  "readings": [
+    {
+      "timestamp": "2020-05-03T13:31:47.360420126Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.92",
+        "weight": "1.7",
+        "temperature": {
+          "roof": "25.2",
+          "upper": "",
+          "middle": "",
+          "lower": "22.12",
+          "drop": "22.18",
+          "outer": "22.87"
+        },
+        "humidity": {
+          "roof": "42.3"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.1",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "3",
+          "rssi": "-116",
+          "snr": "-11.8",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T13:46:58.168133273Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.91",
+        "weight": "1.7",
+        "temperature": {
+          "roof": "24.2",
+          "upper": "",
+          "middle": "",
+          "lower": "21.62",
+          "drop": "22",
+          "outer": "22.62"
+        },
+        "humidity": {
+          "roof": "41.6"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "868.1",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "0",
+          "rssi": "-117",
+          "snr": "-6.8",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T13:57:04.360763696Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.92",
+        "weight": "1.71",
+        "temperature": {
+          "roof": "23.7",
+          "upper": "",
+          "middle": "",
+          "lower": "21.37",
+          "drop": "22",
+          "outer": "22.5"
+        },
+        "humidity": {
+          "roof": "42.1"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "868.5",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "2",
+          "rssi": "-117",
+          "snr": "-10.2",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T14:12:12.159036531Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.91",
+        "weight": "1.7",
+        "temperature": {
+          "roof": "23.1",
+          "upper": "",
+          "middle": "",
+          "lower": "21.31",
+          "drop": "22",
+          "outer": "22.43"
+        },
+        "humidity": {
+          "roof": "43.1"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.7",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "6",
+          "rssi": "-117",
+          "snr": "-9",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T14:42:24.714354411Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.91",
+        "weight": "1.72",
+        "temperature": {
+          "roof": "22.7",
+          "upper": "",
+          "middle": "",
+          "lower": "21.18",
+          "drop": "21.93",
+          "outer": "22.37"
+        },
+        "humidity": {
+          "roof": "43.7"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.9",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "7",
+          "rssi": "-116",
+          "snr": "-6.2",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T16:43:14.998665881Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.91",
+        "weight": "1.72",
+        "temperature": {
+          "roof": "22.6",
+          "upper": "",
+          "middle": "",
+          "lower": "21.12",
+          "drop": "22",
+          "outer": "22.5"
+        },
+        "humidity": {
+          "roof": "45.1"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.1",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "3",
+          "rssi": "-116",
+          "snr": "-5.8",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T17:13:27.532834922Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.91",
+        "weight": "1.74",
+        "temperature": {
+          "roof": "22.6",
+          "upper": "",
+          "middle": "",
+          "lower": "21",
+          "drop": "21.81",
+          "outer": "22.31"
+        },
+        "humidity": {
+          "roof": "45.3"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "868.3",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "1",
+          "rssi": "-107",
+          "snr": "-9.5",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T17:43:40.100355272Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.92",
+        "weight": "1.74",
+        "temperature": {
+          "roof": "22.5",
+          "upper": "",
+          "middle": "",
+          "lower": "20.81",
+          "drop": "21.81",
+          "outer": "22.18"
+        },
+        "humidity": {
+          "roof": "45.4"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "868.5",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "2",
+          "rssi": "-116",
+          "snr": "-9.5",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T18:13:52.643738786Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.91",
+        "weight": "1.73",
+        "temperature": {
+          "roof": "22.4",
+          "upper": "",
+          "middle": "",
+          "lower": "20.87",
+          "drop": "21.81",
+          "outer": "22.18"
+        },
+        "humidity": {
+          "roof": "45.6"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.7",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "6",
+          "rssi": "-113",
+          "snr": "-1",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T18:44:05.201950878Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.92",
+        "weight": "1.73",
+        "temperature": {
+          "roof": "22.3",
+          "upper": "",
+          "middle": "",
+          "lower": "20.81",
+          "drop": "21.75",
+          "outer": "22.12"
+        },
+        "humidity": {
+          "roof": "45.7"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.9",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "7",
+          "rssi": "-113",
+          "snr": "1",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T19:14:17.765112154Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.91",
+        "weight": "1.72",
+        "temperature": {
+          "roof": "22.3",
+          "upper": "",
+          "middle": "",
+          "lower": "20.87",
+          "drop": "21.87",
+          "outer": "22.43"
+        },
+        "humidity": {
+          "roof": "45.8"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.3",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "4",
+          "rssi": "-113",
+          "snr": "-2.5",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T19:44:30.322228238Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.92",
+        "weight": "1.73",
+        "temperature": {
+          "roof": "22.6",
+          "upper": "",
+          "middle": "",
+          "lower": "21.37",
+          "drop": "22.18",
+          "outer": "22.75"
+        },
+        "humidity": {
+          "roof": "45.9"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.7",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "6",
+          "rssi": "-112",
+          "snr": "0.2",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T20:14:42.889685735Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.92",
+        "weight": "1.71",
+        "temperature": {
+          "roof": "22.9",
+          "upper": "",
+          "middle": "",
+          "lower": "21.56",
+          "drop": "22.18",
+          "outer": "22.81"
+        },
+        "humidity": {
+          "roof": "46"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "868.5",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "2",
+          "rssi": "-115",
+          "snr": "-11.2",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T20:44:55.450909774Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.91",
+        "weight": "1.71",
+        "temperature": {
+          "roof": "22.9",
+          "upper": "",
+          "middle": "",
+          "lower": "21.37",
+          "drop": "22.5",
+          "outer": "23.06"
+        },
+        "humidity": {
+          "roof": "46.2"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "867.3",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "4",
+          "rssi": "-113",
+          "snr": "-2",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    },
+    {
+      "timestamp": "2020-05-03T21:15:08.024868167Z",
+      "sensor": {
+        "version": "0",
+        "battery": "3.92",
+        "weight": "1.71",
+        "temperature": {
+          "roof": "23.2",
+          "upper": "",
+          "middle": "",
+          "lower": "21.81",
+          "drop": "22.5",
+          "outer": "23.18"
+        },
+        "humidity": {
+          "roof": "46.1"
+        }
+      },
+      "data_rate": "SF10BW125",
+      "frequency": "868.3",
+      "gateways": [
+        {
+          "gtw_id": "eui-0005fcc23d116aa3",
+          "channel": "1",
+          "rssi": "-110",
+          "snr": "-15.8",
+          "latitude": "",
+          "longitude": "",
+          "altitude": ""
+        }
+      ]
+    }
+  ]
+}

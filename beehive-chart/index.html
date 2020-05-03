@@ -8,21 +8,49 @@
 <body>
     <h1>Bienenstock Sensor Daten</h1>
     <div id="app">
-        <div>Modul {{current.dev}}</div>
+        <div>Beute {{current.dev}}</div>
         <div>Darstellung {{setting.days}} Tage{{setting.collapsed ? ', komprimiert' : ''}}</div>
         <div>Zeit {{current.timestamp}}</div>
 
-        <h2>{{current.temperature}}°C Aussentemperatur</h2>
-        <canvas id="outerChart" width="600" height="200"></canvas>
-
-        <h2>{{current.humidity}}% Luftfeuchtigkeit</h2>
-        <canvas id="humidityChart" width="600" height="200"></canvas>
-
-        <h2>{{current.weight}}kg Gewicht</h2>
+        <h3>{{current.weight}}kg Gewicht</h3>
         <canvas id="weightChart" width="600" height="200"></canvas>
 
-        <h2>{{current.battery}}V Batteriespannung</h2>
+        <h3>{{current.humidity}}% Luftfeuchtigkeit</h3>
+        <canvas id="humidityChart" width="600" height="200"></canvas>
+
+        <h3>{{current.roofTemperature}}°C Dachtemperatur</h3>
+        <canvas id="roofChart" width="600" height="200"></canvas>
+
+        <h3>{{current.level400Temperature}}°C Innentemperatur 40cm</h3>
+        <canvas id="level400Chart" width="600" height="200"></canvas>
+
+        <h3>{{current.level300Temperature}}°C Innentemperatur 30cm</h3>
+        <canvas id="level300Chart" width="600" height="200"></canvas>
+
+        <h3>{{current.level200Temperature}}°C Innentemperatur 20cm</h3>
+        <canvas id="level200Chart" width="600" height="200"></canvas>
+
+        <h3>{{current.dropTemperature}}°C Kälteloch</h3>
+        <canvas id="dropChart" width="600" height="200"></canvas>
+
+        <h3>{{current.outerTemperature}}°C Aussentemperatur</h3>
+        <canvas id="outerChart" width="600" height="200"></canvas>
+
+        <h2>Technische Angaben</h2>
+        <h3>{{current.battery}}V Batteriespannung</h3>
         <canvas id="batteryChart" width="600" height="200"></canvas>
+
+        <h3>LoRa Intervall</h3>
+        <canvas id="intervalChart" width="600" height="200"></canvas>
+
+        <h3>LoRa Data Rate</h3>
+        <canvas id="rateChart" width="600" height="200"></canvas>
+
+        <h3>LoRa Signal Strength RSSI</h3>
+        <canvas id="signalChart" width="600" height="200"></canvas>
+
+        <h3>LoRa Signal Quality SNR</h3>
+        <canvas id="noiseChart" width="600" height="200"></canvas>
     </div>
 </body>
 
@@ -39,8 +67,13 @@
     };
     var current = {
         dev: '',
-        temperature: 0,
         humidity: 0,
+        roofTemperature: 0,
+        level400Temperature: 0,
+        level300Temperature: 0,
+        level200Temperature: 0,
+        dropTemperature: 0,
+        outerTemperature: 0,
         weight: 0,
         battery: 0
     };
@@ -139,6 +172,38 @@
         }
     };
 
+    const intervalAxis = {
+        scaleLabel: {
+            display:     true,
+            labelString: 'Minutes'
+        },
+        ticks: {
+            suggestedMin: 0,
+            suggestedMax: 60
+        }
+    };
+
+    const rateAxis = {
+        scaleLabel: {
+            display:     true,
+            labelString: 'SF'
+        },
+        ticks: {
+            reverse: true,
+            suggestedMin: 7,
+            suggestedMax: 12,
+            stepSize: 1
+        }
+    };
+
+    const signalAxis = {
+        scaleLabel: {
+            display:     true,
+            labelString: 'db'
+        }
+    };
+
+
     const days = setting.days;
     const redColorStyle = index => 'rgba(255,' + inRange(128,0,days,index) + ',0, ' + inRange(0.3,1,days,index) + ')';
     const greenColorStyle = index => 'rgba(' + inRange(255,0,days,index) + ',255,0, ' + inRange(0.5,1,days,index) + ')';
@@ -191,6 +256,7 @@
             borderDash: dashStyle(index),
             borderColor: colorStyle(index),
             backgroundColor: bgColorStyle(index),
+            fill: 'start',
             data: multidaySeries[date].map(r => ({t: moment(r.timestamp).format('HH:mm:ss'), y: selector(r)}))
         }));
         console.log(dataset);
@@ -214,25 +280,63 @@
 
     const last = array => array.slice(-1)[0];
 
+    function timestampIntervalMinutes(reading) {
+        if( typeof timestampIntervalMinutes.last == 'undefined' ) {
+            timestampIntervalMinutes.last = reading.timestamp;
+        }
+        const interval = moment(reading.timestamp).diff(moment(timestampIntervalMinutes.last), 'minutes');
+        timestampIntervalMinutes.last = reading.timestamp;
+        return interval;
+    }
+
+    function spreadFactor(reading) {
+        const pattern = /SF(\d+)BW(\d+)/i;
+        const result = reading.data_rate.match(pattern);
+        return result ? result[1] : null;
+    }
+
     function renderChart(data) {
         console.log(data);
         const lastReading = last(data.readings);
         current.timestamp = moment(lastReading.timestamp).format('D. MMM. YYYY HH:mm:ss');
-        current.temperature = lastReading.sensor.temperature.outer;
-        current.humidity = lastReading.sensor.humidity.outer;
         current.weight = lastReading.sensor.weight;
+        current.humidity = lastReading.sensor.humidity.roof;
+        current.roofTemperature = lastReading.sensor.temperature.roof;
+        current.level400Temperature = lastReading.sensor.temperature.upper;
+        current.level300Temperature = lastReading.sensor.temperature.middle;
+        current.level200Temperature = lastReading.sensor.temperature.lower;
+        current.dropTemperature = lastReading.sensor.temperature.lower;
+        current.outerTemperature = lastReading.sensor.temperature.outer;
         current.battery = lastReading.sensor.battery;
 
         if (setting.collapsed) {
-            createMultidayChart('outerChart', splitDays(data, r => r.sensor.temperature.outer, redColorStyle, redBgColorStyle), temperatureAxis);
-            createMultidayChart('humidityChart', splitDays(data, r => r.sensor.humidity.outer, blueishColorStyle, blueishBgColorStyle), humidityAxis);
             createMultidayChart('weightChart', splitDays(data, r => r.sensor.weight, greenColorStyle, greenBgColorStyle), weightAxis);
+            createMultidayChart('humidityChart', splitDays(data, r => r.sensor.humidity.roof, blueishColorStyle, blueishBgColorStyle), humidityAxis);
+            createMultidayChart('roofChart', splitDays(data, r => r.sensor.temperature.roof, redColorStyle, redBgColorStyle), temperatureAxis);
+            createMultidayChart('level400Chart', splitDays(data, r => r.sensor.temperature.upper, redColorStyle, redBgColorStyle), temperatureAxis);
+            createMultidayChart('level300Chart', splitDays(data, r => r.sensor.temperature.middle, redColorStyle, redBgColorStyle), temperatureAxis);
+            createMultidayChart('level200Chart', splitDays(data, r => r.sensor.temperature.lower, redColorStyle, redBgColorStyle), temperatureAxis);
+            createMultidayChart('dropChart', splitDays(data, r => r.sensor.temperature.drop, redColorStyle, redBgColorStyle), temperatureAxis);
+            createMultidayChart('outerChart', splitDays(data, r => r.sensor.temperature.outer, redColorStyle, redBgColorStyle), temperatureAxis);
             createMultidayChart('batteryChart', splitDays(data, r => r.sensor.battery, blueColorStyle, blueBgColorStyle), batteryAxis);
+            createMultidayChart('intervalChart', splitDays(data, timestampIntervalMinutes, blueColorStyle, blueBgColorStyle), intervalAxis);
+            createMultidayChart('rateChart', splitDays(data, spreadFactor, blueColorStyle, blueBgColorStyle), rateAxis);
+            createMultidayChart('signalChart', splitDays(data, r => r.gateways[0].rssi, blueColorStyle, blueBgColorStyle), signalAxis);
+            createMultidayChart('noiseChart', splitDays(data, r => r.gateways[0].snr, blueColorStyle, blueBgColorStyle), signalAxis);
         } else {
-            createChart('outerChart', 'Aussentemperatur [°C]', timeSeries(data, r => r.sensor.temperature.outer), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
-            createChart('humidityChart', 'Luftfeuchtigkeit [%rel]', timeSeries(data, r => r.sensor.humidity.outer), humidityAxis, "rgba(64, 128, 255, 0.9)", "rgba(64, 128, 255, 0.1)");
             createChart('weightChart', 'Gewicht [kg]', timeSeries(data, r => r.sensor.weight), weightAxis, "rgba(0, 200, 0, 0.9)", "rgba(0, 200, 0, 0.1)");
+            createChart('humidityChart', 'Luftfeuchtigkeit [%rel]', timeSeries(data, r => r.sensor.humidity.roof), humidityAxis, "rgba(64, 128, 255, 0.9)", "rgba(64, 128, 255, 0.1)");
+            createChart('roofChart', 'Dachtemperatur [°C]', timeSeries(data, r => r.sensor.temperature.roof), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
+            createChart('level400Chart', 'Innentemperatur 40cm [°C]', timeSeries(data, r => r.sensor.temperature.upper), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
+            createChart('level300Chart', 'Innentemperatur 30cm [°C]', timeSeries(data, r => r.sensor.temperature.middle), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
+            createChart('level200Chart', 'Innentemperatur 20cm [°C]', timeSeries(data, r => r.sensor.temperature.lower), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
+            createChart('dropChart', 'Kälteloch [°C]', timeSeries(data, r => r.sensor.temperature.drop), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
+            createChart('outerChart', 'Aussentemperatur [°C]', timeSeries(data, r => r.sensor.temperature.outer), temperatureAxis, "rgba(200, 0, 0, 0.9)", "rgba(200, 0, 0, 0.1)");
             createChart('batteryChart', 'Batterie [V]', timeSeries(data, r => r.sensor.battery), batteryAxis, "rgba(0, 0, 200, 0.9)", "rgba(0, 0, 200, 0.1)");
+            createChart('intervalChart', 'Empfangsintervall [min]', timeSeries(data, timestampIntervalMinutes), intervalAxis, "rgba(0, 0, 200, 0.9)", "rgba(0, 0, 200, 0.1)");
+            createChart('rateChart', 'Data Rate [SF]', timeSeries(data, spreadFactor), rateAxis, "rgba(0, 0, 200, 0.9)", "rgba(0, 0, 200, 0.1)");
+            createChart('signalChart', 'RSSI [db]', timeSeries(data, r => r.gateways[0].rssi), signalAxis, "rgba(0, 0, 200, 0.9)", "rgba(0, 0, 200, 0.1)");
+            createChart('noiseChart', 'SNR [db]', timeSeries(data, r => r.gateways[0].snr), signalAxis, "rgba(0, 0, 200, 0.9)", "rgba(0, 0, 200, 0.1)");
         }
     }
 

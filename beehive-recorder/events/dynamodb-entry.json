@@ -1,0 +1,147 @@
+{
+  "app_id": {
+    "S": "bienenbeobachter"
+  },
+  "counter": {
+    "N": "7"
+  },
+  "dev_id": {
+    "S": "shakra"
+  },
+  "downlink_url": {
+    "S": "https://integrations.thethingsnetwork.org/ttn-eu/api/v2/down/bienenbeobachter/bienenbeobachter-recorder?key=ttn-account-v2.X5bwFCxHgjJMLYP7KNSQULjzpnn2Q279CU7iM55ZEIo"
+  },
+  "hardware_serial": {
+    "S": "0035692A622741CB"
+  },
+  "metadata": {
+    "M": {
+      "coding_rate": {
+        "S": "4/5"
+      },
+      "data_rate": {
+        "S": "SF10BW125"
+      },
+      "frequency": {
+        "N": "867.9"
+      },
+      "gateways": {
+        "L": [
+          {
+            "M": {
+              "channel": {
+                "N": "7"
+              },
+              "gtw_id": {
+                "S": "eui-0005fcc23d116aa3"
+              },
+              "rf_chain": {
+                "N": "0"
+              },
+              "rssi": {
+                "N": "-116"
+              },
+              "snr": {
+                "N": "-6.2"
+              },
+              "time": {
+                "S": "2018-07-12T19:50:47.987426Z"
+              },
+              "timestamp": {
+                "N": "1646345612"
+              }
+            }
+          }
+        ]
+      },
+      "modulation": {
+        "S": "LORA"
+      },
+      "time": {
+        "S": "2020-05-03T14:42:24.714354411Z"
+      }
+    }
+  },
+  "payload_fields": {
+    "M": {
+      "field1": {
+        "N": "22.37"
+      },
+      "field2": {
+        "N": "21.93"
+      },
+      "field3": {
+        "N": "21.18"
+      },
+      "field4": {
+        "NULL": true
+      },
+      "field5": {
+        "NULL": true
+      },
+      "field6": {
+        "N": "22.7"
+      },
+      "field7": {
+        "N": "43.7"
+      },
+      "field8": {
+        "N": "1.72"
+      },
+      "sensor": {
+        "M": {
+          "battery": {
+            "N": "3.91"
+          },
+          "humidity": {
+            "M": {
+              "roof": {
+                "N": "43.7"
+              }
+            }
+          },
+          "temperature": {
+            "M": {
+              "drop": {
+                "N": "21.93"
+              },
+              "lower": {
+                "N": "21.18"
+              },
+              "middle": {
+                "NULL": true
+              },
+              "outer": {
+                "N": "22.37"
+              },
+              "roof": {
+                "N": "22.7"
+              },
+              "upper": {
+                "NULL": true
+              }
+            }
+          },
+          "version": {
+            "N": "0"
+          },
+          "weight": {
+            "N": "1.72"
+          }
+        }
+      },
+      "status": {
+        "S": "version 0, 3.91 V"
+      }
+    }
+  },
+  "payload_raw": {
+    "S": "AIcBrAASEd4IvQiRCEYIAIAAgA=="
+  },
+  "port": {
+    "N": "1"
+  },
+  "timestamp": {
+    "S": "2020-05-03T14:42:24.714354411Z"
+  }
+}

@@ -12,19 +12,19 @@ Ziele des Designs:
 
 ## Systemübersicht
 - **Arduino** (entweder Uno + Dragino LoRa Shield, Dragino LoRa Mini Dev oder CubeCell LoRa Dev) \
-  Ein kleiner Microcontroller hat genug Leistung für die gelegentlichen Messung. 
-  Eine wiederaufladbare Batterie dient als Buffer für Messungen während der Nacht und bei schlechtem Wetter. \
-  Das Gerät läuft ohne manuelle Interaktion ausser einem Knopf um es in in den 'Manuellen Modus' zu setzen während am Bienenstock gearbeitet wird.
+  Ein kleiner Microcontroller hat genug Leistung für die gelegentlichen Messungen. 
+  Eine wiederaufladbare Batterie dient als Buffer während der Nacht und bei schlechtem Wetter. \
+  Das Gerät läuft ohne manuelle Interaktion ausser einem Knopf, um es in in den 'Manuellen Modus' zu setzen während am Bienenstock gearbeitet wird.
     - Mehrere (z.B. 5) DS18B20 Temperatursensoren mit dem 1-wire-Protokoll
     - DHT11/22 Temperatur- und Feuchtigkeitssensor
-    - Wägezelle mit HX711 Konverter
+    - Wägezelle(n) mit HX711 Konverter
     - LoRaWan Verbindung (TTN)
-    - Solarzelle mit wiederaufladbarer Batterie
+    - Solarzelle und wiederaufladbarer Batterie (LiPo)
     - Push-Button mit LED für temporäre Ausschaltung (Manueller Modus)
     - Evtl. weitere Geräte mit RS-485 Schnittstelle?
     
 - **LoRaWAN** TTN-Gateway/Netzwerk/Applikation \
-  Bienenstöcke haben normalerweise keinen Kabel-Internetanschluss. Hochgeschwindigkeitsverbindungen mit GSM und WLAN sind nicht nötig und sollten wegen der Strahlenbelastung vermieden werden. \
+  Bienenstöcke haben normalerweise keinen Kabel-Internetanschluss. Hochgeschwindigkeitsverbindungen mit GSM und WLAN sind nicht nötig und werden wegen der Strahlenbelastung vermieden. \
     [TheThingsNetwork](https://www.thethingsnetwork.org/) TTN ist ein globales, offenes LoRa Netzwerk. Wenn kein Gateway innerhalb einiger km verfügbar ist, kann ein zusätzlicher eigener Gateway einfach installiert werden.
     - Übermittelt empfangene Nachrichten vom LoRa Gateway ins Internet, prüft die Authorisierung (OTAA/ABP) und kodiert/dekodiert Nachrichten 
     - Erlaubt direkte ThingSpeak-Integration (jedoch nur 1 Gerät pro Applikation mit 1 Kanal)
@@ -35,10 +35,10 @@ Ziele des Designs:
   Das ist der schnelle und einfache Weg um Sensordaten anzuzeigen.
     - Einfaches Aufsetzen und Teilen von [ThingSpeak](https://thingspeak.com/)
     - Mobile App ist verfügbar
-    - Matlab Analyse ist möglihc
+    - Matlab Analyse ist möglich
     - Beschränkt auf 8 Felder/Kanal
-    - Keine Verlinkung von mehreren Kanälen (Bienenstöcken desselben Imkers)
-    - Beschränkte Interaktion (z.B. kein Drilldown)
+    - Keine Verlinkung von mehreren Kanälen (z.B. Bienenstöcken desselben Imkers)
+    - Beschränkte Interaktion
 
 - **Verarbeitung und Weiterleitung** von Sensordaten z.B. AWS (in Bearbeitung) \
   Alternative oder Ergänzung zu ThingSpeak.
@@ -61,7 +61,6 @@ Drei unterschiedliche Boards wurden getestet:
 - [Heltec CubeCell LoRa Dev](https://heltec.org/project/htcc-ab01/). Das ist mein Favorit!
     - 3.3V ermöglicht LiPo, Ladeschaltung für Solarzelle bereits integriert
     - Energieeffizienz (1W Solarzelle mitt 230mAh LiPo wird an einem Sonnentag aufgeladen und kann fast 2 Wochen überbrücken)
-    - Power efficient (1W solar cell with 230mAh LiPo loads on a single sunny day and has almost 2 weeks of buffer)
     - Kleines Board, LoRa Transmitter bereits integriert
     - Stärkere MCU (48 MHz ARM M0+, 128KB FLASH, 16KB SRAM)
     
@@ -79,28 +78,27 @@ Verwendete Pins:
 ## Übermittelte LoRa Nachricht (Binär kodiert)
 - Das Gerät misst ca. alle 5 min
 - Messungen werden bei grösseren Änderungen oder alle 30 min übermittelt (es kann jedoch passieren, dass Nachrichten verloren gehen)
+- Aktuell keine Uplink-Nachrichten
 - Fixe Nachrichtengrösse und Reihenfolge der Sensorwerte für kompakte/effiziente Übermittlung
 - Werte werden als short integer mit 2 Nachkommastellen übermittelt (-327.67 .. 327.67)
 - Spezieller Wert für null (-327.68) 
 ~~~
-   {
-     "sensor": {
-       "version": 0,    // command id or version
-       "battery": 3.82,
-       "weight": 1.71,
-       "humidity": {
-         "roof": 65.43
-       },
-       "temperature": {
-         "roof": 5.3,
-         "upper": 20.2,
-         "middle": 19.2,
-         "lower": 18.1,
-         "drop": -2.2,
-         "outer": -7.5
-       }
-     }
+ "sensor": {
+   "version": 0,  // command id or version
+   "battery": 3.92,
+   "weight": 0.37,
+   "humidity": {
+     "roof": 47.5
+   },
+   "temperature": {
+     "drop": 20.68,
+     "lower": 19.5,
+     "middle": 19.93,
+     "outer": 20.62,
+     "roof": 22.2,
+     "upper": 19.37
    }
+ }
 ~~~   
    
 ## Checkout von diesem Projekt
@@ -136,6 +134,7 @@ git stash pop
 | Tools > LORAWAN_AT_SUPPORT | `OFF` |
 | Tools > LORAWAN_RGB | `ACTIVE` or `DEACTIVE` |
 | Monitor baud rate | `115200` |
+
 Im Projekt sind alle verwendeten Bibliotheken bereits enthalten (das ist der Grund für das submodule-Kommando und die Einstellung des Sketchbook location).
 
 Dann
@@ -144,10 +143,10 @@ Dann
 1. Sketch kompilieren/laden
 1. Aktivierung mit OTAA benötigt einige Zeit (je nach Verbindungsqualität auch ca. eine halbe Stunde)
 1. Drücke den `USR` Knopf für den 'Manuellen Modus':
-    - es werden keine LoRa Nachrichten verschickt, statt dessen blinkt die LED
+    - es werden keine LoRa Nachrichten verschickt, die LED blinkt
     - kontinuierliche Gewichtsmessung für Kalibration, daraus kann Offset/Scale berechnet werden (z.B. [Excel sheet](./docs/Gewicht%20Eichung%20Loadcell.xlsx))
     - für Temperaturkompensation sollten die Gewichte zusätzlich bei unterschiedlichen Temperaturen gemessen werden
-    - einlesen der 1-wire Temperatursensoren nacheinander, aufschreiben der IDs 
+    - 1-wire Temperatursensoren nacheinander einlesen, IDs aufschreiben 
     - Knopf nochmals drücken um die LoRa Aktivierung wieder zu starten
 1. Eingabe der 1-wire Sensor IDs und Gewichtskalibration in `calibration.h`
 1. Sketch nochmals kompilieren/laden

@@ -17,12 +17,12 @@ To support bee keepers in monitoring their bees with minimal interference, a set
     - DHT11/22 temperature and humidity sensor
     - Weight cell with HX711 converter
     - LoRaWan connection (TTN)
-    - Solar power with rechargeable battery
+    - Solar power and rechargeable battery (LiPo)
     - Push-Button with LED to disable temporary (manual mode)
     - Evtl. slave devices with RS-485?
     
 - **LoRaWAN** TTN-Gateway/Network/Application\
-  Beehives usually have no wired internet connection and high-speed connections using GSM and WLAN should be avoided to keep radiation low.\
+  Beehives usually have no wired internet connection and high-speed connections using GSM and WLAN is avoided to keep radiation low.\
   [TheThingsNetwork](https://www.thethingsnetwork.org/) TTN is a global open LoRa network. If no gateway is available within some km near the beehives, an additional gateway can easily be installed. 
     - Transmits messages from the LoRa gateways to the internet, handles authorization (OTAA/ABP) and encoding/decoding of messages
     - Allows direct ThingSpeak integration (only 1 device per application with 1 channel)
@@ -76,29 +76,28 @@ Used pins:
        
 ## Transmitted LoRa message (binary encoded)
 - The device measures about every 5 min
-- Measures will be transmitted on significant changes or every 30 min (messages may get lost) 
+- Measures will be transmitted on significant changes or every 30 min (messages may get lost)
+- Currently no uplink messages 
 - Fixed size and order of measured values
 - Values are transmitted as short integer values with 2 digits (-327.67 .. 327.67)
 - Reserved value to represent null (-327.68) 
 ~~~
-   {
-     "sensor": {
-       "version": 0,    // command id or version
-       "battery": 3.82,
-       "weight": 1.71,
-       "humidity": {
-         "roof": 65.43
-       },
-       "temperature": {
-         "roof": 5.3,
-         "upper": 20.2,
-         "middle": 19.2,
-         "lower": 18.1,
-         "drop": -2.2,
-         "outer": -7.5
-       }
-     }
+ "sensor": {
+   "version": 0,  // command id or version
+   "battery": 3.92,
+   "weight": 0.37,
+   "humidity": {
+     "roof": 47.5
+   },
+   "temperature": {
+     "drop": 20.68,
+     "lower": 19.5,
+     "middle": 19.93,
+     "outer": 20.62,
+     "roof": 22.2,
+     "upper": 19.37
    }
+ }
 ~~~   
    
 ## Checkout this project
@@ -134,6 +133,7 @@ git stash pop
 | Tools > LORAWAN_AT_SUPPORT | `OFF` |
 | Tools > LORAWAN_RGB | `ACTIVE` or `DEACTIVE` |
 | Monitor baud rate | `115200` |
+
 The project already includes all required libraries (that is the reason for the submodule commands and for the local sketchbook location).
 
 Then

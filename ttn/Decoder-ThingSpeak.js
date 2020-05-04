@@ -2,34 +2,34 @@ function Decoder(bytes, port) {
   // Decode an ThingSpeak formatted uplink message from a buffer
   // (array) of bytes to an object of fields.
 
-  // Payload: 00 7E 01 AB 00 00 80 00 80 00 80 00 80 00 80 00 80 00 80 (19 bytes)
-  //   {
-  //     "field1": null, // Aussentemperatur
-  //     "field2": null, // Kälteloch
-  //     "field3": null, // Temperatur 200mm
-  //     "field4": null, // Temperatur 300mm
-  //     "field5": null, // Temperatur 400mm
-  //     "field6": null, // Dachtemperatur (DHT22)
-  //     "field7": null, // Dachfeuchtigkeit (DHT22)
-  //     "field8": 1.71, // Gewicht
-  //     "status": "version 0, 3.82 V",
-  //     "sensor": {
-  //       "version": 0,
-  //       "battery": 3.82,
-  //       "weight": 1.71,
-  //       "humidity": {
-  //         "roof": null
-  //       },
-  //       "temperature": {
-  //         "roof": null,
-  //         "upper": null,
-  //         "middle": null,
-  //         "lower": null,
-  //         "drop": null,
-  //         "outer": null
-  //       }
+  // Payload: 00 88 01 25 00 8E 12 AC 08 0E 08 14 08 9E 07 C9 07 91 07 (19 bytes)
+  // {
+  //   "field1": 20.62, // Aussentemperatur
+  //   "field2": 20.68, // Kälteloch
+  //   "field3": 19.5,  // Temperatur 200mm
+  //   "field4": 19.93, // Temperatur 300mm
+  //   "field5": 19.37, // Temperatur 400mm
+  //   "field6": 22.2,  // Dachtemperatur (DHT22)
+  //   "field7": 47.5,  // Dachfeuchtigkeit (DHT22)
+  //   "field8": 0.37,  // Gewicht
+  //   "status": "version 0, 3.92 V",
+  //   "sensor": {
+  //     "version": 0,
+  //     "battery": 3.92,
+  //     "weight": 0.37,
+  //     "humidity": {
+  //       "roof": 47.5
+  //     },
+  //     "temperature": {
+  //       "drop": 20.68,
+  //       "lower": 19.5,
+  //       "middle": 19.93,
+  //       "outer": 20.62,
+  //       "roof": 22.2,
+  //       "upper": 19.37
   //     }
   //   }
+  // }
 
   function asShort(index) {
     if (bytes.length < index) return null;

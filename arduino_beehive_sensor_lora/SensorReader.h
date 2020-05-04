@@ -58,6 +58,7 @@ class SensorReader {
     }
 
     void listTemperatureSensors() {
+      sensors.begin();
       byte deviceCount = sensors.getDeviceCount();
       Serial.print("\nFound ");
       Serial.print(deviceCount, DEC);
@@ -97,22 +98,19 @@ class SensorReader {
 
     // DS18B20 temperature sensors on one-wire bus
     float getTemperature(int index) {
+      const uint8_t* addr = thermometer[index];
+      float temperature = sensors.getTempC(addr);
       Serial.print("Thermometer ");
       Serial.print(index);
-      float temperature = getTemperatureDirect(thermometer[index]);
-      Serial.print(" shows ");
-      Serial.print(temperature);
-      Serial.println("C");
-      return temperature; 
-    }
-
-    float getTemperatureDirect(const uint8_t* addr) {
       Serial.print(" @ 0x");
       for (int i = 0; i < 8; i++) {
           if (addr[i] < 0x10) Serial.print('0');
           Serial.print(addr[i], HEX);
       }
-      return sensors.getTempC(addr);
+      Serial.print(" shows ");
+      Serial.print(temperature);
+      Serial.println(" C");
+      return temperature; 
     }
 
     // DHTxx sensor

@@ -18,11 +18,15 @@
  **********************************************************/
 
 // see credentials.h, calibration.h
-//#define DEVICE_NAME krokus
-//#define DEVICE_NAME shakra
-#define DEVICE_NAME gotthard
-//#define DEVICE_NAME cube-cell-1
-//#define DEVICE_NAME test-123
+#define KROKUS      1
+#define SHAKRA      2
+#define GOTTHARD    3
+#define CUBE_CELL_1 4
+#define TEST_123    5
+
+// see credentials.h, calibration.h
+#define DEVICE_ID   SHAKRA
+#define DEVICE_NAME shakra
 
 #if defined(__ASR6501__)
   #include "CubeCellLoRa.h"

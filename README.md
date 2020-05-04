@@ -1,5 +1,6 @@
 # Beehive sensor data
-Weight, temperature and humidity measurement in a beehive using Arduino and LoRaWan (TTN).
+Weight, temperature and humidity measurement in a beehive using Arduino and LoRaWan (TTN).\
+[Deutscher Text](./README-de.md).
 
 ![Arduino compile test](https://github.com/joergkeller/beehive-sensor/workflows/Arduino%20compile%20test/badge.svg)
 
@@ -12,7 +13,7 @@ To support bee keepers in monitoring their bees with minimal interference, a set
 - **Arduino** (alternatively Uno + Dragino LoRa Shield, Dragino LoRa Mini Dev, or CubeCell LoRa Dev)\
   A small microcontroller has enough power to measure every couple of minutes. A rechargeable battery serves as buffer to measure during night and cloudy weather.\
   The device works without any human intervention except a button to put it to a 'manual mode' when working with the beehive.
-    - 3-4 DS18B20 temperature sensors using 1-wire
+    - Several (e.g. 5) DS18B20 temperature sensors using 1-wire
     - DHT11/22 temperature and humidity sensor
     - Weight cell with HX711 converter
     - LoRaWan connection (TTN)
@@ -28,24 +29,22 @@ To support bee keepers in monitoring their bees with minimal interference, a set
     - HTTP integration allows to address any possible backend (many devices per application, see below)
     - see [TTN application](./docs/ttn-application.md)
     
-- Dashboard and visualization with **ThingSpeak** channel\
+- Dashboard and visualization with **ThingSpeak channel**\
   This is the quick and simple way to display the sensor data.
-    - Simple to setup and share
+    - Simple to setup and share [ThingSpeak](https://thingspeak.com/)
     - Mobile app available
     - Matlab analysis possible
     - Limited to 8 fields/channel
     - No linking of multiple channels (beehives)
     - Limited user interaction (drilldown)
 
-- **Mapping and routing** sensor data eg. AWS Api Gateway\
-  Alternative to the ThingSpeak display. 
+- **Mapping and routing** sensor data eg. using AWS (work in progress) \
+  Alternative or extension to the ThingSpeak display. 
   Such a back-end application can be used to collect the sensor data and to feed a web application.
-    - Simple extension eg. AWS Lambda (data store, device specific routing, alarming, custom app)
     - see [AWS serverless](./docs/aws-serverless.md)
     - Forwarding to ThingSpeak channels as above, but allowing many devices/channels per TTN application
     - Additionally storing sensor docs in DynamoDb, see [AWS recording](./docs/aws-recorder.md)
-    - No restrictions of the number of fields or the way sensor data is displayed 
-    - WebApp to show charts of the collected sensor data
+    - No restrictions of the number of fields or the way sensor data is displayed (own WebApp) 
     
        
 ## Device Hardware
@@ -58,8 +57,7 @@ Three boards have been tested:
     - 3.3V (possible LiPo, not tested)
     - Small size, LoRa transmitter integrated
     - Classic Arduino MCU (16MHz ATMega328P, 32KB FLASH, 2KB SRAM)
-- [Heltec CubeCell LoRa Dev](https://heltec.org/project/htcc-ab01/) \
-  My favorite!
+- [Heltec CubeCell LoRa Dev](https://heltec.org/project/htcc-ab01/). My favorite!
     - 3.3V (possible LiPo, integrated solar charging logic)
     - Power efficient (1W solar cell with 230mAh LiPo loads on a single sunny day and has almost 2 weeks of buffer)
     - Small size, LoRa transmitter integrated
@@ -77,6 +75,8 @@ Used pins:
 | LED | to VCC (active low) | A2 | GPIO1 |
        
 ## Transmitted LoRa message (binary encoded)
+- The device measures about every 5 min
+- Measures will be transmitted on significant changes or every 30 min (messages may get lost) 
 - Fixed size and order of measured values
 - Values are transmitted as short integer values with 2 digits (-327.67 .. 327.67)
 - Reserved value to represent null (-327.68) 
@@ -137,14 +137,17 @@ git stash pop
 The project already includes all required libraries (that is the reason for the submodule commands and for the local sketchbook location).
 
 Then
-1. Create TTN account/application/device and enter OTAA/ABP authorization codes in `credentials.h`
+1. Create free TTN account/application/device and enter OTAA/ABP authorization codes in `credentials.h`
+1. Create free ThingSpeak account/channel and a TTN ThingSpeak integration with the appropriate values 
 1. Compile/upload sketch
 1. Activation with OTAA takes some time (even half an hour or so)
 1. Press button to enter 'manual mode'
-    - no LoRa messages sending, blinking LED instead (useful if you work on your beehive)
+    - no LoRa messages sending, blinking LED instead
     - continous weight measuring for calibration, calculate offset/scale (eg. see [Excel sheet](./docs/Gewicht%20Eichung%20Loadcell.xlsx))
     - for temperature compensation, measure weights at different temperatures also 
     - scanning 1-wire temperature sensors one by one, note ids
     - press button again to start LoRa activation
 1. Enter 1-wire sensor ids and weight calibration to `calibration.h`
 1. Compile/upload sketch again 
+    - Wait for OTAA activation
+    - First measure should appear in the local monitor, as TTN data and in ThingSpeak channel

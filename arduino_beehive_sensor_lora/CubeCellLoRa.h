@@ -19,6 +19,8 @@ class CubeCellLoRa {
     }
 
     void join() {
+      Serial.print("Device joining: ");
+      printBufferAsString(DEV_EUI, sizeof(DEV_EUI));
       lora.joinOTAA(DEV_EUI, APP_EUI, APP_KEY);
       //lora.joinABP(DEVADDR, NWKSKEY, APPSKEY);
     }

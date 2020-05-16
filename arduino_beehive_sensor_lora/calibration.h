@@ -10,15 +10,15 @@
 
 #if DEVICE_ID == KROKUS
 
-  #define LOADCELL_DIVIDER 25365    // real_weight / (weighted_reading - zero_reading)
-  #define LOADCELL_OFFSET -43496    // zero_reading: raw value measured with zero weight
-  #define TEMPERATURE_FACTOR 0.0e0  // gradient of trendline
-  #define TEMPERATURE_OFFSET 0.0e0  // offset of trendline
+  #define LOADCELL_DIVIDER 10458    // real_weight / (weighted_reading - zero_reading)
+  #define LOADCELL_OFFSET 481976    // zero_reading: raw value measured with zero weight
+  #define TEMPERATURE_FACTOR -9.6755E-02  // gradient of trendline
+  #define TEMPERATURE_OFFSET +9.3877E-01  // offset of trendline
 
   #define THERMOMETER_COUNT 5 // number of 1-wire thermometers, addresses below
   #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
   const DeviceAddress thermometer[THERMOMETER_COUNT] = {
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 0: Aussentemperatur
+    { 0x28, 0xD7, 0x47, 0x79, 0xA2, 0x16, 0x03, 0xC1 }, // 0: Aussentemperatur
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 1: Temperatur Kälteloch
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 2: Temperatur 200mm
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 3: Temperatur 300mm
@@ -29,8 +29,8 @@
 
   #define LOADCELL_DIVIDER 10263    // real_weight / (weighted_reading - zero_reading)
   #define LOADCELL_OFFSET  17838    // zero_reading: raw value measured with zero weight
-  #define TEMPERATURE_FACTOR 0.0e0  // gradient of trendline
-  #define TEMPERATURE_OFFSET 0.0e0  // offset of trendline
+  #define TEMPERATURE_FACTOR -0.1432  // gradient of trendline
+  #define TEMPERATURE_OFFSET +3.4714  // offset of trendline
 
   #define THERMOMETER_COUNT 5 // number of 1-wire thermometers, addresses below
   #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
@@ -46,17 +46,17 @@
 
   #define LOADCELL_DIVIDER 25365    // real_weight / (weighted_reading - zero_reading)
   #define LOADCELL_OFFSET -43496    // zero_reading: raw value measured with zero weight
-  #define TEMPERATURE_FACTOR 0.0e0  // gradient of trendline
-  #define TEMPERATURE_OFFSET 0.0e0  // offset of trendline
+  #define TEMPERATURE_FACTOR -7.1332E-03 // gradient of trendline
+  #define TEMPERATURE_OFFSET -1.6111E+00 // offset of trendline
 
   #define THERMOMETER_COUNT 5 // number of 1-wire thermometers, addresses below
   #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
   const DeviceAddress thermometer[THERMOMETER_COUNT] = {
     { 0x28, 0xC2, 0xE1, 0x78, 0x0A, 0x00, 0x00, 0x26 }, // 0: Aussentemperatur
-    { 0x28, 0xA6, 0x47, 0x79, 0xA2, 0x16, 0x03, 0x6E }, // 1: Temperatur Kälteloch
-    { 0x28, 0x13, 0x41, 0x79, 0xA2, 0x16, 0x03, 0x1E }, // 2: Temperatur 200mm
-    { 0x28, 0x8F, 0xE1, 0x79, 0xA2, 0x16, 0x03, 0xE1 }, // 3: Temperatur 300mm
-    { 0x28, 0x3F, 0xE0, 0x79, 0xA2, 0x16, 0x03, 0x2B }  // 4: Temperatur 400mm
+    { 0x28, 0x13, 0x41, 0x79, 0xA2, 0x16, 0x03, 0x1E }, // 1: Temperatur Kälteloch
+    { 0x28, 0xA6, 0x47, 0x79, 0xA2, 0x16, 0x03, 0x6E }, // 2: Temperatur 200mm
+    { 0x28, 0x3F, 0xE0, 0x79, 0xA2, 0x16, 0x03, 0x2B }, // 3: Temperatur 300mm
+    { 0x28, 0x8F, 0xE1, 0x79, 0xA2, 0x16, 0x03, 0xE1 }  // 4: Temperatur 400mm
   };
 
 #elif DEVICE_ID == CUBE_CELL_1

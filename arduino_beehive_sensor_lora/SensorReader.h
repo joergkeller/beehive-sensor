@@ -100,16 +100,18 @@ class SensorReader {
     float getTemperature(int index) {
       const uint8_t* addr = thermometer[index];
       float temperature = sensors.getTempC(addr);
-      Serial.print("Thermometer ");
-      Serial.print(index);
-      Serial.print(" @ 0x");
-      for (int i = 0; i < 8; i++) {
-          if (addr[i] < 0x10) Serial.print('0');
-          Serial.print(addr[i], HEX);
-      }
-      Serial.print(" shows ");
-      Serial.print(temperature);
-      Serial.println(" C");
+      #if defined(__ASR6501__)
+        Serial.print("Thermometer ");
+        Serial.print(index);
+        Serial.print(" @ 0x");
+        for (int i = 0; i < 8; i++) {
+            if (addr[i] < 0x10) Serial.print('0');
+            Serial.print(addr[i], HEX);
+        }
+        Serial.print(" shows ");
+        Serial.print(temperature);
+        Serial.println(" C");
+      #endif
       return temperature; 
     }
 

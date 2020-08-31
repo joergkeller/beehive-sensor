@@ -132,15 +132,19 @@ void setup() {
   node.toState(JOIN);
 }
 
-#define xstr(x) str(x)
-#define str(x) #x
-#define ABOUT_MESSAGE "Start '" xstr(DEVICE_NAME) "' beehive LoRa script with sensor message v" xstr(MESSAGE_VERSION)
+#if defined(__ASR6501__)
+  #define xstr(x) str(x)
+  #define str(x) #x
+  #define ABOUT_MESSAGE "Start '" xstr(DEVICE_NAME) "' beehive LoRa script with sensor message v" xstr(MESSAGE_VERSION)
+#endif
 
 void initializeMessage() {
-  Serial.print(ABOUT_MESSAGE);
-  Serial.print(" (");
-  Serial.print(sizeof(message[0]));
-  Serial.println(" bytes)");
+  #if defined(__ASR6501__)
+    Serial.print(ABOUT_MESSAGE);
+    Serial.print(" (");
+    Serial.print(sizeof(message[0]));
+    Serial.println(" bytes)");
+  #endif
   for (int m = 0; m < 2; m++) {
     message[m].sensor.version = MESSAGE_VERSION;
     message[m].sensor.battery = UNDEFINED_VALUE;

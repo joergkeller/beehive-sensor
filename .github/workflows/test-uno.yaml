@@ -1,0 +1,34 @@
+name: Arduino compile test with Arduino UNO
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Arduino compile test with Arduino UNO
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v1.0.0
+
+      - name: Install CubeCell core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr@1.8.3
+
+      - name: Prepare code and submodules
+        run: |
+          git submodule init
+          git submodule update
+          mv arduino_beehive_sensor_lora/credentials-template.h arduino_beehive_sensor_lora/credentials.h
+          sed -i -e '/#define DEVICE_ID/s/SHAKRA/TEST_123/' arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+          sed -i -e '/#define DEVICE_NAME/s/shakra/test_123/' arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+
+      - name: Compile examples
+        run: |
+          arduino-cli compile --fqbn=arduino:avr:uno  examples/LoRa-HelloWorld/LoRa-HelloWorld.ino
+          arduino-cli compile --fqbn=arduino:avr:uno  examples/USB-Voltage/USB-Voltage.ino
+
+      - name: Compile script
+        run: |
+          arduino-cli compile --fqbn=arduino:avr:uno  arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino

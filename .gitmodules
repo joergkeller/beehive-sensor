@@ -11,12 +11,13 @@
 [submodule "libraries/DallasTemperature"]
 	path = libraries/DallasTemperature
 	url = https://github.com/milesburton/Arduino-Temperature-Control-Library.git
-[submodule "libraries/HX711"]
-	path = libraries/HX711
-	url = https://github.com/bogde/HX711.git
 [submodule "libraries/DHT"]
 	path = libraries/DHT
 	url = https://github.com/adafruit/DHT-sensor-library.git
 [submodule "libraries/UnifiedSensor"]
 	path = libraries/UnifiedSensor
 	url = https://github.com/adafruit/Adafruit_Sensor.git
+[submodule "libraries/HX711"]
+	path = libraries/HX711
+	url = https://github.com/joergkeller/HX711.git
+	branch = develop

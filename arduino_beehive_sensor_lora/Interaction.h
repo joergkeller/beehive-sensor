@@ -20,8 +20,8 @@
 #endif
 
 #if(LoraWan_RGB==1)
-#include "Adafruit_NeoPixel.h"
-Adafruit_NeoPixel pixel(1, RGB, NEO_GRB + NEO_KHZ800);
+#include "CubeCell_NeoPixel.h"
+CubeCell_NeoPixel pixel(1, RGB, NEO_GRB + NEO_KHZ800);
 
 void setRGB(uint8_t red, uint8_t green, uint8_t blue) {
   digitalWrite(Vext, LOW);  // Set power

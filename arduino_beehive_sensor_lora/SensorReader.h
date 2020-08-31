@@ -152,10 +152,10 @@ class SensorReader {
     long readVcc() {
       noInterrupts();
       #if defined(__ASR6501__)
-        pinMode(ADC_CTL, OUTPUT);
-        digitalWrite(ADC_CTL, LOW);
+        pinMode(VBAT_ADC_CTL, OUTPUT);
+        digitalWrite(VBAT_ADC_CTL, LOW);
         long result = analogRead(ADC) * 2;
-        digitalWrite(ADC_CTL, HIGH);
+        digitalWrite(VBAT_ADC_CTL, HIGH);
         return result;
       #else
         // see https://forum.arduino.cc/index.php?topic=120693.msg908179#msg908179

@@ -11,7 +11,7 @@ jobs:
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1.0.0
 
-      - name: Install CubeCell core
+      - name: Install AVR core
         run: |
           arduino-cli core update-index
           arduino-cli core install arduino:avr@1.8.3
@@ -55,9 +55,9 @@ jobs:
 
       - name: Compile examples
         run: |
-          arduino-cli compile --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=5,LORAWAN_CLASS=0,LORAWAN_NETMODE=0,LORAWAN_ADR=0,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=1,LORAWAN_RGB=1,LORAWAN_DebugLevel=0 examples/Heltec-PinMode/Heltec-PinMode.ino
-          arduino-cli compile --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=5,LORAWAN_CLASS=0,LORAWAN_NETMODE=0,LORAWAN_ADR=0,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=1,LORAWAN_RGB=1,LORAWAN_DebugLevel=0 examples/Heltec-ShiftIn/Heltec-ShiftIn.ino
+          arduino-cli compile --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=5,LORAWAN_CLASS=0,LORAWAN_NETMODE=0,LORAWAN_ADR=1,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=0,LORAWAN_RGB=1,LORAWAN_DebugLevel=0 examples/Heltec-PinMode/Heltec-PinMode.ino
+          arduino-cli compile --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=5,LORAWAN_CLASS=0,LORAWAN_NETMODE=0,LORAWAN_ADR=1,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=0,LORAWAN_RGB=1,LORAWAN_DebugLevel=0 examples/Heltec-ShiftIn/Heltec-ShiftIn.ino
 
       - name: Compile script
         run: |
-          arduino-cli compile --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=5,LORAWAN_CLASS=0,LORAWAN_NETMODE=0,LORAWAN_ADR=0,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=1,LORAWAN_RGB=1,LORAWAN_DebugLevel=0 arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+          arduino-cli compile --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=5,LORAWAN_CLASS=0,LORAWAN_NETMODE=0,LORAWAN_ADR=1,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=0,LORAWAN_RGB=1,LORAWAN_DebugLevel=0 arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino

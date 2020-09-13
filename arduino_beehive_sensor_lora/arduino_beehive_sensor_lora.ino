@@ -25,8 +25,8 @@
 #define TEST_123    5
 
 // see credentials.h, calibration.h
-#define DEVICE_ID   SHAKRA
-#define DEVICE_NAME shakra
+#define DEVICE_ID   KROKUS
+#define DEVICE_NAME krokus
 
 #if defined(__ASR6501__)
   #include "CubeCellLoRa.h"
@@ -60,8 +60,10 @@ typedef union {
 } message_t;
 
 #define MS 1L
-#define SEC (1000*MS)
-#define MIN (60*SEC)
+#define SEC  (1000*MS)
+#define MIN  (60*SEC)
+#define HOUR (60*MIN)
+#define DAY  (24*HOUR)
 
 unsigned long getTime();
 void onSwitchManualMode();
@@ -69,9 +71,11 @@ void onSwitchManualMode();
 #define RAW_MEASURE_INTERVAL    (4*SEC)   // Dragino only allows 8s, 4s, 2s, 1s
 #define MEASURE_INTERVAL        (5*MIN)
 #define UNCONDITIONAL_INTERVAL  (30*MIN)
-#define CONFIRMATION            false
+#define CONFIRMATION_INTERVAL   (12*HOUR)
+#define RESET_INTERVAL          (6*DAY)
 #define JOIN_WAIT               (60*MIN)
-#define TRANSMISSION_WAIT       (10*SEC)
+#define TRANSMISSION_WAIT       (15*SEC)
+#define MAX_TRANSMISSION_FAIL   5
 
 #define LIMIT_WEIGHT_DIFF       10  // 0.100 kg
 #define LIMIT_TEMPERATURE_DIFF  50  // 0.50 degrees
@@ -83,7 +87,10 @@ byte lastMsgIndex = 0;
 unsigned long seqNumber = 0L;
 unsigned long lastMeasureMs = 0L;
 unsigned long lastTransmissionMs = 0L;
+unsigned long lastConfirmationMs = 0L;
 unsigned long sleptMs = 0L;
+boolean       requireConfirmation = false;
+unsigned int  transmissionFailed = 0;
 
 typedef enum               {JOIN,   MEASURE,   TRANSMIT,   SLEEP,   MANUAL } States;
 const char* stateNames[] = {"Join", "Measure", "Transmit", "Sleep", "Manual"};
@@ -159,18 +166,19 @@ void initializeMessage() {
 
 /* Loop ******************************************/
 
-bool unconditionalTransmit();
-bool hasChanged(byte index);
-bool hasChangedWeight(short lastValue, short nextValue);
-bool hasChangedTemperature(short lastValue, short nextValue);
-bool hasChangedHumidity(short lastValue, short nextValue);
-
 void loop() {
   node.loop();
   radio.tick();
 }
 
 /* Event handler ******************************************/
+
+bool unconditionalTransmit();
+bool withConfirmation();
+bool hasChanged(byte index);
+bool hasChangedWeight(short lastValue, short nextValue);
+bool hasChangedTemperature(short lastValue, short nextValue);
+bool hasChangedHumidity(short lastValue, short nextValue);
 
 // JOIN ---------------------------
 
@@ -208,19 +216,31 @@ void measure() {
 void sendMessage() {
   byte index = (lastMsgIndex + 1) % 2;
   lastTransmissionMs = getTime();
-  seqNumber = radio.send(message[index].bytes, sizeof(message[index]), CONFIRMATION);
+  requireConfirmation = withConfirmation();
+  seqNumber = radio.send(message[index].bytes, sizeof(message[index]), requireConfirmation);
   lastMsgIndex = index;
 }
 
 void transmitting() {
-  if (!radio.isTransmitting()) {
+  if (!radio.isTransmitting()) { // successful transmission!
+    if (requireConfirmation) {
+      transmissionFailed = 0;
+      requireConfirmation = false;
+      lastConfirmationMs = getTime();
+    }
     node.toState(SLEEP);
   }
 }
 
 void onTransmitTimeout() {
+  transmissionFailed++;
   radio.clear();
   node.toState(SLEEP);
+  #if defined(__ASR6501__)
+    if (transmissionFailed > MAX_TRANSMISSION_FAIL) {
+      HW_Reset(0);
+    }
+  #endif
 }
 
 // SLEEP ---------------------------
@@ -270,6 +290,11 @@ void onSleepTimeout() {
 } 
 
 void powerUp() {
+  #if defined(__ASR6501__)
+    if (getTime() >= RESET_INTERVAL) {
+      HW_Reset(0);
+    }
+  #endif
   #ifdef USBCON
     USBDevice.init();
     USBDevice.attach();
@@ -418,6 +443,24 @@ bool unconditionalTransmit() {
     Serial.print(transmissionInterval / 1000); Serial.println("s since transmission");
   }
   return unconditionalTransmit;
+}
+
+inline
+boolean withConfirmation() {
+  #if defined(__ASR6501__)
+    if (transmissionFailed > 0) {
+      Serial.println("Require confirmation after fail");
+      return true;
+    }
+    unsigned long confirmationInterval = getTime() - lastConfirmationMs;
+    boolean confirmation = confirmationInterval >= CONFIRMATION_INTERVAL;
+    if (confirmation) {
+      Serial.println("Require confirmation");
+    }
+    return confirmation;
+  #else
+    return false;
+  #endif
 }
 
 inline

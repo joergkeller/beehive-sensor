@@ -44,8 +44,7 @@ class SensorReader {
       dht.begin();
       sensors.begin();
       scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
-      scale.set_scale(LOADCELL_DIVIDER);
-      scale.set_offset(LOADCELL_OFFSET);
+      initialize();
     }
 
     void powerDown() {
@@ -55,6 +54,14 @@ class SensorReader {
     void powerUp() {
       scale.power_up();
       dht.begin();
+      initialize();
+    }
+
+    void initialize() {
+      scaleIsReady = scale.wait_ready_retry(5, 200);
+      if (!scaleIsReady) { Serial.println("Scale not ready"); }
+      scale.set_scale(LOADCELL_DIVIDER);
+      scale.set_offset(LOADCELL_OFFSET);
     }
 
     void listTemperatureSensors() {
@@ -123,6 +130,7 @@ class SensorReader {
     float getWeight() { return scale.get_units(OPERATIONAL_SAMPLING); }
 
     float getCompensatedWeight() {
+      if (!scaleIsReady) { return -127.0f; }
       float weight = getWeight();
       float outerTemperature = sensors.getTempC(thermometer[THERMOMETER_OUTER]);
       if (isnan(outerTemperature) || outerTemperature == -127.0f) {
@@ -140,6 +148,7 @@ class SensorReader {
     OneWire oneWire = OneWire(ONEWIRE_PIN);
     DallasTemperature sensors = DallasTemperature(&oneWire);
     HX711 scale = HX711();
+    boolean scaleIsReady = false;
 
     void printBufferAsArray(byte* buffer, int length) {
       Serial.print("{ 0x");

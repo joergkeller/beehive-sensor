@@ -1,0 +1,38 @@
+Windows Installation
+--------------------
+Oracle VirtualBox 6.1.12 r139181
+Fedora 32 Workstation ISO
+
+Fedora Installation
+-------------------
+Uninstall LibreOffice and others
+$ sudo dnf update
+$ sudo dnf upgrade
+$ sudo dnf install podman
+
+$ sudo dnf install snapd
+$ sudo ln -s /var/lib/snapd/snap /snap
+$ sudo snap install intellij-idea-ultimate --classic
+
+AWS CLI
+-------
+$ podman run --rm -it amazon/aws-cli --version
+
+AWS Amplify CLI
+---------------
+$ sudo npm install -g @aws-amplify/cli
+$ amplify configure
+$ cd <project>
+$ amplify init
+$ amplify add auth
+$ amplify delete
+
+Vue.js CLI
+----------
+$ cd dev/vue-cli
+$ podman build . -t vue-cli
+
+$ vue create authtest
+$ cd authtest
+$ npm run serve
+$ npm run build

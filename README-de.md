@@ -25,7 +25,7 @@ Ziele des Designs:
     
 - **LoRaWAN** TTN-Gateway/Netzwerk/Applikation \
   Bienenstöcke haben normalerweise keinen Kabel-Internetanschluss. Hochgeschwindigkeitsverbindungen mit GSM und WLAN sind nicht nötig und werden wegen der Strahlenbelastung vermieden. \
-    [TheThingsNetwork](https://www.thethingsnetwork.org/) TTN ist ein globales, offenes LoRa Netzwerk. Wenn kein Gateway innerhalb einiger km verfügbar ist, kann ein zusätzlicher eigener Gateway einfach installiert werden.
+    [TheThingsNetwork](https://www.thethingsnetwork.org/) (TTN) ist ein globales, offenes LoRa Netzwerk. Wenn kein Gateway innerhalb einiger km verfügbar ist, kann ein zusätzlicher eigener Gateway einfach installiert werden.
     - Übermittelt empfangene Nachrichten vom LoRa Gateway ins Internet, prüft die Authorisierung (OTAA/ABP) und kodiert/dekodiert Nachrichten 
     - Erlaubt direkte ThingSpeak-Integration (jedoch nur 1 Gerät pro Applikation mit 1 Kanal)
     - HTTP-Integration erlaubt jedes beliebige Internet-Backend anzusprechen (z.B. eigene Verarbeitung, siehe unten)
@@ -60,7 +60,7 @@ Drei unterschiedliche Boards wurden getestet:
     - Klassischer Arduino MCU (16MHz ATMega328P, 32KB FLASH, 2KB SRAM)
 - [Heltec CubeCell LoRa Dev](https://heltec.org/project/htcc-ab01/). Das ist mein Favorit!
     - 3.3V ermöglicht LiPo, Ladeschaltung für Solarzelle bereits integriert
-    - Energieeffizienz (1W Solarzelle mitt 230mAh LiPo wird an einem Sonnentag aufgeladen und kann fast 2 Wochen überbrücken)
+    - Energieeffizienz (1W Solarzelle mit 230mAh LiPo wird an einem Sonnentag aufgeladen und kann fast 2 Wochen überbrücken)
     - Kleines Board, LoRa Transmitter bereits integriert
     - Stärkere MCU (48 MHz ARM M0+, 128KB FLASH, 16KB SRAM)
     
@@ -104,6 +104,7 @@ Verwendete Pins:
 ## Checkout von diesem Projekt
 Lokale Installation von `git` und `Arduino IDE` vorausgesetzt.\
 Installation des CubeCell Software: https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/quick_start.html
+(aktuelle Version 1.1.0)
 ~~~
 git clone https://github.com/joergkeller/beehive-sensor.git
 cd beehive-sensor

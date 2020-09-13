@@ -23,7 +23,7 @@ To support bee keepers in monitoring their bees with minimal interference, a set
     
 - **LoRaWAN** TTN-Gateway/Network/Application\
   Beehives usually have no wired internet connection and high-speed connections using GSM and WLAN is avoided to keep radiation low.\
-  [TheThingsNetwork](https://www.thethingsnetwork.org/) TTN is a global open LoRa network. If no gateway is available within some km near the beehives, an additional gateway can easily be installed. 
+  [TheThingsNetwork](https://www.thethingsnetwork.org/) (TTN) is a global open LoRa network. If no gateway is available within some km near the beehives, an additional gateway can easily be installed. 
     - Transmits messages from the LoRa gateways to the internet, handles authorization (OTAA/ABP) and encoding/decoding of messages
     - Allows direct ThingSpeak integration (only 1 device per application with 1 channel)
     - HTTP integration allows to address any possible backend (many devices per application, see below)
@@ -103,6 +103,7 @@ Used pins:
 ## Checkout this project
 Local installation of `git` and `Arduino IDE` assumed.\
 Install the CubeCell board: https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/quick_start.html
+ (current version 1.1.0).
 ~~~
 git clone https://github.com/joergkeller/beehive-sensor.git
 cd beehive-sensor

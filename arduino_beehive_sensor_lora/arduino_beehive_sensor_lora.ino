@@ -18,12 +18,12 @@
  **********************************************************/
 
 // see credentials.h, calibration.h
-#define KROKUS       1
-#define SHAKRA       2
-#define GOTTHARD     3
-#define WITCHES      4
-#define CUBE_CELL_1 11
-#define TEST_123    12
+#define KROKUS       1      // CubeCell - OTAA
+#define SHAKRA       2      // CubeCell - OTAA
+#define GOTTHARD     3      // CubeCell - OTAA
+#define WITCHES      4      // CubeCell - OTAA
+#define CUBE_CELL_1 11      // CubeCell - OTAA
+#define TEST_123    12      // Dragino  - ABP
 
 // see credentials.h, calibration.h
 #define DEVICE_ID   KROKUS
@@ -203,11 +203,13 @@ void measure() {
   lastMeasureMs = getTime();
   byte index = (lastMsgIndex + 1) % 2;
   readSensors(index);
-  printSensorData(index);
+  #if defined(__ASR6501__)
+    printSensorData(index);
+  #endif
   if (unconditionalTransmit() || hasChanged(index)) {
     node.toState(TRANSMIT);
   } else {
-    Serial.println("No relevant change");
+    Serial.println("No changes");
     node.toState(SLEEP);
   }
 }
@@ -374,7 +376,9 @@ void measureRawData() {
   sensor.listTemperatureSensors();
   sensor.listRawWeight();
   readSensors(1);
-  printSensorData(1);
+  #if defined(__ASR6501__)
+    printSensorData(1);
+  #endif
   delay(1);
   interaction.setLed(false);
 }
@@ -469,7 +473,6 @@ bool hasChangedValue(short lastValue, short nextValue, short limit) {
   return abs(lastValue - nextValue) >= limit;
 }
 
-inline
 bool hasChanged(byte index) {
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
     if (hasChangedValue(message[lastMsgIndex].sensor.temperature.other[i], message[index].sensor.temperature.other[i], LIMIT_TEMPERATURE_DIFF)) {

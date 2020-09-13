@@ -18,11 +18,12 @@
  **********************************************************/
 
 // see credentials.h, calibration.h
-#define KROKUS      1
-#define SHAKRA      2
-#define GOTTHARD    3
-#define CUBE_CELL_1 4
-#define TEST_123    5
+#define KROKUS       1
+#define SHAKRA       2
+#define GOTTHARD     3
+#define WITCHES      4
+#define CUBE_CELL_1 11
+#define TEST_123    12
 
 // see credentials.h, calibration.h
 #define DEVICE_ID   KROKUS

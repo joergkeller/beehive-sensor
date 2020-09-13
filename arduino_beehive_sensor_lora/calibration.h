@@ -59,6 +59,23 @@
     { 0x28, 0x8F, 0xE1, 0x79, 0xA2, 0x16, 0x03, 0xE1 }  // 4: Temperatur 400mm
   };
 
+#elif DEVICE_ID == WITCHES
+
+  #define LOADCELL_DIVIDER  0    // real_weight / (weighted_reading - zero_reading)
+  #define LOADCELL_OFFSET   0    // zero_reading: raw value measured with zero weight
+  #define TEMPERATURE_FACTOR 0.0 // gradient of trendline
+  #define TEMPERATURE_OFFSET 0.0 // offset of trendline
+
+  #define THERMOMETER_COUNT 5 // number of 1-wire thermometers, addresses below
+  #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
+  const DeviceAddress thermometer[THERMOMETER_COUNT] = {
+    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 0: Aussentemperatur
+    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 1: Temperatur Kälteloch
+    { 0x28, 0xA6, 0x47, 0x79, 0xA2, 0x16, 0x03, 0x6E }, // 2: Temperatur 200mm
+    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 3: Temperatur 300mm
+    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }  // 4: Temperatur 400mm
+  };
+
 #elif DEVICE_ID == CUBE_CELL_1
 
   #define LOADCELL_DIVIDER 25365    // real_weight / (weighted_reading - zero_reading)

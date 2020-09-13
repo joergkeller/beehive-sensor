@@ -105,6 +105,7 @@ Local installation of `git` and `Arduino IDE` assumed.\
 Install the CubeCell board: https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/quick_start.html
  (current version 1.1.0).
 ~~~
+cd <project-root>
 git clone https://github.com/joergkeller/beehive-sensor.git
 cd beehive-sensor
 git submodule init

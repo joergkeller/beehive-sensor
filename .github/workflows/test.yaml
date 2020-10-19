@@ -90,7 +90,7 @@ jobs:
       - name: Compile examples
         run: |
           arduino-cli compile examples/LoRa-HelloWorld --fqbn=adafruit:samd:adafruit_feather_m0
-          arduino-cli compile examples/USB-Voltage --fqbn=adafruit:samd:adafruit_feather_m0
+          arduino-cli compile examples/Feather-Voltage --fqbn=adafruit:samd:adafruit_feather_m0
 
       - name: Compile script
         run: |

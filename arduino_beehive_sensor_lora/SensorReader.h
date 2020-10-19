@@ -187,6 +187,8 @@ class SensorReader {
         long result = analogRead(ADC) * 2;
         digitalWrite(VBAT_ADC_CTL, HIGH);
         return result;
+      #elif defined(__SAMD21G18A__)
+        return 3300L; // TODO
       #else
         // see https://forum.arduino.cc/index.php?topic=120693.msg908179#msg908179
         // Read 1.1V reference against AVcc

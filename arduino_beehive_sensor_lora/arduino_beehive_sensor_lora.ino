@@ -26,8 +26,8 @@
 #define TEST_123    12      // Dragino  - ABP
 
 // see credentials.h, calibration.h
-#define DEVICE_ID   TEST_123
-#define DEVICE_NAME test-123
+#define DEVICE_ID   KROKUS
+#define DEVICE_NAME krokus
 
 #ifdef ARDUINO_AVR_FEATHER32U4
   #define DEBUG(str)            ;
@@ -39,15 +39,17 @@
   #define DEBUG3(str1,val,str2)   { Serial.print(str1); Serial.print(val,DEC); Serial.println(str2); }
 #endif
 
+#include "SensorReader.h"
+#include "StateMachine.h"
+
 #if defined(__ASR6501__)
   #include "CubeCellLoRa.h"
 #else
   #include <LowPower.h>
   #include "DraginoLoRa.h"
 #endif
-#include "SensorReader.h"
-#include "StateMachine.h"
-#ifdef ARDUINO_AVR_FEATHER32U4
+
+#ifndef ARDUINO_AVR_FEATHER32U4
   #include "Interaction.h"
 #endif
 
@@ -293,6 +295,8 @@ void powerDown() {
 void sleeping() {
   #if defined(__ASR6501__)
     lowPowerHandler();
+  #elif defined(__SAMD21G18A__)
+    LowPower.standby(); // TODO timed wakeup
   #else
     unsigned long timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
     if (timeToWake >= 8000) {
@@ -373,6 +377,8 @@ void manualMode() {
 
   #if defined(__ASR6501__)
     lowPowerHandler();
+  #elif defined(__SAMD21G18A__)
+    LowPower.standby(); // TODO timed wakeup
   #else
     #if RAW_MEASURE_INTERVAL >= 8000
       LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);

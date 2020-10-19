@@ -33,6 +33,38 @@ jobs:
         run: |
           arduino-cli compile --fqbn=arduino:avr:uno  arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
 
+  build-feather:
+    name: Adafruit Feather 32u4 with integrated LoRa
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v1.0.0
+
+      - name: Install CubeCell core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr@1.8.3
+          arduino-cli core install adafruit:avr@1.4.13
+
+      - name: Prepare code and submodules
+        run: |
+          git submodule init
+          git submodule update
+          mv arduino_beehive_sensor_lora/credentials-template.h arduino_beehive_sensor_lora/credentials.h
+          sed -i -e '/#define DEVICE_ID/s/KROKUS/TEST_123/' arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+          sed -i -e '/#define DEVICE_NAME/s/krokus/test_123/' arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+
+      - name: Compile examples
+        run: |
+          arduino-cli compile examples/LoRa-HelloWorld --fqbn=adafruit:avr:feather32u4
+          arduino-cli compile examples/USB-Voltage --fqbn=adafruit:avr:feather32u4
+
+      - name: Compile script
+        run: |
+          arduino-cli compile arduino_beehive_sensor_lora --fqbn=adafruit:avr:feather32u4
+
   build-cubecell:
     name: Heltec CubeCell board
     runs-on: ubuntu-latest

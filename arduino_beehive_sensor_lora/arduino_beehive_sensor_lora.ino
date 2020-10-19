@@ -299,7 +299,9 @@ void powerUp() {
     }
   #endif
   #ifdef USBCON
+  #if defined(__ASR6501__)
     USBDevice.init();
+  #endif
     USBDevice.attach();
   #endif
   sensor.powerUp();
@@ -365,7 +367,9 @@ void manualMode() {
   #endif
 
   #ifdef USBCON
+  #if defined(__ASR6501__)
     USBDevice.init();
+  #endif
     USBDevice.attach();
   #endif
   delay(1);

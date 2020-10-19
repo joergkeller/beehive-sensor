@@ -26,8 +26,18 @@
 #define TEST_123    12      // Dragino  - ABP
 
 // see credentials.h, calibration.h
-#define DEVICE_ID   KROKUS
-#define DEVICE_NAME krokus
+#define DEVICE_ID   TEST_123
+#define DEVICE_NAME test-123
+
+#ifdef ARDUINO_AVR_FEATHER32U4
+  #define DEBUG(str)            ;
+  #define DEBUG2(str1,str2)     ;
+  #define DEBUG3(str1,val,str2) ;
+#else
+  #define DEBUG(str)                Serial.println(str)
+  #define DEBUG2(str1,str2)       { Serial.print(str1); Serial.println(str2); }
+  #define DEBUG3(str1,val,str2)   { Serial.print(str1); Serial.print(val,DEC); Serial.println(str2); }
+#endif
 
 #if defined(__ASR6501__)
   #include "CubeCellLoRa.h"
@@ -37,7 +47,9 @@
 #endif
 #include "SensorReader.h"
 #include "StateMachine.h"
-#include "Interaction.h"
+#ifdef ARDUINO_AVR_FEATHER32U4
+  #include "Interaction.h"
+#endif
 
 #define UNDEFINED_VALUE -32768
 #define MESSAGE_VERSION 0
@@ -93,11 +105,18 @@ unsigned long sleptMs = 0L;
 boolean       requireConfirmation = false;
 unsigned int  transmissionFailed = 0;
 
+#ifdef ARDUINO_AVR_FEATHER32U4
+typedef enum               {JOIN,   MEASURE,   TRANSMIT,   SLEEP} States;
+const char* stateNames[] = {"Join", "Measure", "Transmit", "Sleep"};
+#else
 typedef enum               {JOIN,   MEASURE,   TRANSMIT,   SLEEP,   MANUAL } States;
 const char* stateNames[] = {"Join", "Measure", "Transmit", "Sleep", "Manual"};
+#endif
 StateMachine node(5, stateNames, getTime);
 
+#ifndef ARDUINO_AVR_FEATHER32U4
 Interaction interaction;
+#endif
 
 SensorReader sensor = SensorReader();
 #if defined(__ASR6501__)
@@ -120,7 +139,9 @@ void setup() {
   sensor.begin();
   initializeMessage();
   radio.begin();
+  #ifndef ARDUINO_AVR_FEATHER32U4
   interaction.begin(onSwitchManualMode);
+  #endif
 
   node.onEnter(JOIN, beginJoin);
   node.onState(JOIN, joining);
@@ -133,9 +154,11 @@ void setup() {
   node.onState(SLEEP, sleeping);
   node.onTimeout(SLEEP, MEASURE_INTERVAL, onSleepTimeout);
   node.onExit(SLEEP, powerUp);
+  #ifndef ARDUINO_AVR_FEATHER32U4
   node.onEnter(MANUAL, beginManual);
   node.onState(MANUAL, manualMode);
   node.onExit(MANUAL, endManual);
+  #endif
 
   node.toState(JOIN);
 }
@@ -209,7 +232,7 @@ void measure() {
   if (unconditionalTransmit() || hasChanged(index)) {
     node.toState(TRANSMIT);
   } else {
-    Serial.println("No changes");
+    DEBUG("No changes");
     node.toState(SLEEP);
   }
 }
@@ -252,7 +275,7 @@ void powerDown() {
   sensor.powerDown();
 
   uint32_t timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
-  Serial.print(timeToWake / 1000); Serial.println(" s sleeping");
+  DEBUG2((timeToWake / 1000), " s sleeping");
   delay(1);
   Serial.flush();
   #ifdef USBCON
@@ -310,6 +333,7 @@ void powerUp() {
 
 // MANUAL ---------------------------
 
+#ifndef ARDUINO_AVR_FEATHER32U4
 void onSwitchManualMode() {
   if (!interaction.checkSwitchPressed()) return;
 
@@ -393,6 +417,7 @@ void endManual() {
     TimerStop(&wakeupTimer);
   #endif
 }
+#endif
 
 /* Helper methods ******************************************/
 
@@ -420,9 +445,11 @@ void readSensors(byte index) {
   message[index].sensor.weight = asShort(sensor.getCompensatedWeight());
   message[index].sensor.humidity.roof = asShort(sensor.getRoofHumidity());
   message[index].sensor.temperature.roof = asShort(sensor.getRoofTemperature());
+  #ifndef ARDUINO_AVR_FEATHER32U4
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
     message[index].sensor.temperature.other[i] = asShort(sensor.getTemperature(i));
   }
+  #endif
   sensor.stopReading();
 }
 
@@ -436,11 +463,9 @@ void printSensorData(byte index) {
   print(message[index].sensor.battery, " Vbat");
 }
 
-inline
 void print(short compactValue, String suffix) {
   if (compactValue != UNDEFINED_VALUE) {
-    Serial.print(compactValue / 100.0);
-    Serial.println(suffix);
+    DEBUG2((compactValue / 100.0), suffix);
   }
 }
 
@@ -449,7 +474,7 @@ bool unconditionalTransmit() {
   unsigned long transmissionInterval = getTime() - lastTransmissionMs;
   boolean unconditionalTransmit = transmissionInterval >= (UNCONDITIONAL_INTERVAL - (MEASURE_INTERVAL/2));
   if (unconditionalTransmit) {
-    Serial.print(transmissionInterval / 1000); Serial.println("s since transmission");
+    DEBUG2((transmissionInterval / 1000), "s since transmission");
   }
   return unconditionalTransmit;
 }
@@ -458,13 +483,13 @@ inline
 boolean withConfirmation() {
   #if defined(__ASR6501__)
     if (transmissionFailed > 0) {
-      Serial.println("Require confirmation after fail");
+      DEBUG("Require confirmation after fail");
       return true;
     }
     unsigned long confirmationInterval = getTime() - lastConfirmationMs;
     boolean confirmation = confirmationInterval >= CONFIRMATION_INTERVAL;
     if (confirmation) {
-      Serial.println("Require confirmation");
+      DEBUG("Require confirmation");
     }
     return confirmation;
   #else

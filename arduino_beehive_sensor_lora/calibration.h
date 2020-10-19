@@ -102,6 +102,7 @@
 
   #define THERMOMETER_COUNT 5 // number of 1-wire thermometers, addresses below
   #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
+  #ifndef ARDUINO_AVR_FEATHER32U4
   const DeviceAddress thermometer[THERMOMETER_COUNT] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 0: Aussentemperatur
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 1: Temperatur Kälteloch
@@ -109,6 +110,7 @@
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 3: Temperatur 300mm
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }  // 4: Temperatur 400mm
   };
+  #endif
 
 #endif
 

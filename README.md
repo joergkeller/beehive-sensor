@@ -128,6 +128,7 @@ git stash pop
 | Tools > Board | `CubeCell-Board` |
 | Tools > LORAWAN_REGION | `REGION_EU868` or your region |
 | Tools > LORAWAN_CLASS | `CLASS_A` |
+| Tools > LORAWAN_DEVEUI | `CUSTOM` |
 | Tools > LORAWAN_NETMODE | `OTAA` |
 | Tools > LORAWAN_ADR | `ON` |
 | Tools > LORAWAN_UPLINKMODE | `UNCONFIRMED` |

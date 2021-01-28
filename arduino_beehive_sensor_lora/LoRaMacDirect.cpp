@@ -9,6 +9,14 @@
 /* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
 bool keepNet = LORAWAN_NET_RESERVE;
 
+/*loraWan default Dr when adr disabled*/
+#ifdef REGION_US915
+int8_t defaultDrForNoAdr = 3;
+#else
+int8_t defaultDrForNoAdr = 5;
+#endif
+int8_t currentDrForNoAdr;
+
 LoRaMacPrimitives_t macPrimitive;
 LoRaMacCallback_t macCallback;
 

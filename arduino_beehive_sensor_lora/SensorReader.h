@@ -143,10 +143,10 @@ class SensorReader {
     float getWeight() { return scale.get_units(OPERATIONAL_SAMPLING); }
 
     float getCompensatedWeight() {
-      #ifdef ARDUINO_AVR_FEATHER32U4
+      if (!scaleIsReady) { return -127.0f; }
+      #if defined(ARDUINO_AVR_FEATHER32U4) || (THERMOMETER_COUNT > 0)
         return getWeight();
       #else
-        if (!scaleIsReady) { return -127.0f; }
         float weight = getWeight();
         float outerTemperature = sensors.getTempC(thermometer[THERMOMETER_OUTER]);
         if (isnan(outerTemperature) || outerTemperature == -127.0f) {

@@ -45,7 +45,7 @@
 #if defined(__ASR6501__)
   #include "CubeCellLoRa.h"
 #else
-  #include <LowPower.h>
+  #include <Adafruit_SleepyDog.h>
   #include "DraginoLoRa.h"
 #endif
 
@@ -165,14 +165,14 @@ void setup() {
   node.toState(JOIN);
 }
 
-#if defined(__ASR6501__)
+#ifndef ARDUINO_AVR_FEATHER32U4
   #define xstr(x) str(x)
   #define str(x) #x
   #define ABOUT_MESSAGE "Start '" xstr(DEVICE_NAME) "' beehive LoRa script with sensor message v" xstr(MESSAGE_VERSION)
 #endif
 
 void initializeMessage() {
-  #if defined(__ASR6501__)
+  #ifndef ARDUINO_AVR_FEATHER32U4
     Serial.print(ABOUT_MESSAGE);
     Serial.print(" (");
     Serial.print(sizeof(message[0]));
@@ -228,7 +228,7 @@ void measure() {
   lastMeasureMs = getTime();
   byte index = (lastMsgIndex + 1) % 2;
   readSensors(index);
-  #if defined(__ASR6501__)
+  #ifndef ARDUINO_AVR_FEATHER32U4
     printSensorData(index);
   #endif
   if (unconditionalTransmit() || hasChanged(index)) {
@@ -296,22 +296,11 @@ void sleeping() {
   #if defined(__ASR6501__)
     lowPowerHandler();
   #elif defined(__SAMD21G18A__)
-    LowPower.standby(); // TODO timed wakeup
+    unsigned long timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
+    sleptMs += Watchdog.sleep(timeToWake);
   #else
     unsigned long timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
-    if (timeToWake >= 8000) {
-      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-      sleptMs += 8000;
-    } else if (timeToWake >= 4000) {
-      LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
-      sleptMs += 4000;
-    } else if (timeToWake >= 2000) {
-      LowPower.powerDown(SLEEP_2S, ADC_OFF, BOD_OFF);
-      sleptMs += 2000;
-    } else {
-      LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
-      sleptMs += 1000;
-    }
+    sleptMs += Watchdog.sleep(min(timeToWake, 8*SEC));
   #endif
 }
 
@@ -378,21 +367,9 @@ void manualMode() {
   #if defined(__ASR6501__)
     lowPowerHandler();
   #elif defined(__SAMD21G18A__)
-    LowPower.standby(); // TODO timed wakeup
+    sleptMs += Watchdog.sleep(RAW_MEASURE_INTERVAL);
   #else
-    #if RAW_MEASURE_INTERVAL >= 8000
-      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-      sleptMs += 8000;
-    #elif  RAW_MEASURE_INTERVAL >= 4000
-      LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
-      sleptMs += 4000;
-    #elif  RAW_MEASURE_INTERVAL >= 2000
-      LowPower.powerDown(SLEEP_2S, ADC_OFF, BOD_OFF);
-      sleptMs += 2000;
-    #else
-      LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
-      sleptMs += 1000;
-    #endif
+    sleptMs += Watchdog.sleep(min(RAW_MEASURE_INTERVAL, 8*SEC));
     measureRawData();
   #endif
 

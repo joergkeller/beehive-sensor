@@ -144,7 +144,7 @@ class SensorReader {
 
     float getCompensatedWeight() {
       if (!scaleIsReady) { return -127.0f; }
-      #if defined(ARDUINO_AVR_FEATHER32U4) || (THERMOMETER_COUNT > 0)
+      #if defined(ARDUINO_AVR_FEATHER32U4) || (THERMOMETER_COUNT == 0)
         return getWeight();
       #else
         float weight = getWeight();
@@ -198,7 +198,7 @@ class SensorReader {
         while (bit_is_set(ADCSRA, ADSC));
         long result = ADCL;
         result |= ADCH<<8;
-        result = 1126400L / result; // Back-calculate AVcc in mV
+        result = 1126400L / result; // Back-calculate AVcc in mV (1.1V * 1024 * 1000)
         return result;
       #endif
       interrupts();

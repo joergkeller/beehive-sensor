@@ -100,16 +100,19 @@
   #define TEMPERATURE_FACTOR 0.0e0  // gradient of trendline
   #define TEMPERATURE_OFFSET 0.0e0  // offset of trendline
 
-  #define THERMOMETER_COUNT 5 // number of 1-wire thermometers, addresses below
-  #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
-  #ifndef ARDUINO_AVR_FEATHER32U4
-  const DeviceAddress thermometer[THERMOMETER_COUNT] = {
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 0: Aussentemperatur
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 1: Temperatur Kälteloch
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 2: Temperatur 200mm
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 3: Temperatur 300mm
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }  // 4: Temperatur 400mm
-  };
+  #ifdef ARDUINO_AVR_FEATHER32U4
+      #define THERMOMETER_COUNT 0 // number of 1-wire thermometers
+      #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
+  #else
+      #define THERMOMETER_COUNT 5 // number of 1-wire thermometers, addresses below
+      #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
+      const DeviceAddress thermometer[THERMOMETER_COUNT] = {
+        { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 0: Aussentemperatur
+        { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 1: Temperatur Kälteloch
+        { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 2: Temperatur 200mm
+        { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, // 3: Temperatur 300mm
+        { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }  // 4: Temperatur 400mm
+      };
   #endif
 
 #endif

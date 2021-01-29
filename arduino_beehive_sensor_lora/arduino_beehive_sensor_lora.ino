@@ -65,7 +65,9 @@ typedef struct {
   } humidity;
   struct {
     short roof;
+    #if THERMOMETER_COUNT > 0
     short other[THERMOMETER_COUNT];
+    #endif
   } temperature;
 }__attribute((packed)) beesensor_t;
 
@@ -184,9 +186,11 @@ void initializeMessage() {
     message[m].sensor.weight = UNDEFINED_VALUE;
     message[m].sensor.humidity.roof = UNDEFINED_VALUE;
     message[m].sensor.temperature.roof = UNDEFINED_VALUE;
+    #if THERMOMETER_COUNT > 0
     for (int i = 0; i < THERMOMETER_COUNT; i++) {
       message[m].sensor.temperature.other[i] = UNDEFINED_VALUE;
     }
+    #endif
   }
 }
 
@@ -428,7 +432,7 @@ void readSensors(byte index) {
   message[index].sensor.weight = asShort(sensor.getCompensatedWeight());
   message[index].sensor.humidity.roof = asShort(sensor.getRoofHumidity());
   message[index].sensor.temperature.roof = asShort(sensor.getRoofTemperature());
-  #ifndef ARDUINO_AVR_FEATHER32U4
+  #if THERMOMETER_COUNT > 0
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
     message[index].sensor.temperature.other[i] = asShort(sensor.getTemperature(i));
   }
@@ -438,9 +442,11 @@ void readSensors(byte index) {
 
 void printSensorData(byte index) {
   print(message[index].sensor.weight, " kg");
+  #if THERMOMETER_COUNT > 0
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
     print(message[index].sensor.temperature.other[i], String(" C level ") + i);
   }
+  #endif
   print(message[index].sensor.temperature.roof, " C roof");
   print(message[index].sensor.humidity.roof, " % rel roof");
   print(message[index].sensor.battery, " Vbat");
@@ -486,11 +492,13 @@ bool hasChangedValue(short lastValue, short nextValue, short limit) {
 }
 
 bool hasChanged(byte index) {
+  #if THERMOMETER_COUNT > 0
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
     if (hasChangedValue(message[lastMsgIndex].sensor.temperature.other[i], message[index].sensor.temperature.other[i], LIMIT_TEMPERATURE_DIFF)) {
       return true;
     }
   }
+  #endif
   return hasChangedValue(message[lastMsgIndex].sensor.weight, message[index].sensor.weight, LIMIT_WEIGHT_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.roof, message[index].sensor.temperature.roof, LIMIT_TEMPERATURE_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.humidity.roof, message[index].sensor.humidity.roof, LIMIT_HUMIDITY_DIFF);

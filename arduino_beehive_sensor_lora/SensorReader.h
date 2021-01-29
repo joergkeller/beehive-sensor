@@ -131,7 +131,7 @@ class SensorReader {
         Serial.print(temperature);
         Serial.println(" C");
       #endif
-      return temperature; 
+      return temperature;
     }
     #endif
 
@@ -144,7 +144,7 @@ class SensorReader {
 
     float getCompensatedWeight() {
       if (!scaleIsReady) { return -127.0f; }
-      #if defined(ARDUINO_AVR_FEATHER32U4) || (THERMOMETER_COUNT == 0)
+      #if THERMOMETER_COUNT == 0
         return getWeight();
       #else
         float weight = getWeight();

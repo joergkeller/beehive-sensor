@@ -102,7 +102,6 @@
 
   #ifdef ARDUINO_AVR_FEATHER32U4
       #define THERMOMETER_COUNT 0 // number of 1-wire thermometers
-      #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation
   #else
       #define THERMOMETER_COUNT 0 // number of 1-wire thermometers, addresses below
       #define THERMOMETER_OUTER 0 // 0-based index of temperature reading for weight compensation

@@ -35,6 +35,7 @@
   #define ONEWIRE_PIN         5
   #define LOADCELL_DOUT_PIN  A0
   #define LOADCELL_SCK_PIN   A1
+  #define VBATPIN            A7
 #endif
 
 #define TEMPERATURE_PRECISION 12
@@ -187,8 +188,12 @@ class SensorReader {
         long result = analogRead(ADC) * 2;
         digitalWrite(VBAT_ADC_CTL, HIGH);
         return result;
-      #elif defined(__SAMD21G18A__)
-        return 3300L; // TODO
+      #elif defined(__SAMD21G18A__) || defined(ARDUINO_AVR_FEATHER32U4)
+        long measured = analogRead(VBATPIN);
+        measured *= 2;    // we divided by 2, so multiply back
+        measured *= 3300; // Multiply by 3300mV, our reference voltage
+        measured /= 1024; // convert to voltage
+        return measured;
       #else
         // see https://forum.arduino.cc/index.php?topic=120693.msg908179#msg908179
         // Read 1.1V reference against AVcc

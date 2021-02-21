@@ -131,7 +131,9 @@ void setup() {
   node.onTimeout(TRANSMIT, TRANSMISSION_WAIT, onTransmitTimeout);
   node.onEnter(SLEEP, powerDown);
   node.onState(SLEEP, sleeping);
+#if not defined(__ASR6501__)
   node.onTimeout(SLEEP, MEASURE_INTERVAL, onSleepTimeout);
+#endif
   node.onExit(SLEEP, powerUp);
   node.onEnter(MANUAL, beginManual);
   node.onState(MANUAL, manualMode);

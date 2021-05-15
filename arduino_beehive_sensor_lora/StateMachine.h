@@ -85,7 +85,7 @@ class StateMachine {
       }
       if (currentState != INVALID_STATE) {
         onLoopState(currentState);
-        if (timeoutHandler[currentState].maxDuration != INVALID_DURATION && timeoutHandler[currentState].maxDuration < duration()) {
+        if (nextState == INVALID_STATE && timeoutHandler[currentState].maxDuration != INVALID_DURATION && timeoutHandler[currentState].maxDuration < duration()) {
           onTimeoutState(currentState);
         }
       }

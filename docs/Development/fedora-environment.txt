@@ -3,12 +3,23 @@ Windows Installation
 Oracle VirtualBox 6.1.12 r139181
 Fedora 32 Workstation ISO
 
+Uninstall
+---------
+$ sudo dnf remove libreoffice*
+$ sudo dnf remove virtualbox*
+$ sudo dnf remove tigervnc
+$ sudo dnf remove sane*
+$ sudo dnf autoremove
+$ sudo dnf clean
+
 Fedora Installation
 -------------------
 Uninstall LibreOffice and others
-$ sudo dnf update
-$ sudo dnf upgrade
-$ sudo dnf install podman
+$ dnf check-update
+$ sudo dnf -y upgrade
+$ sudo dnf -y install podman
+
+$ sudo dnf -y install chrome
 
 $ sudo dnf install snapd
 $ sudo ln -s /var/lib/snapd/snap /snap
@@ -36,3 +47,17 @@ $ vue create authtest
 $ cd authtest
 $ npm run serve
 $ npm run build
+
+VSCode
+------
+$ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+$ cat <<EOF | sudo tee /etc/yum.repos.d/vscode.repo
+  [vscode]
+  name=Visual Studio Code
+  baseurl=https://packages.microsoft.com/yumrepos/vscode
+  enabled=1
+  gpgcheck=1
+  gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+  EOF
+$ dnf check-update
+$ sudo dnf -y install vscode

@@ -1,2 +1,5 @@
 .idea
 *.iml
+/arduino_beehive_sensor_lora/credentials.h
+/arduino_beehive_sensor_lora/build/
+/examples/*/build/

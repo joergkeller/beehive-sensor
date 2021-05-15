@@ -10,6 +10,7 @@ arduino-cli core install CubeCell:CubeCell@1.2.0
 arduino-cli core install arduino:avr
 arduino-cli board listall CubeCell
 arduino-cli board listall Uno
+arduino-cli board listall 32u4
 ```
 
 ```

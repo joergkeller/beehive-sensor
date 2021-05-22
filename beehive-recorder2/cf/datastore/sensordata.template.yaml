@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+#Parameters:
+#  Stage:
+#    Type: String
+
+Resources:
+  SensorDataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: dev_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: dev_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+
+Outputs:
+  SensorDataTable:
+    Value: !Ref SensorDataTable
+  SensorDataTableArn:
+    Value: !GetAtt SensorDataTable.Arn

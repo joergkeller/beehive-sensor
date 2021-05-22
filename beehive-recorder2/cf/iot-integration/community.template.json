@@ -1,0 +1,1745 @@
+{
+  "Description": "AWS IoT Integration 1.1.6 for The Things Stack",
+  "Metadata": {
+    "AWS::CloudFormation::Interface": {
+      "ParameterGroups": [
+        {
+          "Label": {
+            "default": "AWS IoT Core"
+          },
+          "Parameters": [
+            "ThingTypeName",
+            "ThingNameScheme",
+            "ThingShadowMetrics"
+          ]
+        },
+        {
+          "Label": {
+            "default": "The Things Stack"
+          },
+          "Parameters": [
+            "ClusterAddress",
+            "ApplicationID",
+            "ApplicationAPIKey"
+          ]
+        }
+      ],
+      "ParameterLabels": {
+        "ThingTypeName": {
+          "default": "Thing Type Name"
+        },
+        "ThingNameScheme": {
+          "default": "Thing Name Scheme"
+        },
+        "ThingShadowMetrics": {
+          "default": "Thing Shadow Metrics"
+        },
+        "ClusterAddress": {
+          "default": "Cluster Address"
+        },
+        "ApplicationID": {
+          "default": "Application ID"
+        },
+        "ApplicationAPIKey": {
+          "default": "Application API Key"
+        }
+      }
+    }
+  },
+  "Resources": {
+    "ThingLogGroup7097DEA1": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/thethings/lorawan/${AWS::StackName}/things"
+        },
+        "RetentionInDays": 731
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "community/ThingLogGroup/Resource"
+      }
+    },
+    "KeyEncryptionKey153AA9B3": {
+      "Type": "AWS::SecretsManager::Secret",
+      "Properties": {
+        "Description": "Key encryption key used to unwrap the AppSKey delivered from Join Servers",
+        "GenerateSecretString": {
+          "ExcludeCharacters": "GHIJKLMNOPQRSTUVWXYZ",
+          "ExcludeLowercase": true,
+          "ExcludePunctuation": true,
+          "PasswordLength": 32
+        },
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}/AppSKeyKEK"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/KeyEncryptionKey/Resource"
+      }
+    },
+    "TheThingsStackRoleCD9FBAD2": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::678672909819:root"
+                    ]
+                  ]
+                }
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "iot:DescribeEndpoint",
+                  "Effect": "Allow",
+                  "Resource": "*"
+                },
+                {
+                  "Action": "iot:Connect",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:client/*"
+                  }
+                },
+                {
+                  "Action": [
+                    "iot:Publish",
+                    "iot:Receive"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/thethings/lorawan/${AWS::StackName}/*"
+                  }
+                },
+                {
+                  "Action": "iot:Subscribe",
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/thethings/lorawan/${AWS::StackName}/downlink/push"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/thethings/lorawan/${AWS::StackName}/downlink/replace"
+                    }
+                  ]
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "TheThingsStack"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/TheThingsStackRole/Resource"
+      }
+    },
+    "ConfigureFunctionServiceRole92986743": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/ConfigureFunction/ServiceRole/Resource"
+      }
+    },
+    "ConfigureFunctionServiceRoleDefaultPolicyD5EA3235": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "KeyEncryptionKey153AA9B3"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "ConfigureFunctionServiceRoleDefaultPolicyD5EA3235",
+        "Roles": [
+          {
+            "Ref": "ConfigureFunctionServiceRole92986743"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/ConfigureFunction/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "ConfigureFunction6D858B4A": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "thethingsindustries-${AWS::Region}"
+          },
+          "S3Key": {
+            "Fn::Sub": "integration-aws/1.1.6/fnconfigure.zip"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "ConfigureFunctionServiceRole92986743",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_STACK_NAME": {
+              "Ref": "AWS::StackName"
+            },
+            "AWS_THING_TYPE_NAME": {
+              "Ref": "ThingTypeName"
+            },
+            "AWS_THING_NAME_SCHEME": {
+              "Fn::FindInMap": [
+                "ThingNameSchemes",
+                {
+                  "Ref": "ThingNameScheme"
+                },
+                "Scheme"
+              ]
+            },
+            "AWS_THING_SHADOW_METRICS": {
+              "Fn::FindInMap": [
+                "Enabled",
+                {
+                  "Ref": "ThingShadowMetrics"
+                },
+                "Boolean"
+              ]
+            },
+            "AWS_THING_LOG_GROUP_NAME": {
+              "Ref": "ThingLogGroup7097DEA1"
+            },
+            "TTES_CLUSTER_ADDRESS": {
+              "Ref": "ClusterAddress"
+            },
+            "TTES_HOME_NET_ID": "000013",
+            "TTES_APPLICATION_ID": {
+              "Ref": "ApplicationID"
+            },
+            "TTES_APPLICATION_API_KEY": {
+              "Ref": "ApplicationAPIKey"
+            },
+            "TTES_APPLICATION_KEK_LABEL": {
+              "Ref": "KeyEncryptionKey153AA9B3"
+            },
+            "TTES_DEFAULT_FREQUENCY_PLAN_ID": {
+              "Fn::FindInMap": [
+                "Regions",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "DefaultFrequencyPlanID"
+              ]
+            }
+          }
+        },
+        "Handler": "fnconfigure",
+        "Runtime": "go1.x",
+        "Timeout": 30
+      },
+      "DependsOn": [
+        "ConfigureFunctionServiceRoleDefaultPolicyD5EA3235",
+        "ConfigureFunctionServiceRole92986743"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "community/ConfigureFunction/Resource"
+      }
+    },
+    "Configuration": {
+      "Type": "Custom::Configuration",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "ConfigureFunction6D858B4A",
+            "Arn"
+          ]
+        },
+        "CrossAccountRoleArn": {
+          "Fn::GetAtt": [
+            "TheThingsStackRoleCD9FBAD2",
+            "Arn"
+          ]
+        },
+        "EndToEndEncryption": "false"
+      },
+      "DependsOn": [
+        "TheThingsStackRoleCD9FBAD2"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "community/Configuration/Default"
+      }
+    },
+    "CreateThingTypeFunctionServiceRole4BC3D245": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/CreateThingTypeFunction/ServiceRole/Resource"
+      }
+    },
+    "CreateThingTypeFunctionServiceRoleDefaultPolicy846D9B20": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "iot:CreateThingType",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": [
+                  "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thingtype/${ThingTypeName}",
+                  {
+                    "ThingTypeName": {
+                      "Ref": "ThingTypeName"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "CreateThingTypeFunctionServiceRoleDefaultPolicy846D9B20",
+        "Roles": [
+          {
+            "Ref": "CreateThingTypeFunctionServiceRole4BC3D245"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/CreateThingTypeFunction/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "CreateThingTypeFunction47FAD672": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "thethingsindustries-${AWS::Region}"
+          },
+          "S3Key": {
+            "Fn::Sub": "integration-aws/1.1.6/fncreatethingtype.zip"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "CreateThingTypeFunctionServiceRole4BC3D245",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_STACK_NAME": {
+              "Ref": "AWS::StackName"
+            },
+            "AWS_THING_TYPE_NAME": {
+              "Ref": "ThingTypeName"
+            },
+            "AWS_THING_NAME_SCHEME": {
+              "Fn::FindInMap": [
+                "ThingNameSchemes",
+                {
+                  "Ref": "ThingNameScheme"
+                },
+                "Scheme"
+              ]
+            },
+            "AWS_THING_SHADOW_METRICS": {
+              "Fn::FindInMap": [
+                "Enabled",
+                {
+                  "Ref": "ThingShadowMetrics"
+                },
+                "Boolean"
+              ]
+            },
+            "AWS_THING_LOG_GROUP_NAME": {
+              "Ref": "ThingLogGroup7097DEA1"
+            },
+            "TTES_CLUSTER_ADDRESS": {
+              "Ref": "ClusterAddress"
+            },
+            "TTES_HOME_NET_ID": "000013",
+            "TTES_APPLICATION_ID": {
+              "Ref": "ApplicationID"
+            },
+            "TTES_APPLICATION_API_KEY": {
+              "Ref": "ApplicationAPIKey"
+            },
+            "TTES_APPLICATION_KEK_LABEL": {
+              "Ref": "KeyEncryptionKey153AA9B3"
+            },
+            "TTES_DEFAULT_FREQUENCY_PLAN_ID": {
+              "Fn::FindInMap": [
+                "Regions",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "DefaultFrequencyPlanID"
+              ]
+            }
+          }
+        },
+        "Handler": "fncreatethingtype",
+        "Runtime": "go1.x"
+      },
+      "DependsOn": [
+        "CreateThingTypeFunctionServiceRoleDefaultPolicy846D9B20",
+        "CreateThingTypeFunctionServiceRole4BC3D245"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "community/CreateThingTypeFunction/Resource"
+      }
+    },
+    "ThingType": {
+      "Type": "Custom::ThingType",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CreateThingTypeFunction47FAD672",
+            "Arn"
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "community/ThingType/Default"
+      }
+    },
+    "HandleUplinkFunctionServiceRoleFA5537D7": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/HandleUplinkFunction/ServiceRole/Resource"
+      }
+    },
+    "HandleUplinkFunctionServiceRoleDefaultPolicyF1A0596C": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "iot:DescribeEndpoint",
+                "iot:ListThings"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "iot:CreateThing",
+                "iot:GetThingShadow",
+                "iot:UpdateThing",
+                "iot:UpdateThingShadow"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+              }
+            },
+            {
+              "Action": "iot:Publish",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/lorawan/*"
+              }
+            },
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "KeyEncryptionKey153AA9B3"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "HandleUplinkFunctionServiceRoleDefaultPolicyF1A0596C",
+        "Roles": [
+          {
+            "Ref": "HandleUplinkFunctionServiceRoleFA5537D7"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/HandleUplinkFunction/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "HandleUplinkFunctionFFF53E7D": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "thethingsindustries-${AWS::Region}"
+          },
+          "S3Key": {
+            "Fn::Sub": "integration-aws/1.1.6/fnhandleuplink.zip"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "HandleUplinkFunctionServiceRoleFA5537D7",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_STACK_NAME": {
+              "Ref": "AWS::StackName"
+            },
+            "AWS_THING_TYPE_NAME": {
+              "Ref": "ThingTypeName"
+            },
+            "AWS_THING_NAME_SCHEME": {
+              "Fn::FindInMap": [
+                "ThingNameSchemes",
+                {
+                  "Ref": "ThingNameScheme"
+                },
+                "Scheme"
+              ]
+            },
+            "AWS_THING_SHADOW_METRICS": {
+              "Fn::FindInMap": [
+                "Enabled",
+                {
+                  "Ref": "ThingShadowMetrics"
+                },
+                "Boolean"
+              ]
+            },
+            "AWS_THING_LOG_GROUP_NAME": {
+              "Ref": "ThingLogGroup7097DEA1"
+            },
+            "TTES_CLUSTER_ADDRESS": {
+              "Ref": "ClusterAddress"
+            },
+            "TTES_HOME_NET_ID": "000013",
+            "TTES_APPLICATION_ID": {
+              "Ref": "ApplicationID"
+            },
+            "TTES_APPLICATION_API_KEY": {
+              "Ref": "ApplicationAPIKey"
+            },
+            "TTES_APPLICATION_KEK_LABEL": {
+              "Ref": "KeyEncryptionKey153AA9B3"
+            },
+            "TTES_DEFAULT_FREQUENCY_PLAN_ID": {
+              "Fn::FindInMap": [
+                "Regions",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "DefaultFrequencyPlanID"
+              ]
+            }
+          }
+        },
+        "Handler": "fnhandleuplink",
+        "Runtime": "go1.x",
+        "Timeout": 10
+      },
+      "DependsOn": [
+        "HandleUplinkFunctionServiceRoleDefaultPolicyF1A0596C",
+        "HandleUplinkFunctionServiceRoleFA5537D7"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "community/HandleUplinkFunction/Resource"
+      }
+    },
+    "HandleUplinkRule": {
+      "Type": "AWS::IoT::TopicRule",
+      "Properties": {
+        "TopicRulePayload": {
+          "Actions": [
+            {
+              "Lambda": {
+                "FunctionArn": {
+                  "Fn::GetAtt": [
+                    "HandleUplinkFunctionFFF53E7D",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "AwsIotSqlVersion": "2016-03-23",
+          "RuleDisabled": false,
+          "Sql": {
+            "Fn::Sub": "select * from 'thethings/lorawan/${AWS::StackName}/uplink'"
+          }
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/HandleUplinkRule"
+      }
+    },
+    "InvokeHandleUplinkFunctionFromRule": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HandleUplinkFunctionFFF53E7D",
+            "Arn"
+          ]
+        },
+        "Principal": "iot.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "HandleUplinkRule",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/InvokeHandleUplinkFunctionFromRule"
+      }
+    },
+    "HandleJoinRule": {
+      "Type": "AWS::IoT::TopicRule",
+      "Properties": {
+        "TopicRulePayload": {
+          "Actions": [
+            {
+              "Lambda": {
+                "FunctionArn": {
+                  "Fn::GetAtt": [
+                    "HandleUplinkFunctionFFF53E7D",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "AwsIotSqlVersion": "2016-03-23",
+          "RuleDisabled": false,
+          "Sql": {
+            "Fn::Sub": "select * from 'thethings/lorawan/${AWS::StackName}/join'"
+          }
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/HandleJoinRule"
+      }
+    },
+    "InvokeHandleJoinFunctionFromRule": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HandleUplinkFunctionFFF53E7D",
+            "Arn"
+          ]
+        },
+        "Principal": "iot.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "HandleJoinRule",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/InvokeHandleJoinFunctionFromRule"
+      }
+    },
+    "HandleDownlinkQueueInvalidatedRule": {
+      "Type": "AWS::IoT::TopicRule",
+      "Properties": {
+        "TopicRulePayload": {
+          "Actions": [
+            {
+              "Lambda": {
+                "FunctionArn": {
+                  "Fn::GetAtt": [
+                    "HandleUplinkFunctionFFF53E7D",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "AwsIotSqlVersion": "2016-03-23",
+          "RuleDisabled": false,
+          "Sql": {
+            "Fn::Sub": "select * from 'thethings/lorawan/${AWS::StackName}/downlink/invalidated'"
+          }
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/HandleDownlinkQueueInvalidatedRule"
+      }
+    },
+    "InvokeHandleDownlinkQueueInvalidatedFunctionFromRule": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HandleUplinkFunctionFFF53E7D",
+            "Arn"
+          ]
+        },
+        "Principal": "iot.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "HandleDownlinkQueueInvalidatedRule",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/InvokeHandleDownlinkQueueInvalidatedFunctionFromRule"
+      }
+    },
+    "HandleDownlinkFunctionServiceRoleB70B3AC7": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/HandleDownlinkFunction/ServiceRole/Resource"
+      }
+    },
+    "HandleDownlinkFunctionServiceRoleDefaultPolicy2B9D6C77": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "iot:DescribeEndpoint",
+                "iot:DescribeThing"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "iot:GetThingShadow",
+                "iot:UpdateThingShadow"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+              }
+            },
+            {
+              "Action": "iot:Publish",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/thethings/lorawan/${AWS::StackName}/downlink/push"
+                },
+                {
+                  "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/thethings/lorawan/${AWS::StackName}/downlink/replace"
+                }
+              ]
+            },
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "KeyEncryptionKey153AA9B3"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "HandleDownlinkFunctionServiceRoleDefaultPolicy2B9D6C77",
+        "Roles": [
+          {
+            "Ref": "HandleDownlinkFunctionServiceRoleB70B3AC7"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/HandleDownlinkFunction/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "HandleDownlinkFunction9F063C71": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "thethingsindustries-${AWS::Region}"
+          },
+          "S3Key": {
+            "Fn::Sub": "integration-aws/1.1.6/fnhandledownlink.zip"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "HandleDownlinkFunctionServiceRoleB70B3AC7",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_STACK_NAME": {
+              "Ref": "AWS::StackName"
+            },
+            "AWS_THING_TYPE_NAME": {
+              "Ref": "ThingTypeName"
+            },
+            "AWS_THING_NAME_SCHEME": {
+              "Fn::FindInMap": [
+                "ThingNameSchemes",
+                {
+                  "Ref": "ThingNameScheme"
+                },
+                "Scheme"
+              ]
+            },
+            "AWS_THING_SHADOW_METRICS": {
+              "Fn::FindInMap": [
+                "Enabled",
+                {
+                  "Ref": "ThingShadowMetrics"
+                },
+                "Boolean"
+              ]
+            },
+            "AWS_THING_LOG_GROUP_NAME": {
+              "Ref": "ThingLogGroup7097DEA1"
+            },
+            "TTES_CLUSTER_ADDRESS": {
+              "Ref": "ClusterAddress"
+            },
+            "TTES_HOME_NET_ID": "000013",
+            "TTES_APPLICATION_ID": {
+              "Ref": "ApplicationID"
+            },
+            "TTES_APPLICATION_API_KEY": {
+              "Ref": "ApplicationAPIKey"
+            },
+            "TTES_APPLICATION_KEK_LABEL": {
+              "Ref": "KeyEncryptionKey153AA9B3"
+            },
+            "TTES_DEFAULT_FREQUENCY_PLAN_ID": {
+              "Fn::FindInMap": [
+                "Regions",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "DefaultFrequencyPlanID"
+              ]
+            }
+          }
+        },
+        "Handler": "fnhandledownlink",
+        "Runtime": "go1.x",
+        "Timeout": 10
+      },
+      "DependsOn": [
+        "HandleDownlinkFunctionServiceRoleDefaultPolicy2B9D6C77",
+        "HandleDownlinkFunctionServiceRoleB70B3AC7"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "community/HandleDownlinkFunction/Resource"
+      }
+    },
+    "HandleDownlinkRule": {
+      "Type": "AWS::IoT::TopicRule",
+      "Properties": {
+        "TopicRulePayload": {
+          "Actions": [
+            {
+              "Lambda": {
+                "FunctionArn": {
+                  "Fn::GetAtt": [
+                    "HandleDownlinkFunction9F063C71",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "AwsIotSqlVersion": "2016-03-23",
+          "RuleDisabled": false,
+          "Sql": "select * from 'lorawan/downlink'"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/HandleDownlinkRule"
+      }
+    },
+    "InvokeHandleDownlinkFunctionFromRule": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HandleDownlinkFunction9F063C71",
+            "Arn"
+          ]
+        },
+        "Principal": "iot.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "HandleDownlinkRule",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/InvokeHandleDownlinkFunctionFromRule"
+      }
+    },
+    "ClaimThingFunctionServiceRole95DD8E79": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/ClaimThingFunction/ServiceRole/Resource"
+      }
+    },
+    "ClaimThingFunctionServiceRoleDefaultPolicy7A5A6E1A": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "iot:UpdateThing",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "ClaimThingFunctionServiceRoleDefaultPolicy7A5A6E1A",
+        "Roles": [
+          {
+            "Ref": "ClaimThingFunctionServiceRole95DD8E79"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/ClaimThingFunction/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "ClaimThingFunction19C49F37": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "thethingsindustries-${AWS::Region}"
+          },
+          "S3Key": {
+            "Fn::Sub": "integration-aws/1.1.6/fnclaimthing.zip"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "ClaimThingFunctionServiceRole95DD8E79",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_STACK_NAME": {
+              "Ref": "AWS::StackName"
+            },
+            "AWS_THING_TYPE_NAME": {
+              "Ref": "ThingTypeName"
+            },
+            "AWS_THING_NAME_SCHEME": {
+              "Fn::FindInMap": [
+                "ThingNameSchemes",
+                {
+                  "Ref": "ThingNameScheme"
+                },
+                "Scheme"
+              ]
+            },
+            "AWS_THING_SHADOW_METRICS": {
+              "Fn::FindInMap": [
+                "Enabled",
+                {
+                  "Ref": "ThingShadowMetrics"
+                },
+                "Boolean"
+              ]
+            },
+            "AWS_THING_LOG_GROUP_NAME": {
+              "Ref": "ThingLogGroup7097DEA1"
+            },
+            "TTES_CLUSTER_ADDRESS": {
+              "Ref": "ClusterAddress"
+            },
+            "TTES_HOME_NET_ID": "000013",
+            "TTES_APPLICATION_ID": {
+              "Ref": "ApplicationID"
+            },
+            "TTES_APPLICATION_API_KEY": {
+              "Ref": "ApplicationAPIKey"
+            },
+            "TTES_APPLICATION_KEK_LABEL": {
+              "Ref": "KeyEncryptionKey153AA9B3"
+            },
+            "TTES_DEFAULT_FREQUENCY_PLAN_ID": {
+              "Fn::FindInMap": [
+                "Regions",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "DefaultFrequencyPlanID"
+              ]
+            }
+          }
+        },
+        "Handler": "fnclaimthing",
+        "Runtime": "go1.x",
+        "Timeout": 60
+      },
+      "DependsOn": [
+        "ClaimThingFunctionServiceRoleDefaultPolicy7A5A6E1A",
+        "ClaimThingFunctionServiceRole95DD8E79"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "community/ClaimThingFunction/Resource"
+      }
+    },
+    "ClaimThingRule": {
+      "Type": "AWS::IoT::TopicRule",
+      "Properties": {
+        "TopicRulePayload": {
+          "Actions": [
+            {
+              "Lambda": {
+                "FunctionArn": {
+                  "Fn::GetAtt": [
+                    "ClaimThingFunction19C49F37",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "AwsIotSqlVersion": "2016-03-23",
+          "RuleDisabled": false,
+          "Sql": {
+            "Fn::Sub": [
+              "select thingName,   attributes.devEUI as devEUI,   attributes.joinEUI as joinEUI,   attributes.appEUI as appEUI,   attributes.deviceID as deviceID,   attributes.claimAuthenticationCode as claimAuthenticationCode from '$aws/events/thing/+/created' where thingTypeName = '${ThingTypeName}' and attributes.stackName = '${AWS::StackName}' and (not isUndefined(attributes.joinEUI) or not isUndefined(attributes.appEUI)) and not isUndefined(attributes.claimAuthenticationCode)",
+              {
+                "ThingTypeName": {
+                  "Ref": "ThingTypeName"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/ClaimThingRule"
+      }
+    },
+    "InvokeClaimThingFunctionFromRule": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ClaimThingFunction19C49F37",
+            "Arn"
+          ]
+        },
+        "Principal": "iot.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "ClaimThingRule",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/InvokeClaimThingFunctionFromRule"
+      }
+    },
+    "CreateThingFunctionServiceRoleD999ABD4": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/CreateThingFunction/ServiceRole/Resource"
+      }
+    },
+    "CreateThingFunction6012E8BC": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "thethingsindustries-${AWS::Region}"
+          },
+          "S3Key": {
+            "Fn::Sub": "integration-aws/1.1.6/fncreatething.zip"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "CreateThingFunctionServiceRoleD999ABD4",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_STACK_NAME": {
+              "Ref": "AWS::StackName"
+            },
+            "AWS_THING_TYPE_NAME": {
+              "Ref": "ThingTypeName"
+            },
+            "AWS_THING_NAME_SCHEME": {
+              "Fn::FindInMap": [
+                "ThingNameSchemes",
+                {
+                  "Ref": "ThingNameScheme"
+                },
+                "Scheme"
+              ]
+            },
+            "AWS_THING_SHADOW_METRICS": {
+              "Fn::FindInMap": [
+                "Enabled",
+                {
+                  "Ref": "ThingShadowMetrics"
+                },
+                "Boolean"
+              ]
+            },
+            "AWS_THING_LOG_GROUP_NAME": {
+              "Ref": "ThingLogGroup7097DEA1"
+            },
+            "TTES_CLUSTER_ADDRESS": {
+              "Ref": "ClusterAddress"
+            },
+            "TTES_HOME_NET_ID": "000013",
+            "TTES_APPLICATION_ID": {
+              "Ref": "ApplicationID"
+            },
+            "TTES_APPLICATION_API_KEY": {
+              "Ref": "ApplicationAPIKey"
+            },
+            "TTES_APPLICATION_KEK_LABEL": {
+              "Ref": "KeyEncryptionKey153AA9B3"
+            },
+            "TTES_DEFAULT_FREQUENCY_PLAN_ID": {
+              "Fn::FindInMap": [
+                "Regions",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "DefaultFrequencyPlanID"
+              ]
+            }
+          }
+        },
+        "Handler": "fncreatething",
+        "Runtime": "go1.x",
+        "Timeout": 60
+      },
+      "DependsOn": [
+        "CreateThingFunctionServiceRoleD999ABD4"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "community/CreateThingFunction/Resource"
+      }
+    },
+    "CreateThingRule": {
+      "Type": "AWS::IoT::TopicRule",
+      "Properties": {
+        "TopicRulePayload": {
+          "Actions": [
+            {
+              "Lambda": {
+                "FunctionArn": {
+                  "Fn::GetAtt": [
+                    "CreateThingFunction6012E8BC",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "AwsIotSqlVersion": "2016-03-23",
+          "RuleDisabled": false,
+          "Sql": {
+            "Fn::Sub": [
+              "select thingName,   attributes.devEUI as devEUI,   attributes.joinEUI as joinEUI,   attributes.appEUI as appEUI,   attributes.deviceID as deviceID,   attributes.lorawanVersion as lorawanVersion,   attributes.regionalParametersVersion as regionalParametersVersion,   attributes.frequencyPlanID as frequencyPlanID,   attributes.appKey as appKey,   attributes.nwkKey as nwkKey from '$aws/events/thing/+/created' where thingTypeName = '${ThingTypeName}' and attributes.stackName = '${AWS::StackName}' and (not isUndefined(attributes.joinEUI) or not isUndefined(attributes.appEUI)) and not isUndefined(attributes.lorawanVersion) and not isUndefined(attributes.regionalParametersVersion) and not isUndefined(attributes.appKey)",
+              {
+                "ThingTypeName": {
+                  "Ref": "ThingTypeName"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/CreateThingRule"
+      }
+    },
+    "InvokeCreateThingFunctionFromRule": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "CreateThingFunction6012E8BC",
+            "Arn"
+          ]
+        },
+        "Principal": "iot.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "CreateThingRule",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/InvokeCreateThingFunctionFromRule"
+      }
+    },
+    "DeleteThingFunctionServiceRole1AD03CBE": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/DeleteThingFunction/ServiceRole/Resource"
+      }
+    },
+    "DeleteThingFunction64137BC0": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "thethingsindustries-${AWS::Region}"
+          },
+          "S3Key": {
+            "Fn::Sub": "integration-aws/1.1.6/fndeletething.zip"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "DeleteThingFunctionServiceRole1AD03CBE",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_STACK_NAME": {
+              "Ref": "AWS::StackName"
+            },
+            "AWS_THING_TYPE_NAME": {
+              "Ref": "ThingTypeName"
+            },
+            "AWS_THING_NAME_SCHEME": {
+              "Fn::FindInMap": [
+                "ThingNameSchemes",
+                {
+                  "Ref": "ThingNameScheme"
+                },
+                "Scheme"
+              ]
+            },
+            "AWS_THING_SHADOW_METRICS": {
+              "Fn::FindInMap": [
+                "Enabled",
+                {
+                  "Ref": "ThingShadowMetrics"
+                },
+                "Boolean"
+              ]
+            },
+            "AWS_THING_LOG_GROUP_NAME": {
+              "Ref": "ThingLogGroup7097DEA1"
+            },
+            "TTES_CLUSTER_ADDRESS": {
+              "Ref": "ClusterAddress"
+            },
+            "TTES_HOME_NET_ID": "000013",
+            "TTES_APPLICATION_ID": {
+              "Ref": "ApplicationID"
+            },
+            "TTES_APPLICATION_API_KEY": {
+              "Ref": "ApplicationAPIKey"
+            },
+            "TTES_APPLICATION_KEK_LABEL": {
+              "Ref": "KeyEncryptionKey153AA9B3"
+            },
+            "TTES_DEFAULT_FREQUENCY_PLAN_ID": {
+              "Fn::FindInMap": [
+                "Regions",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "DefaultFrequencyPlanID"
+              ]
+            }
+          }
+        },
+        "Handler": "fndeletething",
+        "Runtime": "go1.x",
+        "Timeout": 60
+      },
+      "DependsOn": [
+        "DeleteThingFunctionServiceRole1AD03CBE"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "community/DeleteThingFunction/Resource"
+      }
+    },
+    "DeleteThingRule": {
+      "Type": "AWS::IoT::TopicRule",
+      "Properties": {
+        "TopicRulePayload": {
+          "Actions": [
+            {
+              "Lambda": {
+                "FunctionArn": {
+                  "Fn::GetAtt": [
+                    "DeleteThingFunction64137BC0",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          ],
+          "AwsIotSqlVersion": "2016-03-23",
+          "RuleDisabled": false,
+          "Sql": {
+            "Fn::Sub": [
+              "select thingName,   attributes.devEUI as devEUI,   attributes.joinEUI as joinEUI,   attributes.appEUI as appEUI,   attributes.deviceID as deviceID from '$aws/events/thing/+/deleted' where thingTypeName = '${ThingTypeName}' and attributes.stackName = '${AWS::StackName}'",
+              {
+                "ThingTypeName": {
+                  "Ref": "ThingTypeName"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/DeleteThingRule"
+      }
+    },
+    "InvokeDeleteThingFunctionFromRule": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "DeleteThingFunction64137BC0",
+            "Arn"
+          ]
+        },
+        "Principal": "iot.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "DeleteThingRule",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "community/InvokeDeleteThingFunctionFromRule"
+      }
+    }
+  },
+  "Mappings": {
+    "Regions": {
+      "af-south-1": {
+        "DefaultFrequencyPlanID": "EU_863_870_TTN"
+      },
+      "ap-east-1": {
+        "DefaultFrequencyPlanID": "AS_923_925"
+      },
+      "ap-northeast-1": {
+        "DefaultFrequencyPlanID": "AS_920_923"
+      },
+      "ap-northeast-2": {
+        "DefaultFrequencyPlanID": "KR_920_923"
+      },
+      "ap-south-1": {
+        "DefaultFrequencyPlanID": "IN_865_867"
+      },
+      "ap-southeast-1": {
+        "DefaultFrequencyPlanID": "AS_920_923"
+      },
+      "ap-southeast-2": {
+        "DefaultFrequencyPlanID": "AU_915_928_FSB_2"
+      },
+      "ca-central-1": {
+        "DefaultFrequencyPlanID": "US_902_928_FSB_2"
+      },
+      "eu-central-1": {
+        "DefaultFrequencyPlanID": "EU_863_870_TTN"
+      },
+      "eu-north-1": {
+        "DefaultFrequencyPlanID": "EU_863_870_TTN"
+      },
+      "eu-south-1": {
+        "DefaultFrequencyPlanID": "EU_863_870_TTN"
+      },
+      "eu-west-1": {
+        "DefaultFrequencyPlanID": "EU_863_870_TTN"
+      },
+      "eu-west-2": {
+        "DefaultFrequencyPlanID": "EU_863_870_TTN"
+      },
+      "eu-west-3": {
+        "DefaultFrequencyPlanID": "EU_863_870_TTN"
+      },
+      "me-south-1": {
+        "DefaultFrequencyPlanID": "EU_863_870_TTN"
+      },
+      "sa-east-1": {
+        "DefaultFrequencyPlanID": "AU_915_928_FSB_2"
+      },
+      "us-east-1": {
+        "DefaultFrequencyPlanID": "US_902_928_FSB_2"
+      },
+      "us-east-2": {
+        "DefaultFrequencyPlanID": "US_902_928_FSB_2"
+      },
+      "us-west-1": {
+        "DefaultFrequencyPlanID": "US_902_928_FSB_2"
+      },
+      "us-west-2": {
+        "DefaultFrequencyPlanID": "US_902_928_FSB_2"
+      }
+    },
+    "ThingNameSchemes": {
+      "DevEUI": {
+        "Scheme": "DEVEUI"
+      },
+      "DeviceID": {
+        "Scheme": "STACK_NAME_DEVICE_ID"
+      }
+    },
+    "Enabled": {
+      "Enabled": {
+        "Boolean": "true"
+      },
+      "Disabled": {
+        "Boolean": "false"
+      }
+    }
+  },
+  "Outputs": {
+    "DefaultFrequencyPlanID": {
+      "Description": "Default LoRaWAN frequency plan used based on your AWS region. This frequency plan is used if you don't specify one. See https://enterprise.thethingsstack.io/reference/frequency-plans/ for more information",
+      "Value": {
+        "Fn::FindInMap": [
+          "Regions",
+          {
+            "Ref": "AWS::Region"
+          },
+          "DefaultFrequencyPlanID"
+        ]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}:DefaultFrequencyPlanID"
+        }
+      }
+    },
+    "CrossAccountRoleArn": {
+      "Description": "Use this ARN to configure the AWS IoT integration in The Things Stack",
+      "Value": {
+        "Fn::GetAtt": [
+          "TheThingsStackRoleCD9FBAD2",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}:CrossAccountRoleArn"
+        }
+      }
+    }
+  },
+  "Parameters": {
+    "ThingTypeName": {
+      "Type": "String",
+      "Default": "lorawan",
+      "Description": "IoT Core thing type name. This needs to be unique in your AWS account."
+    },
+    "ThingNameScheme": {
+      "Type": "String",
+      "Default": "DevEUI",
+      "AllowedValues": [
+        "DevEUI",
+        "DeviceID"
+      ],
+      "Description": "The name that is given to AWS IoT things when they are created by the integration. When using DevEUI, the thing name will be like 1122334455667788. When using Device ID, the thing name will be a combination of the CloudFormation stack name and the device ID as registered in The Things Stack."
+    },
+    "ThingShadowMetrics": {
+      "Type": "String",
+      "Default": "Enabled",
+      "AllowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "Description": "Update metrics in the thing shadow (activated and last seen timestamps, session information, coverage, RSSI and SNR). Disable this to reduce Device Shadow charges."
+    },
+    "ClusterAddress": {
+      "Type": "String",
+      "Default": "eu1.cloud.thethings.network",
+      "AllowedValues": [
+        "au1.cloud.thethings.network",
+        "eu1.cloud.thethings.network",
+        "nam1.cloud.thethings.network"
+      ],
+      "Description": "Cluster address of The Things Network."
+    },
+    "ApplicationID": {
+      "Type": "String",
+      "AllowedPattern": "^[a-z0-9](?:[-]?[a-z0-9]){2,}$",
+      "Description": "ID of the application in The Things Stack.",
+      "MaxLength": 36
+    },
+    "ApplicationAPIKey": {
+      "Type": "String",
+      "Description": "API key of the application in The Things Stack. This API key has to have at least the rights to edit basic settings, get and set end devices with keys and read and write traffic.",
+      "NoEcho": true
+    }
+  }
+}

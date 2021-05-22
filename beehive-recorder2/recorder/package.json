@@ -1,0 +1,14 @@
+{
+  "name": "beehive-recorder",
+  "version": "1.0.0",
+  "description": "AWS lambda function to record beehive sensor messages",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}

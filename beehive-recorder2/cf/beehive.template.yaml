@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+#Parameters:
+#  Stage:
+#    Type: String
+
+Resources:
+  DataStore:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: datastore/sensordata.template.yaml
+#      Parameters:
+#        Stage: !Ref Stage
+
+  MessageRecorder:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: job/message-recorder.template.yaml
+      Parameters:
+#        Stage: !Ref Stage
+        TargetTable: !GetAtt DataStore.Outputs.SensorDataTable
+        TargetTableArn: !GetAtt DataStore.Outputs.SensorDataTableArn
+

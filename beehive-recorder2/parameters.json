@@ -1,0 +1,9 @@
+{
+  "Parameters": {
+    "ThingTypeName": "lorawan",
+    "ThingNameScheme": "DevEUI",
+    "ThingShadowMetrics": "Enabled",
+    "ClusterAddress": "eu1.cloud.thethings.network",
+    "ApplicationID": "bienen-test"
+  }
+}

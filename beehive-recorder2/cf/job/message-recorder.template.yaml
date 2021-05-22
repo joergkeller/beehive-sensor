@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Parameters:
+#  Stage:
+#    Type: String
+  TargetTable:
+    Type: String
+  TargetTableArn:
+    Type: String
+
+Resources:
+
+  MessageRecorderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/app.handler
+      Runtime: nodejs14.x
+      CodeUri: ../../recorder/
+      Environment:
+        Variables:
+          TARGET_TABLE_NAME: !Ref TargetTable
+      Tracing: Active
+      Timeout: 120
+      Policies:
+        - AWSLambdaExecute
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:BatchGetItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:BatchWriteItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+              Resource: "*"
+      Events:
+        IoTRule:
+          Type: IoTRule
+          Properties:
+            AwsIotSqlVersion: 2016-03-23
+            Sql: SELECT * FROM 'lorawan/+/uplink'
+
+  LambdaFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: MessageRecorderFunction
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Join ["", ["/aws/lambda/", !Ref MessageRecorderFunction]]

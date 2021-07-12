@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name skorokithakis)(type Legacy)(uri /home/jke/Develop/beehive-sensor/schema/skorokithakis/sensors.lib)(options "")(descr ""))
+)

@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP HTCC-AB01
+D Cubecell Dev Board
+K LoRaWAN 1.0.2 SX1262 ASR6501 MCU ARM Cortex M0+
+$ENDCMP
+#
+#End Doc Library

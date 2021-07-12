@@ -16,9 +16,12 @@
 #ifndef __SENSORREADER_H__
 #define __SENSORREADER_H__
 
-#include <DHT.h>
+#ifndef ARDUINO_AVR_FEATHER32U4
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#endif
+
+#include <DHT.h>
 #include <HX711.h>
 #include "calibration.h"
 
@@ -32,6 +35,7 @@
   #define ONEWIRE_PIN         5
   #define LOADCELL_DOUT_PIN  A0
   #define LOADCELL_SCK_PIN   A1
+  #define VBATPIN            A7
 #endif
 
 #define TEMPERATURE_PRECISION 12
@@ -42,38 +46,45 @@ class SensorReader {
   public:
     void begin() {
       dht.begin();
+      #ifndef ARDUINO_AVR_FEATHER32U4
       sensors.begin();
+      #endif
       scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
       initialize();
     }
 
     void powerDown() {
+      #ifndef ARDUINO_AVR_FEATHER32U4
       scale.power_down();
+      #endif
     }
 
     void powerUp() {
+      #ifndef ARDUINO_AVR_FEATHER32U4
       scale.power_up();
+      #endif
       dht.begin();
       initialize();
     }
 
     void initialize() {
       scaleIsReady = scale.wait_ready_retry(5, 200);
-      if (!scaleIsReady) { Serial.println("Scale not ready"); }
+      if (!scaleIsReady) { DEBUG("Scale not ready"); }
       scale.set_scale(LOADCELL_DIVIDER);
       scale.set_offset(LOADCELL_OFFSET);
     }
 
+    #ifndef ARDUINO_AVR_FEATHER32U4
     void listTemperatureSensors() {
       sensors.begin();
       byte deviceCount = sensors.getDeviceCount();
-      Serial.print("\nFound ");
-      Serial.print(deviceCount, DEC);
-      Serial.println(" temperature sensor");
+      DEBUG3("\nFound ", deviceCount, " temperature sensor");
 
-      Serial.print("Parasite power is: ");
-      if (sensors.isParasitePowerMode()) Serial.println("ON");
-      else Serial.println("OFF");
+      if (sensors.isParasitePowerMode()) {
+        DEBUG2("Parasite power is: ", "ON");
+      } else {
+        DEBUG2("Parasite power is: ", "OFF");
+      }
 
       for (byte i = 0; i < deviceCount; i++) {
         DeviceAddress addr;
@@ -83,27 +94,29 @@ class SensorReader {
             Serial.print(": ");
             printBufferAsArray(addr, sizeof(addr));
         } else {
-          Serial.print("Unable to find address for Device ");
-          Serial.println(i);
+          DEBUG2("Unable to find address for Device ", i);
         }
       }
     }
 
     void listRawWeight() {
       long value = scale.read_average(SETUP_SAMPLING);
-      Serial.print("Raw weight read: ");
-      Serial.println(value);
+      DEBUG2("Raw weight read: ", value);
     }
+    #endif
 
     void startReading() {
+      #ifndef ARDUINO_AVR_FEATHER32U4
       sensors.setResolution(TEMPERATURE_PRECISION);
       sensors.requestTemperatures();
+      #endif
       dht.read(true);
     }
 
     void stopReading() {}
 
     // DS18B20 temperature sensors on one-wire bus
+    #ifndef ARDUINO_AVR_FEATHER32U4
     float getTemperature(int index) {
       const uint8_t* addr = thermometer[index];
       float temperature = sensors.getTempC(addr);
@@ -119,8 +132,9 @@ class SensorReader {
         Serial.print(temperature);
         Serial.println(" C");
       #endif
-      return temperature; 
+      return temperature;
     }
+    #endif
 
     // DHTxx sensor
     float getRoofTemperature() { return dht.readTemperature(); }
@@ -131,13 +145,17 @@ class SensorReader {
 
     float getCompensatedWeight() {
       if (!scaleIsReady) { return -127.0f; }
-      float weight = getWeight();
-      float outerTemperature = sensors.getTempC(thermometer[THERMOMETER_OUTER]);
-      if (isnan(outerTemperature) || outerTemperature == -127.0f) {
-        return weight;
-      } else {
-        return weight - (TEMPERATURE_FACTOR * outerTemperature) - TEMPERATURE_OFFSET;
-      }
+      #if THERMOMETER_COUNT == 0
+        return getWeight();
+      #else
+        float weight = getWeight();
+        float outerTemperature = sensors.getTempC(thermometer[THERMOMETER_OUTER]);
+        if (isnan(outerTemperature) || outerTemperature == -127.0f) {
+          return weight;
+        } else {
+          return weight - (TEMPERATURE_FACTOR * outerTemperature) - TEMPERATURE_OFFSET;
+        }
+      #endif
     }
 
     // battery voltage
@@ -145,8 +163,10 @@ class SensorReader {
 
   private:
     DHT dht = DHT(DHT_PIN, DHT22);
+    #ifndef ARDUINO_AVR_FEATHER32U4
     OneWire oneWire = OneWire(ONEWIRE_PIN);
     DallasTemperature sensors = DallasTemperature(&oneWire);
+    #endif
     HX711 scale = HX711();
     boolean scaleIsReady = false;
 
@@ -168,6 +188,12 @@ class SensorReader {
         long result = analogRead(ADC) * 2;
         digitalWrite(VBAT_ADC_CTL, HIGH);
         return result;
+      #elif defined(__SAMD21G18A__) || defined(ARDUINO_AVR_FEATHER32U4)
+        long measured = analogRead(VBATPIN);
+        measured *= 2;    // we divided by 2, so multiply back
+        measured *= 3300; // Multiply by 3300mV, our reference voltage
+        measured /= 1024; // convert to voltage
+        return measured;
       #else
         // see https://forum.arduino.cc/index.php?topic=120693.msg908179#msg908179
         // Read 1.1V reference against AVcc
@@ -177,7 +203,7 @@ class SensorReader {
         while (bit_is_set(ADCSRA, ADSC));
         long result = ADCL;
         result |= ADCH<<8;
-        result = 1126400L / result; // Back-calculate AVcc in mV
+        result = 1126400L / result; // Back-calculate AVcc in mV (1.1V * 1024 * 1000)
         return result;
       #endif
       interrupts();

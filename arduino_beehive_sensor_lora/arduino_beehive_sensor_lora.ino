@@ -29,15 +29,29 @@
 #define DEVICE_ID   KROKUS
 #define DEVICE_NAME krokus
 
+#ifdef ARDUINO_AVR_FEATHER32U4
+  #define DEBUG(str)            ;
+  #define DEBUG2(str1,str2)     ;
+  #define DEBUG3(str1,val,str2) ;
+#else
+  #define DEBUG(str)                Serial.println(str)
+  #define DEBUG2(str1,str2)       { Serial.print(str1); Serial.println(str2); }
+  #define DEBUG3(str1,val,str2)   { Serial.print(str1); Serial.print(val,DEC); Serial.println(str2); }
+#endif
+
+#include "SensorReader.h"
+#include "StateMachine.h"
+
 #if defined(__ASR6501__)
   #include "CubeCellLoRa.h"
 #else
-  #include <LowPower.h>
+  #include <Adafruit_SleepyDog.h>
   #include "DraginoLoRa.h"
 #endif
-#include "SensorReader.h"
-#include "StateMachine.h"
-#include "Interaction.h"
+
+#ifndef ARDUINO_AVR_FEATHER32U4
+  #include "Interaction.h"
+#endif
 
 #define UNDEFINED_VALUE -32768
 #define MESSAGE_VERSION 0
@@ -51,7 +65,9 @@ typedef struct {
   } humidity;
   struct {
     short roof;
+    #if THERMOMETER_COUNT > 0
     short other[THERMOMETER_COUNT];
+    #endif
   } temperature;
 }__attribute((packed)) beesensor_t;
 
@@ -93,11 +109,18 @@ unsigned long sleptMs = 0L;
 boolean       requireConfirmation = false;
 unsigned int  transmissionFailed = 0;
 
+#ifdef ARDUINO_AVR_FEATHER32U4
+typedef enum               {JOIN,   MEASURE,   TRANSMIT,   SLEEP} States;
+const char* stateNames[] = {"Join", "Measure", "Transmit", "Sleep"};
+#else
 typedef enum               {JOIN,   MEASURE,   TRANSMIT,   SLEEP,   MANUAL } States;
 const char* stateNames[] = {"Join", "Measure", "Transmit", "Sleep", "Manual"};
+#endif
 StateMachine node(5, stateNames, getTime);
 
+#ifndef ARDUINO_AVR_FEATHER32U4
 Interaction interaction;
+#endif
 
 SensorReader sensor = SensorReader();
 #if defined(__ASR6501__)
@@ -120,7 +143,9 @@ void setup() {
   sensor.begin();
   initializeMessage();
   radio.begin();
+  #ifndef ARDUINO_AVR_FEATHER32U4
   interaction.begin(onSwitchManualMode);
+  #endif
 
   node.onEnter(JOIN, beginJoin);
   node.onState(JOIN, joining);
@@ -133,21 +158,23 @@ void setup() {
   node.onState(SLEEP, sleeping);
   node.onTimeout(SLEEP, MEASURE_INTERVAL, onSleepTimeout);
   node.onExit(SLEEP, powerUp);
+  #ifndef ARDUINO_AVR_FEATHER32U4
   node.onEnter(MANUAL, beginManual);
   node.onState(MANUAL, manualMode);
   node.onExit(MANUAL, endManual);
+  #endif
 
   node.toState(JOIN);
 }
 
-#if defined(__ASR6501__)
+#ifndef ARDUINO_AVR_FEATHER32U4
   #define xstr(x) str(x)
   #define str(x) #x
   #define ABOUT_MESSAGE "Start '" xstr(DEVICE_NAME) "' beehive LoRa script with sensor message v" xstr(MESSAGE_VERSION)
 #endif
 
 void initializeMessage() {
-  #if defined(__ASR6501__)
+  #ifndef ARDUINO_AVR_FEATHER32U4
     Serial.print(ABOUT_MESSAGE);
     Serial.print(" (");
     Serial.print(sizeof(message[0]));
@@ -159,9 +186,11 @@ void initializeMessage() {
     message[m].sensor.weight = UNDEFINED_VALUE;
     message[m].sensor.humidity.roof = UNDEFINED_VALUE;
     message[m].sensor.temperature.roof = UNDEFINED_VALUE;
+    #if THERMOMETER_COUNT > 0
     for (int i = 0; i < THERMOMETER_COUNT; i++) {
       message[m].sensor.temperature.other[i] = UNDEFINED_VALUE;
     }
+    #endif
   }
 }
 
@@ -203,13 +232,13 @@ void measure() {
   lastMeasureMs = getTime();
   byte index = (lastMsgIndex + 1) % 2;
   readSensors(index);
-  #if defined(__ASR6501__)
+  #ifndef ARDUINO_AVR_FEATHER32U4
     printSensorData(index);
   #endif
   if (unconditionalTransmit() || hasChanged(index)) {
     node.toState(TRANSMIT);
   } else {
-    Serial.println("No changes");
+    DEBUG("No changes");
     node.toState(SLEEP);
   }
 }
@@ -252,7 +281,7 @@ void powerDown() {
   sensor.powerDown();
 
   uint32_t timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
-  Serial.print(timeToWake / 1000); Serial.println(" s sleeping");
+  DEBUG2((timeToWake / 1000), " s sleeping");
   delay(1);
   Serial.flush();
   #ifdef USBCON
@@ -270,21 +299,12 @@ void powerDown() {
 void sleeping() {
   #if defined(__ASR6501__)
     lowPowerHandler();
+  #elif defined(__SAMD21G18A__)
+    unsigned long timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
+    sleptMs += Watchdog.sleep(timeToWake);
   #else
     unsigned long timeToWake = (lastMeasureMs + MEASURE_INTERVAL) - getTime();
-    if (timeToWake >= 8000) {
-      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-      sleptMs += 8000;
-    } else if (timeToWake >= 4000) {
-      LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
-      sleptMs += 4000;
-    } else if (timeToWake >= 2000) {
-      LowPower.powerDown(SLEEP_2S, ADC_OFF, BOD_OFF);
-      sleptMs += 2000;
-    } else {
-      LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
-      sleptMs += 1000;
-    }
+    sleptMs += Watchdog.sleep(min(timeToWake, 8*SEC));
   #endif
 }
 
@@ -299,7 +319,9 @@ void powerUp() {
     }
   #endif
   #ifdef USBCON
+  #if defined(__ASR6501__)
     USBDevice.init();
+  #endif
     USBDevice.attach();
   #endif
   sensor.powerUp();
@@ -308,6 +330,7 @@ void powerUp() {
 
 // MANUAL ---------------------------
 
+#ifndef ARDUINO_AVR_FEATHER32U4
 void onSwitchManualMode() {
   if (!interaction.checkSwitchPressed()) return;
 
@@ -347,25 +370,17 @@ void manualMode() {
 
   #if defined(__ASR6501__)
     lowPowerHandler();
+  #elif defined(__SAMD21G18A__)
+    sleptMs += Watchdog.sleep(RAW_MEASURE_INTERVAL);
   #else
-    #if RAW_MEASURE_INTERVAL >= 8000
-      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-      sleptMs += 8000;
-    #elif  RAW_MEASURE_INTERVAL >= 4000
-      LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
-      sleptMs += 4000;
-    #elif  RAW_MEASURE_INTERVAL >= 2000
-      LowPower.powerDown(SLEEP_2S, ADC_OFF, BOD_OFF);
-      sleptMs += 2000;
-    #else
-      LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
-      sleptMs += 1000;
-    #endif
+    sleptMs += Watchdog.sleep(min(RAW_MEASURE_INTERVAL, 8*SEC));
     measureRawData();
   #endif
 
   #ifdef USBCON
+  #if defined(__ASR6501__)
     USBDevice.init();
+  #endif
     USBDevice.attach();
   #endif
   delay(1);
@@ -389,6 +404,7 @@ void endManual() {
     TimerStop(&wakeupTimer);
   #endif
 }
+#endif
 
 /* Helper methods ******************************************/
 
@@ -416,27 +432,29 @@ void readSensors(byte index) {
   message[index].sensor.weight = asShort(sensor.getCompensatedWeight());
   message[index].sensor.humidity.roof = asShort(sensor.getRoofHumidity());
   message[index].sensor.temperature.roof = asShort(sensor.getRoofTemperature());
+  #if THERMOMETER_COUNT > 0
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
     message[index].sensor.temperature.other[i] = asShort(sensor.getTemperature(i));
   }
+  #endif
   sensor.stopReading();
 }
 
 void printSensorData(byte index) {
   print(message[index].sensor.weight, " kg");
+  #if THERMOMETER_COUNT > 0
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
     print(message[index].sensor.temperature.other[i], String(" C level ") + i);
   }
+  #endif
   print(message[index].sensor.temperature.roof, " C roof");
   print(message[index].sensor.humidity.roof, " % rel roof");
   print(message[index].sensor.battery, " Vbat");
 }
 
-inline
 void print(short compactValue, String suffix) {
   if (compactValue != UNDEFINED_VALUE) {
-    Serial.print(compactValue / 100.0);
-    Serial.println(suffix);
+    DEBUG2((compactValue / 100.0), suffix);
   }
 }
 
@@ -445,7 +463,7 @@ bool unconditionalTransmit() {
   unsigned long transmissionInterval = getTime() - lastTransmissionMs;
   boolean unconditionalTransmit = transmissionInterval >= (UNCONDITIONAL_INTERVAL - (MEASURE_INTERVAL/2));
   if (unconditionalTransmit) {
-    Serial.print(transmissionInterval / 1000); Serial.println("s since transmission");
+    DEBUG2((transmissionInterval / 1000), "s since transmission");
   }
   return unconditionalTransmit;
 }
@@ -454,13 +472,13 @@ inline
 boolean withConfirmation() {
   #if defined(__ASR6501__)
     if (transmissionFailed > 0) {
-      Serial.println("Require confirmation after fail");
+      DEBUG("Require confirmation after fail");
       return true;
     }
     unsigned long confirmationInterval = getTime() - lastConfirmationMs;
     boolean confirmation = confirmationInterval >= CONFIRMATION_INTERVAL;
     if (confirmation) {
-      Serial.println("Require confirmation");
+      DEBUG("Require confirmation");
     }
     return confirmation;
   #else
@@ -474,11 +492,13 @@ bool hasChangedValue(short lastValue, short nextValue, short limit) {
 }
 
 bool hasChanged(byte index) {
+  #if THERMOMETER_COUNT > 0
   for (int i = 0; i < THERMOMETER_COUNT; i++) {
     if (hasChangedValue(message[lastMsgIndex].sensor.temperature.other[i], message[index].sensor.temperature.other[i], LIMIT_TEMPERATURE_DIFF)) {
       return true;
     }
   }
+  #endif
   return hasChangedValue(message[lastMsgIndex].sensor.weight, message[index].sensor.weight, LIMIT_WEIGHT_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.temperature.roof, message[index].sensor.temperature.roof, LIMIT_TEMPERATURE_DIFF)
       || hasChangedValue(message[lastMsgIndex].sensor.humidity.roof, message[index].sensor.humidity.roof, LIMIT_HUMIDITY_DIFF);

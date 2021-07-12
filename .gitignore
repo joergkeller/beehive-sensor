@@ -1,2 +1,3 @@
 .idea
 *.iml
+/arduino_beehive_sensor_lora/build/

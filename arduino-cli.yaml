@@ -1,5 +1,6 @@
 board_manager:
   additional_urls:
     - http://resource.heltec.cn/download/package_CubeCell_index.json
+    - https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
 directories:
   user: ./

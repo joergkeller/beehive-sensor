@@ -14,10 +14,17 @@ arduino-cli board listall Uno
 
 ```
 arduino-cli board list
-arduino-cli compile --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=6,LORAWAN_CLASS=0,LORAWAN_DEVEUI=0,LORAWAN_NETMODE=0,LORAWAN_ADR=1,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=1,LORAWAN_RGB=0,LORAWAN_DebugLevel=0 arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
-arduino-cli compile -u -p COM25 --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=6,LORAWAN_CLASS=0,LORAWAN_DEVEUI=0,LORAWAN_NETMODE=0,LORAWAN_ADR=1,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=1,LORAWAN_RGB=0,LORAWAN_DebugLevel=0 arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+arduino-cli compile arduino_beehive_sensor_lora --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=6,LORAWAN_CLASS=0,LORAWAN_DEVEUI=0,LORAWAN_NETMODE=0,LORAWAN_ADR=1,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=1,LORAWAN_RGB=0,LORAWAN_DebugLevel=0
+arduino-cli compile arduino_beehive_sensor_lora -u -p COM25 --fqbn=CubeCell:CubeCell:CubeCell-Board:LORAWAN_REGION=6,LORAWAN_CLASS=0,LORAWAN_DEVEUI=0,LORAWAN_NETMODE=0,LORAWAN_ADR=1,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=1,LORAWAN_RGB=0,LORAWAN_DebugLevel=0
 --- or for dragino LoRa shield/board:
-arduino-cli compile --fqbn=arduino:avr:uno  arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+sed -i -e '/#define DEVICE_ID/s/KROKUS/TEST_123/' arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+sed -i -e '/#define DEVICE_NAME/s/krokus/test_123/' arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+arduino-cli compile arduino_beehive_sensor_lora --fqbn=arduino:avr:uno
+--- or for feather32u4 
+sed -i -e '/#define DEVICE_ID/s/KROKUS/TEST_123/' arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+sed -i -e '/#define DEVICE_NAME/s/krokus/test_123/' arduino_beehive_sensor_lora/arduino_beehive_sensor_lora.ino
+arduino-cli compile arduino_beehive_sensor_lora --fqbn=adafruit:avr:feather32u4
+
 minicom -D /dev/ttyUSB0 -b 115200 
 ```
 The compile-time arguments are defined in the boards.txt file of the [CubeCell arduino core](https://github.com/HelTecAutomation/ASR650x-Arduino).

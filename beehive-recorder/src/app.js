@@ -23,13 +23,13 @@ const devices = require('./devices.json');
 exports.lambdaHandler = async (event, context) => {
     try {
         const body = JSON.parse(event.body);
-        sendToDb(body);
-        console.log('Payload recorded');
-        const device = findDevice(body.dev_id);
-        if (device && device.thingspeak) {
-            await sendToThingspeak(device, body.payload_fields);
-            console.log('Device shown on Thingspeak #' + device.thingspeak.channel_id);
+        console.log(body);
+        if (isPayloadV3(body)) {
+            await handlePayloadV3(body);
+        } else {
+            await handlePayloadV2(body);
         }
+        const feed = {message: 'Hello world'};
         return {
             statusCode: 201
         };
@@ -38,6 +38,34 @@ exports.lambdaHandler = async (event, context) => {
         return err;
     }
 };
+
+function isPayloadV3(body) {
+    if (body.uplink_message) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+async function handlePayloadV2(body) {
+    sendToDbV2(body);
+    console.log('Payload v2 recorded');
+    const device = findDevice(body.dev_id);
+    if (device && device.thingspeak) {
+        await sendToThingspeak(device, body.payload_fields);
+        console.log('Device shown on Thingspeak #' + device.thingspeak.channel_id);
+    }
+}
+
+async function handlePayloadV3(body) {
+    sendToDbV3(body);
+    console.log('Payload v3 recorded');
+    const device = findDevice(body.end_device_ids.device_id);
+    if (device && device.thingspeak) {
+        await sendToThingspeak(device, body.uplink_message.decoded_payload);
+        console.log('Device shown on Thingspeak #' + device.thingspeak.channel_id);
+    }
+}
 
 function findDevice(devId) {
     console.log('Device is ' + devId);
@@ -51,8 +79,24 @@ async function sendToThingspeak(device, payload) {
     return axios.post(url, payload);
 }
 
-async function sendToDb(payload) {
+async function sendToDbV2(payload) {
     payload.timestamp = payload.metadata.time;
+    var params = {
+        TableName: dbTable,
+        Item: payload
+    };
+
+    AWS.config.update({region: region});
+    const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
+    return docClient.put(params).promise();
+}
+
+async function sendToDbV3(payload) {
+    payload.dev_id = payload.end_device_ids.device_id;
+    payload.app_id = payload.end_device_ids.application_ids.application_id;
+    payload.timestamp = payload.received_at;
+    payload.payload_fields = {};
+    payload.payload_fields.sensor = payload.uplink_message.decoded_payload.sensor;
     var params = {
         TableName: dbTable,
         Item: payload

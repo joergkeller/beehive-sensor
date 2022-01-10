@@ -7,15 +7,14 @@
   "author": "SAM CLI",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.21.2"
+    "axios": "^0.24.0"
   },
   "scripts": {
     "test": "mocha test/js/"
   },
   "devDependencies": {
-    "aws-sdk-mock": "^5.1.0",
-    "chai": "^4.2.0",
-    "mocha": "^6.2.3",
-    "ansi-regex": ">=5.0.1" # mocha transitive dependency
+    "aws-sdk-mock": "^5.5.1",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.3"
   }
 }

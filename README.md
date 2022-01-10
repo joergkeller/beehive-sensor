@@ -103,7 +103,7 @@ Used pins:
 ## Checkout this project
 Local installation of `git` and `Arduino IDE` assumed.\
 Install the CubeCell board: https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/quick_start.html
- (current version 1.1.0).
+ (current version 1.3.0).
 ~~~
 cd <project-root>
 git clone https://github.com/joergkeller/beehive-sensor.git
@@ -122,7 +122,7 @@ git stash pop
 
 | Arduino Settings      | Value |
 | ----------------------|-------|
-| File > Preferences > Settings > Board Manager URLs | `http://resource.heltec.cn/download/package_CubeCell_index.json`
+| File > Preferences > Settings > Board Manager URLs | `https://github.com/HelTecAutomation/CubeCell-Arduino/releases/download/V1.3.0/package_CubeCell_index.json` |
 | File > Preferences > Settings > Sketchbook location | `C:\...\beehive-sensor` |
 | File > Open... | `C:\...\beehive-sensor\arduino_beehive_sensor_lora\arduino_beehive_sensor_lora.ino` |
 | Tools > Board | `CubeCell-Board` |

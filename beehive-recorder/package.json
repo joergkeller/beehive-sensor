@@ -15,6 +15,7 @@
   "devDependencies": {
     "aws-sdk-mock": "^5.1.0",
     "chai": "^4.2.0",
-    "mocha": "^6.2.3"
+    "mocha": "^6.2.3",
+    "ansi-regex": ">=5.0.1" # mocha transitive dependency
   }
 }

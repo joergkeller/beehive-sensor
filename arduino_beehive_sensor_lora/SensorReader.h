@@ -132,12 +132,16 @@ class SensorReader {
     float getCompensatedWeight() {
       if (!scaleIsReady) { return -127.0f; }
       float weight = getWeight();
-      float outerTemperature = sensors.getTempC(thermometer[THERMOMETER_OUTER]);
-      if (isnan(outerTemperature) || outerTemperature == -127.0f) {
+      #if THERMOMETER_COUNT > 0
+        float outerTemperature = sensors.getTempC(thermometer[THERMOMETER_OUTER]);
+        if (isnan(outerTemperature) || outerTemperature == -127.0f) {
+          return weight;
+        } else {
+          return weight - (TEMPERATURE_FACTOR * outerTemperature) - TEMPERATURE_OFFSET;
+        }
+      #else
         return weight;
-      } else {
-        return weight - (TEMPERATURE_FACTOR * outerTemperature) - TEMPERATURE_OFFSET;
-      }
+      #endif
     }
 
     // battery voltage

@@ -5,7 +5,7 @@
 #ifndef __LORAMACDIRECT_H__
 #define __LORAMACDIRECT_H__
 
-#include <LoRaMac.h>
+#include <LoRaWan_102.h>
 
 /*!
 * Number of trials to transmit the frame, if the LoRaMAC layer did not
